@@ -12,6 +12,9 @@ type IconName =
   | "professional"
   | "phone"
   | "mail"
+  | "location"
+  | "clock"
+  | "send"
   | "check"
   | "plan"
   | "tools";
@@ -88,6 +91,24 @@ function Icon({ name, className = "" }: { name: IconName; className?: string }) 
       <>
         <path d="M4 6h16v12H4z" />
         <path d="m4 7 8 6 8-6" />
+      </>
+    ),
+    location: (
+      <>
+        <path d="M12 21s7-5.1 7-11a7 7 0 0 0-14 0c0 5.9 7 11 7 11z" />
+        <path d="M12 10.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" />
+      </>
+    ),
+    clock: (
+      <>
+        <path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z" />
+        <path d="M12 6v6l4 2" />
+      </>
+    ),
+    send: (
+      <>
+        <path d="M22 2 11 13" />
+        <path d="m22 2-7 20-4-9-9-4z" />
       </>
     ),
     check: (
@@ -470,35 +491,217 @@ export default function Home() {
       </section>
 
       <section id="contact" className="section-reveal bg-[#053920] px-5 py-24 text-white lg:px-8">
-        <div className="mx-auto grid max-w-7xl gap-8 border border-[#f6d97b]/28 bg-[#112416]/70 p-6 shadow-[0_36px_120px_rgba(0,0,0,0.28)] md:p-10 lg:grid-cols-[1fr_auto] lg:items-center">
-          <div>
-            <p className="section-kicker text-[#f6d97b]">Contact</p>
-            <h2 className="mt-4 text-4xl font-black leading-tight sm:text-6xl">
-              พร้อมเริ่มคุยแบบ รีโนเวท หรือบิวท์อินบ้านของคุณ
-            </h2>
-            <p className="mt-5 max-w-2xl text-lg leading-9 text-white/72">
-              ส่งรูปพื้นที่และรายละเอียดคร่าว ๆ ให้ทีมงานประเมินเบื้องต้น
-              จากนั้นนัดสำรวจและสรุปขอบเขตงานให้ชัดเจนก่อนเริ่มจริง
-            </p>
+        <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-stretch">
+          <div className="relative overflow-hidden border border-[#f6d97b]/28 bg-[#112416]/72 p-6 shadow-[0_36px_120px_rgba(0,0,0,0.28)] md:p-10">
+            <div className="luxury-rings absolute -right-56 -top-56 h-[420px] w-[420px] rounded-full opacity-60" />
+            <div className="relative">
+              <p className="section-kicker text-[#f6d97b]">Contact</p>
+              <h2 className="mt-4 text-4xl font-black leading-tight sm:text-6xl">
+                เล่าไอเดียบ้านของคุณ แล้วให้ทีมช่วยประเมินขั้นแรก
+              </h2>
+              <p className="mt-5 max-w-2xl text-lg leading-9 text-white/72">
+                ส่งข้อมูลพื้นที่ งบประมาณคร่าว ๆ และความต้องการหลักไว้ก่อน
+                ทีมงานจะใช้เป็นข้อมูลตั้งต้นสำหรับการนัดสำรวจและสรุปขอบเขตงานจริง
+              </p>
+
+              <div className="mt-10 grid gap-4">
+                <a href="tel:+66819512297" className="contact-info-row group">
+                  <span className="icon-medallion shrink-0">
+                    <Icon name="phone" className="size-6" />
+                  </span>
+                  <span>
+                    <span className="block text-sm font-black uppercase tracking-[0.18em] text-[#f6d97b]">
+                      Phone
+                    </span>
+                    <span className="mt-1 block text-2xl font-black">081-9512-297</span>
+                  </span>
+                </a>
+                <a href="mailto:34buildmaster@gmail.com" className="contact-info-row group">
+                  <span className="icon-medallion shrink-0">
+                    <Icon name="mail" className="size-6" />
+                  </span>
+                  <span>
+                    <span className="block text-sm font-black uppercase tracking-[0.18em] text-[#f6d97b]">
+                      Email
+                    </span>
+                    <span className="mt-1 block break-all text-xl font-black">
+                      34buildmaster@gmail.com
+                    </span>
+                  </span>
+                </a>
+                <div className="contact-info-row">
+                  <span className="icon-medallion shrink-0">
+                    <Icon name="location" className="size-6" />
+                  </span>
+                  <span>
+                    <span className="block text-sm font-black uppercase tracking-[0.18em] text-[#f6d97b]">
+                      Service Area
+                    </span>
+                    <span className="mt-1 block text-xl font-black">
+                      เชียงใหม่ และพื้นที่ใกล้เคียง
+                    </span>
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
-            <a
-              href="tel:+66819512297"
-              className="gold-button inline-flex min-h-12 items-center justify-center gap-2 px-7 font-black text-[#112416]"
-            >
-              <Icon name="phone" className="size-5" />
-              โทร 081-9512-297
-            </a>
-            <a
-              href="mailto:34buildmaster@gmail.com"
-              className="inline-flex min-h-12 items-center justify-center gap-2 border border-[#f6d97b]/50 px-7 font-black text-[#fdf0a3] transition hover:bg-[#f6d97b] hover:text-[#112416]"
-            >
-              <Icon name="mail" className="size-5" />
-              ส่งอีเมล
-            </a>
-          </div>
+
+          <form
+            action="mailto:34buildmaster@gmail.com"
+            className="section-card border border-[#f6d97b]/30 bg-[#fbf7ec] p-6 text-[#112416] shadow-[0_36px_120px_rgba(0,0,0,0.18)] md:p-8"
+            encType="text/plain"
+            method="post"
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="section-kicker">Request Quote</p>
+                <h3 className="mt-4 text-3xl font-black leading-tight sm:text-4xl">
+                  ฝากรายละเอียดเพื่อให้ทีมติดต่อกลับ
+                </h3>
+              </div>
+              <span className="icon-medallion hidden sm:grid">
+                <Icon name="send" className="size-7" />
+              </span>
+            </div>
+
+            <div className="mt-8 grid gap-5 sm:grid-cols-2">
+              <label className="form-field">
+                <span>ชื่อผู้ติดต่อ</span>
+                <input name="name" placeholder="ชื่อ-นามสกุล" type="text" />
+              </label>
+              <label className="form-field">
+                <span>เบอร์โทร</span>
+                <input name="phone" placeholder="08x-xxx-xxxx" type="tel" />
+              </label>
+              <label className="form-field sm:col-span-2">
+                <span>ประเภทงาน</span>
+                <select defaultValue="" name="service">
+                  <option disabled value="">
+                    เลือกประเภทงานที่สนใจ
+                  </option>
+                  <option>ออกแบบบ้าน</option>
+                  <option>รีโนเวทบ้าน</option>
+                  <option>สร้างบ้าน</option>
+                  <option>บิวท์อิน</option>
+                </select>
+              </label>
+              <label className="form-field">
+                <span>พื้นที่โครงการ</span>
+                <input name="location" placeholder="อำเภอ / จังหวัด" type="text" />
+              </label>
+              <label className="form-field">
+                <span>งบประมาณคร่าว ๆ</span>
+                <input name="budget" placeholder="เช่น 800,000 - 1,500,000" type="text" />
+              </label>
+              <label className="form-field sm:col-span-2">
+                <span>รายละเอียดเพิ่มเติม</span>
+                <textarea
+                  name="message"
+                  placeholder="เล่าขนาดพื้นที่ สไตล์ที่ชอบ หรือสิ่งที่อยากปรับปรุง"
+                  rows={5}
+                />
+              </label>
+            </div>
+
+            <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <button
+                className="gold-button inline-flex min-h-12 items-center justify-center gap-2 px-7 font-black text-[#112416]"
+                type="submit"
+              >
+                <Icon name="send" className="size-5" />
+                ส่งรายละเอียด
+              </button>
+              <p className="text-sm leading-6 text-[#4d5b50]">
+                ตอนนี้ฟอร์มจะเปิดอีเมลของเครื่องก่อน ระบบบันทึกเข้าหลังบ้านจะทำในขั้นต่อไป
+              </p>
+            </div>
+          </form>
         </div>
       </section>
+
+      <footer className="bg-[#112416] px-5 py-14 text-white lg:px-8">
+        <div className="mx-auto grid max-w-7xl gap-10 border-t border-[#f6d97b]/20 pt-10 lg:grid-cols-[1.2fr_0.7fr_0.7fr_1fr]">
+          <div>
+            <a href="#" className="flex items-center gap-3" aria-label="34 Build Master Construction">
+              <span className="grid size-14 place-items-center border border-[#f6d97b]/40 bg-[#053920] text-xl font-black text-[#fdf0a3]">
+                34
+              </span>
+              <span className="leading-tight">
+                <span className="block text-lg font-black uppercase tracking-[0.16em]">
+                  Build Master
+                </span>
+                <span className="block text-xs uppercase tracking-[0.24em] text-[#f6d97b]">
+                  Construction
+                </span>
+              </span>
+            </a>
+            <p className="mt-5 max-w-sm text-base leading-8 text-white/62">
+              สร้างสรรค์คุณภาพ มุ่งมั่นในทุกงานก่อสร้าง
+              สำหรับงานออกแบบ รีโนเวท สร้างบ้าน และบิวท์อิน
+            </p>
+          </div>
+
+          <div>
+            <h3 className="footer-heading">บริการ</h3>
+            <ul className="mt-4 space-y-3 text-white/66">
+              {services.map((service) => (
+                <li key={service.title}>
+                  <a className="footer-link" href="#services">
+                    {service.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="footer-heading">เมนู</h3>
+            <ul className="mt-4 space-y-3 text-white/66">
+              <li>
+                <a className="footer-link" href="#projects">
+                  ผลงาน
+                </a>
+              </li>
+              <li>
+                <a className="footer-link" href="#process">
+                  ขั้นตอน
+                </a>
+              </li>
+              <li>
+                <a className="footer-link" href="#contact">
+                  ติดต่อเรา
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="footer-heading">ติดต่อ</h3>
+            <ul className="mt-4 space-y-4 text-white/72">
+              <li className="flex gap-3">
+                <Icon name="phone" className="mt-1 size-5 shrink-0 text-[#f6d97b]" />
+                <a className="footer-link" href="tel:+66819512297">
+                  081-9512-297
+                </a>
+              </li>
+              <li className="flex gap-3">
+                <Icon name="mail" className="mt-1 size-5 shrink-0 text-[#f6d97b]" />
+                <a className="footer-link break-all" href="mailto:34buildmaster@gmail.com">
+                  34buildmaster@gmail.com
+                </a>
+              </li>
+              <li className="flex gap-3">
+                <Icon name="location" className="mt-1 size-5 shrink-0 text-[#f6d97b]" />
+                <span>เชียงใหม่ และพื้นที่ใกล้เคียง</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div className="mx-auto mt-10 flex max-w-7xl flex-col gap-3 border-t border-[#f6d97b]/14 pt-6 text-sm text-white/46 sm:flex-row sm:items-center sm:justify-between">
+          <p>© 2026 34 Build Master Construction. All rights reserved.</p>
+          <p>Modern Luxury Premium Construction</p>
+        </div>
+      </footer>
     </main>
   );
 }
