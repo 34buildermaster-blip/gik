@@ -1,0 +1,41 @@
+# Workspace
+work/
+outputs/
+
+# Dependencies
+node_modules/
+vendor/
+
+# Build output
+.next/
+out/
+build/
+public/build/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+auth.json
+*.pem
+
+# Logs and caches
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.phpunit.result.cache
+.phpunit.cache/
+*.tsbuildinfo
+
+# Local database
+database/database.sqlite
+*.sqlite
+
+# Editors and OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.zed/
+.nova/
