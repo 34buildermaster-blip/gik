@@ -243,7 +243,7 @@ export default function Home() {
       <header className="sticky top-0 z-40 border-b border-[#f6d97b]/20 bg-[#053920]/95 text-white shadow-[0_18px_60px_rgba(0,0,0,0.2)] backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
           <a href="#" className="group flex items-center gap-3" aria-label="34 Build Master Construction">
-            <span className="relative grid size-12 place-items-center overflow-hidden bg-[#112416] text-lg font-black text-[#fdf0a3] ring-1 ring-[#f6d97b]/40">
+            <span className="relative grid size-12 place-items-center overflow-hidden rounded-2xl bg-[#112416] text-lg font-black text-[#fdf0a3] ring-1 ring-[#f6d97b]/40">
               <span className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#fdf0a3] to-transparent" />
               34
             </span>
@@ -321,7 +321,7 @@ export default function Home() {
               </a>
               <a
                 href="#projects"
-                className="inline-flex min-h-12 items-center justify-center border border-[#f6d97b]/50 px-7 text-base font-bold text-[#fdf0a3] transition hover:bg-[#f6d97b] hover:text-[#112416]"
+                className="inline-flex min-h-12 items-center justify-center rounded-full border border-[#f6d97b]/50 px-7 text-base font-bold text-[#fdf0a3] transition hover:bg-[#f6d97b] hover:text-[#112416]"
               >
                 ดูผลงานตัวอย่าง
               </a>
@@ -345,7 +345,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="services" className="section-reveal relative overflow-hidden px-5 py-24 lg:px-8">
+      <section id="services" className="section-reveal bg-material-section relative overflow-hidden px-5 py-24 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-10 lg:grid-cols-[0.78fr_1.22fr] lg:items-end">
             <div>
@@ -383,7 +383,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="projects" className="section-reveal bg-[#053920] px-5 py-24 text-white lg:px-8">
+      <section id="projects" className="section-reveal bg-luxury-section px-5 py-24 text-white lg:px-8">
         <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.86fr_1.14fr]">
           <div>
             <p className="section-kicker text-[#f6d97b]">Selected Work</p>
@@ -402,7 +402,7 @@ export default function Home() {
                 key={project.title}
                 className="section-card group grid gap-5 border border-[#f6d97b]/18 bg-[#112416]/62 p-5 shadow-[0_30px_90px_rgba(0,0,0,0.24)] transition hover:-translate-y-1 hover:border-[#f6d97b]/48 md:grid-cols-[120px_1fr]"
               >
-                <div className="grid min-h-28 place-items-center bg-gradient-to-br from-[#aa7426] via-[#f6d97b] to-[#fdf0a3] text-[#053920]">
+                <div className="grid min-h-28 place-items-center rounded-3xl bg-gradient-to-br from-[#aa7426] via-[#f6d97b] to-[#fdf0a3] text-[#053920]">
                   <Icon name={project.icon} className="size-12" />
                 </div>
                 <div>
@@ -418,7 +418,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section-reveal px-5 py-24 lg:px-8">
+      <section className="section-reveal bg-material-section px-5 py-24 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-10 lg:grid-cols-[0.82fr_1.18fr] lg:items-center">
             <div>
@@ -431,7 +431,7 @@ export default function Home() {
               {values.map((value) => (
                 <div
                   key={value.label}
-                  className="section-card border border-[#aa7426]/24 bg-white px-4 py-6 text-center shadow-sm transition hover:-translate-y-1 hover:border-[#aa7426]/50 hover:shadow-xl"
+                  className="section-card border border-[#aa7426]/24 bg-white/92 px-4 py-6 text-center shadow-sm backdrop-blur transition hover:-translate-y-1 hover:border-[#aa7426]/50 hover:shadow-xl"
                 >
                   <div className="icon-medallion mx-auto mb-4">
                     <Icon name={value.icon} className="size-7" />
@@ -446,7 +446,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="process" className="section-reveal bg-[#112416] px-5 py-24 text-white lg:px-8">
+      <section id="process" className="section-reveal bg-luxury-section px-5 py-24 text-white lg:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="max-w-3xl">
             <p className="section-kicker text-[#f6d97b]">Process</p>
@@ -473,7 +473,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section-reveal grid bg-white lg:grid-cols-2">
+      <section className="section-reveal grid overflow-hidden bg-white lg:grid-cols-2">
         <div className="bg-[#fbf7ec] px-5 py-24 lg:px-16">
           <p className="section-kicker">FAQ</p>
           <h2 className="mt-4 text-4xl font-black leading-tight sm:text-6xl">
@@ -490,9 +490,9 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="contact" className="section-reveal bg-[#053920] px-5 py-24 text-white lg:px-8">
+      <section id="contact" className="section-reveal bg-luxury-section px-5 py-24 text-white lg:px-8">
         <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-stretch">
-          <div className="relative overflow-hidden border border-[#f6d97b]/28 bg-[#112416]/72 p-6 shadow-[0_36px_120px_rgba(0,0,0,0.28)] md:p-10">
+          <div className="relative overflow-hidden rounded-[2rem] border border-[#f6d97b]/28 bg-[#112416]/72 p-6 shadow-[0_36px_120px_rgba(0,0,0,0.28)] md:p-10">
             <div className="luxury-rings absolute -right-56 -top-56 h-[420px] w-[420px] rounded-full opacity-60" />
             <div className="relative">
               <p className="section-kicker text-[#f6d97b]">Contact</p>
@@ -548,7 +548,7 @@ export default function Home() {
 
           <form
             action="mailto:34buildmaster@gmail.com"
-            className="section-card border border-[#f6d97b]/30 bg-[#fbf7ec] p-6 text-[#112416] shadow-[0_36px_120px_rgba(0,0,0,0.18)] md:p-8"
+            className="section-card border border-[#f6d97b]/30 bg-[#fbf7ec]/95 p-6 text-[#112416] shadow-[0_36px_120px_rgba(0,0,0,0.18)] backdrop-blur md:p-8"
             encType="text/plain"
             method="post"
           >
@@ -623,7 +623,7 @@ export default function Home() {
         <div className="mx-auto grid max-w-7xl gap-10 border-t border-[#f6d97b]/20 pt-10 lg:grid-cols-[1.2fr_0.7fr_0.7fr_1fr]">
           <div>
             <a href="#" className="flex items-center gap-3" aria-label="34 Build Master Construction">
-              <span className="grid size-14 place-items-center border border-[#f6d97b]/40 bg-[#053920] text-xl font-black text-[#fdf0a3]">
+              <span className="grid size-14 place-items-center rounded-2xl border border-[#f6d97b]/40 bg-[#053920] text-xl font-black text-[#fdf0a3]">
                 34
               </span>
               <span className="leading-tight">
