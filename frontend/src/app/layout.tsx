@@ -14,11 +14,13 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://34bmconstruction.com"),
-  title: "34 BM Construction | รับออกแบบ รีโนเวท สร้างบ้าน และบิวท์อิน",
+  title: "34 Build Master Construction | รับออกแบบ รีโนเวท สร้างบ้าน และบิวท์อิน",
   description:
-    "34 BM Construction รับออกแบบ รีโนเวท สร้างบ้าน และบิวท์อินครบวงจร วางแผนงานชัดเจน ดูแลหน้างานเป็นระบบ และพร้อมให้คำปรึกษาเบื้องต้น",
+    "34 Build Master Construction รับออกแบบ รีโนเวท สร้างบ้าน และบิวท์อินครบวงจร สร้างสรรค์คุณภาพ มุ่งมั่นในทุกงานก่อสร้าง",
   keywords: [
     "34 BM Construction",
+    "34 Build Master Construction",
+    "Build Master Construction",
     "รับสร้างบ้าน",
     "รับรีโนเวทบ้าน",
     "รับออกแบบบ้าน",
@@ -26,7 +28,7 @@ export const metadata: Metadata = {
     "บริษัทรับเหมาก่อสร้าง",
   ],
   openGraph: {
-    title: "34 BM Construction",
+    title: "34 Build Master Construction",
     description: "รับออกแบบ รีโนเวท สร้างบ้าน และบิวท์อินครบวงจร",
     images: ["/hero-construction.png"],
     type: "website",

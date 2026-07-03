@@ -1,8 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fbf7ec;
+  --foreground: #112416;
+  --primary-green: #053920;
+  --dark-green: #112416;
+  --gold: #aa7426;
+  --light-gold: #f6d97b;
+  --soft-gold: #fdf0a3;
 }
 
 @theme inline {
@@ -22,5 +27,162 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "DB Adman X", var(--font-geist-sans), Tahoma, Arial, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+::selection {
+  background: var(--light-gold);
+  color: var(--dark-green);
+}
+
+.gold-text {
+  background: linear-gradient(115deg, #aa7426 0%, #f6d97b 45%, #fdf0a3 62%, #aa7426 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero-gold-text {
+  background: linear-gradient(110deg, #b87924 0%, #f6d97b 34%, #fff3b8 55%, #d79731 88%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.58));
+}
+
+.gold-button {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: linear-gradient(110deg, #aa7426 0%, #f6d97b 48%, #fdf0a3 64%, #aa7426 100%);
+  box-shadow: 0 18px 44px rgba(170, 116, 38, 0.32);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    filter 180ms ease;
+}
+
+.gold-button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  transform: translateX(-120%) skewX(-18deg);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.48), transparent);
+  transition: transform 650ms ease;
+}
+
+.gold-button:hover {
+  transform: translateY(-1px);
+  filter: saturate(1.05);
+  box-shadow: 0 24px 54px rgba(170, 116, 38, 0.38);
+}
+
+.gold-button:hover::after {
+  transform: translateX(120%) skewX(-18deg);
+}
+
+.section-kicker {
+  color: var(--gold);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.section-kicker::after {
+  content: "";
+  display: block;
+  width: 56px;
+  height: 2px;
+  margin-top: 12px;
+  background: linear-gradient(90deg, var(--gold), var(--light-gold), transparent);
+}
+
+.luxe-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(170, 116, 38, 0.2);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(253, 240, 163, 0.12)),
+    #ffffff;
+  box-shadow: 0 18px 54px rgba(17, 36, 22, 0.08);
+  transition:
+    transform 220ms ease,
+    border-color 220ms ease,
+    box-shadow 220ms ease;
+}
+
+.luxe-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(130deg, transparent 0%, rgba(246, 217, 123, 0.18) 45%, transparent 64%);
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+
+.luxe-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(170, 116, 38, 0.48);
+  box-shadow: 0 28px 74px rgba(17, 36, 22, 0.14);
+}
+
+.luxe-card:hover::before {
+  opacity: 1;
+}
+
+.luxury-rings {
+  border: 1px solid rgba(246, 217, 123, 0.28);
+  box-shadow:
+    inset 0 0 0 22px rgba(246, 217, 123, 0.05),
+    inset 0 0 0 46px rgba(170, 116, 38, 0.08),
+    inset 0 0 0 74px rgba(253, 240, 163, 0.04);
+  transform: rotate(-18deg);
+}
+
+.luxury-stat {
+  position: relative;
+}
+
+.luxury-stat::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: -10px;
+  width: 34px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+}
+
+.reveal-up {
+  animation: reveal-up 720ms ease both;
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
 }
