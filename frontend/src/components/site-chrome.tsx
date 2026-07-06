@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 type IconName = "phone" | "mail" | "location" | "send" | "facebook" | "instagram" | "line" | "tiktok";
@@ -79,6 +80,52 @@ const socialLinks = [
 ];
 
 const serviceLinks = ["ออกแบบบ้าน", "รีโนเวทบ้าน", "สร้างบ้าน", "บิวท์อิน"];
+
+export function PageHero({
+  title,
+  currentLabel,
+  parentLabel = "หน้าหลัก",
+  parentHref = "/",
+  size = "default",
+}: {
+  title: string;
+  currentLabel: string;
+  parentLabel?: string;
+  parentHref?: string;
+  size?: "default" | "compact";
+}) {
+  const titleSize =
+    size === "compact"
+      ? "text-4xl sm:text-6xl"
+      : "text-5xl sm:text-7xl";
+
+  return (
+    <section className="relative grid min-h-[320px] place-items-center overflow-hidden bg-[#053920] px-5 py-16 text-white lg:px-8">
+      <Image
+        src="/bg-luxury-green.png"
+        alt="พื้นหลัง 34 Build Master Construction"
+        fill
+        priority
+        sizes="100vw"
+        className="z-0 object-cover opacity-55"
+      />
+      <div className="absolute inset-0 z-10 bg-[linear-gradient(90deg,rgba(5,57,32,0.96),rgba(17,36,22,0.88)),radial-gradient(circle_at_50%_8%,rgba(246,217,123,0.2),transparent_30%)]" />
+      <div className="relative z-20 mx-auto max-w-6xl text-center">
+        <h1 className={`${titleSize} font-extrabold leading-tight drop-shadow-[0_18px_46px_rgba(0,0,0,0.35)]`}>
+          {title}
+        </h1>
+        <div className="mt-5 flex flex-wrap items-center justify-center gap-3 text-lg font-bold">
+          <Link href={parentHref} className="text-white/76 transition hover:text-[#f6d97b]">
+            {parentLabel}
+          </Link>
+          <span className="text-[#f6d97b]">/</span>
+          <span className="text-[#f6d97b]">{currentLabel}</span>
+        </div>
+      </div>
+      <span aria-hidden="true" className="absolute inset-x-0 bottom-0 z-20 h-1 bg-gradient-to-r from-transparent via-[#f6d97b] to-transparent" />
+    </section>
+  );
+}
 
 export function SiteHeader() {
   return (

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { ContactBand, SiteFooter, SiteHeader } from "@/components/site-chrome";
+import { ContactBand, PageHero, SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { blogPosts } from "@/data/blog";
 
 export const metadata: Metadata = {
@@ -17,28 +17,7 @@ export default function BlogPage() {
   return (
     <main className="min-h-screen bg-[#fbf7ec] text-lg text-[#112416]">
       <SiteHeader />
-
-      <section className="relative overflow-hidden bg-[#053920] px-5 py-20 text-white lg:px-8">
-        <Image
-          src="/bg-luxury-green.png"
-          alt="พื้นหลังบทความ 34 Build Master Construction"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover opacity-45"
-        />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,57,32,0.96),rgba(17,36,22,0.82))]" />
-        <div className="relative mx-auto max-w-7xl">
-          <p className="section-kicker text-[#f6d97b]">Blog</p>
-          <h1 className="mt-5 max-w-4xl text-5xl font-extrabold leading-tight sm:text-7xl">
-            บทความสำหรับเจ้าของบ้านที่อยากเริ่มงานอย่างมั่นใจ
-          </h1>
-          <p className="mt-6 max-w-3xl text-xl leading-9 text-white/72">
-            รวมแนวคิด วัสดุ ขั้นตอน และการวางแผนงานบ้าน เพื่อช่วยให้คุณเห็นภาพก่อนเริ่มออกแบบ รีโนเวท สร้างบ้าน หรือทำบิวท์อิน
-          </p>
-        </div>
-        <span aria-hidden="true" className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-[#f6d97b] to-transparent" />
-      </section>
+      <PageHero title="บทความ" currentLabel="บทความ" />
 
       <section className="relative overflow-hidden bg-[#fffaf0] px-5 py-20 lg:px-8">
         <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_15%_18%,rgba(246,217,123,0.22),transparent_28%),linear-gradient(90deg,rgba(170,116,38,0.05)_1px,transparent_1px)] bg-[length:auto,88px_88px]" />

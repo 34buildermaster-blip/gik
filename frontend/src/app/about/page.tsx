@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { ContactBand, SiteFooter, SiteHeader } from "@/components/site-chrome";
+import { ContactBand, PageHero, SiteFooter, SiteHeader } from "@/components/site-chrome";
 
 export const metadata: Metadata = {
   title: "เกี่ยวกับเรา | 34 Build Master Construction",
@@ -43,29 +43,7 @@ export default function AboutPage() {
   return (
     <main className="min-h-screen bg-[#fbf7ec] text-lg text-[#112416]">
       <SiteHeader />
-
-      <section className="about-page-title relative grid min-h-[320px] place-items-center overflow-hidden bg-[#053920] px-5 py-16 text-white lg:px-8">
-        <Image
-          src="/bg-luxury-green.png"
-          alt="พื้นหลังแบรนด์ 34 Build Master Construction"
-          fill
-          priority
-          sizes="100vw"
-          className="z-0 object-cover opacity-55"
-        />
-        <div className="about-title-overlay absolute inset-0 z-10" />
-        <div className="relative z-20 mx-auto max-w-7xl text-center">
-          <h1 className="text-5xl font-extrabold leading-tight drop-shadow-[0_18px_46px_rgba(0,0,0,0.35)] sm:text-7xl">เกี่ยวกับเรา</h1>
-          <div className="mt-5 flex items-center justify-center gap-3 text-lg font-bold">
-            <Link href="/" className="text-white/76 transition hover:text-[#f6d97b]">
-              หน้าหลัก
-            </Link>
-            <span className="text-[#f6d97b]">/</span>
-            <span className="text-[#f6d97b]">เกี่ยวกับเรา</span>
-          </div>
-        </div>
-        <span aria-hidden="true" className="absolute inset-x-0 bottom-0 z-20 h-1 bg-gradient-to-r from-transparent via-[#f6d97b] to-transparent" />
-      </section>
+      <PageHero title="เกี่ยวกับเรา" currentLabel="เกี่ยวกับเรา" />
 
       <section className="about-intro-section relative overflow-hidden bg-[#fffaf0] px-5 py-24 lg:px-8">
         <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.9fr_1fr] lg:items-center">

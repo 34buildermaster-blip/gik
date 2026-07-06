@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ContactBand, SiteFooter, SiteHeader } from "@/components/site-chrome";
+import { ContactBand, PageHero, SiteFooter, SiteHeader } from "@/components/site-chrome";
 
 export const metadata: Metadata = {
   title: "บริการ | 34 Build Master Construction",
@@ -31,14 +31,7 @@ export default function ServicesPage() {
   return (
     <main className="min-h-screen bg-[#fbf7ec] text-lg text-[#112416]">
       <SiteHeader />
-      <section className="bg-luxury-section px-5 py-24 text-white lg:px-8">
-        <div className="mx-auto max-w-7xl">
-          <p className="section-kicker text-[#f6d97b]">Services</p>
-          <h1 className="mt-5 max-w-4xl text-5xl font-extrabold leading-tight sm:text-7xl">
-            บริการครบสำหรับบ้านที่ต้องการความสวย ใช้งานดี และควบคุมคุณภาพได้
-          </h1>
-        </div>
-      </section>
+      <PageHero title="บริการ" currentLabel="บริการ" />
 
       <section className="bg-material-section px-5 py-20 lg:px-8">
         <div className="mx-auto grid max-w-7xl gap-6 md:grid-cols-2">

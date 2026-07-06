@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ContactBand, SiteFooter, SiteHeader } from "@/components/site-chrome";
+import { ContactBand, PageHero, SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { blogPosts, getBlogPost } from "@/data/blog";
 
 type BlogDetailProps = {
@@ -67,34 +67,7 @@ export default async function BlogDetailPage({ params }: BlogDetailProps) {
     <main className="min-h-screen bg-[#fbf7ec] text-lg text-[#112416]">
       <SiteHeader />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-
-      <section className="relative overflow-hidden bg-[#053920] px-5 py-20 text-white lg:px-8">
-        <Image
-          src={post.image}
-          alt={post.coverAlt}
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover opacity-42"
-        />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,57,32,0.98),rgba(17,36,22,0.86)),radial-gradient(circle_at_75%_18%,rgba(246,217,123,0.2),transparent_28%)]" />
-        <div className="relative mx-auto max-w-5xl text-center">
-          <Link href="/blog" className="inline-flex rounded-full border border-[#f6d97b]/32 px-5 py-2 text-base font-extrabold text-[#f6d97b] transition hover:bg-[#f6d97b] hover:text-[#112416]">
-            กลับไปหน้าบทความ
-          </Link>
-          <p className="mt-8 text-sm font-extrabold uppercase tracking-[0.22em] text-[#f6d97b]">{post.category}</p>
-          <h1 className="mt-5 text-4xl font-extrabold leading-tight drop-shadow-[0_20px_56px_rgba(0,0,0,0.35)] sm:text-6xl">
-            {post.title}
-          </h1>
-          <p className="mx-auto mt-6 max-w-3xl text-xl leading-9 text-white/74">{post.excerpt}</p>
-          <div className="mt-7 flex flex-wrap items-center justify-center gap-3 text-base font-bold text-white/66">
-            <span>{post.date}</span>
-            <span className="text-[#f6d97b]">·</span>
-            <span>อ่าน {post.readTime}</span>
-          </div>
-        </div>
-        <span aria-hidden="true" className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-[#f6d97b] to-transparent" />
-      </section>
+      <PageHero title={post.title} currentLabel="รายละเอียดบทความ" parentLabel="บทความ" parentHref="/blog" size="compact" />
 
       <article className="relative overflow-hidden bg-[#fffaf0] px-5 py-20 lg:px-8">
         <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_15%_12%,rgba(246,217,123,0.2),transparent_24%),linear-gradient(90deg,rgba(170,116,38,0.05)_1px,transparent_1px)] bg-[length:auto,92px_92px]" />

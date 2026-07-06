@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ContactForm, SiteFooter, SiteHeader } from "@/components/site-chrome";
+import { ContactForm, PageHero, SiteFooter, SiteHeader } from "@/components/site-chrome";
 
 export const metadata: Metadata = {
   title: "ติดต่อเรา | 34 Build Master Construction",
@@ -11,17 +11,7 @@ export default function ContactPage() {
   return (
     <main className="min-h-screen bg-[#fbf7ec] text-lg text-[#112416]">
       <SiteHeader />
-      <section className="bg-luxury-section px-5 py-24 text-white lg:px-8">
-        <div className="mx-auto max-w-7xl">
-          <p className="section-kicker text-[#f6d97b]">Contact</p>
-          <h1 className="mt-5 max-w-4xl text-5xl font-extrabold leading-tight sm:text-7xl">
-            เล่าไอเดียบ้านของคุณ แล้วให้ทีมช่วยประเมินขั้นแรก
-          </h1>
-          <p className="mt-6 max-w-3xl text-xl leading-10 text-white/72">
-            ส่งข้อมูลพื้นที่ งบประมาณคร่าว ๆ และประเภทงานที่ต้องการ ทีมจะใช้เป็นข้อมูลเริ่มต้นก่อนนัดสำรวจหรือคุยรายละเอียด
-          </p>
-        </div>
-      </section>
+      <PageHero title="ติดต่อเรา" currentLabel="ติดต่อเรา" />
 
       <section className="bg-material-section px-5 py-20 lg:px-8">
         <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.8fr_1.2fr]">
