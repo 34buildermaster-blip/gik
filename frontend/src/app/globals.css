@@ -418,7 +418,7 @@ html {
   color: white;
   background:
     linear-gradient(90deg, rgba(5, 57, 32, 0.94), rgba(17, 36, 22, 0.9)),
-    url("/bg-luxury-green.png");
+    url("/gik/bg-luxury-green.png");
   background-position: center;
   background-size: cover;
 }
@@ -504,7 +504,7 @@ html {
   overflow: hidden;
   background:
     linear-gradient(90deg, rgba(5, 57, 32, 0.94), rgba(17, 36, 22, 0.9)),
-    url("/bg-luxury-green.png");
+    url("/gik/bg-luxury-green.png");
   background-position: center;
   background-size: cover;
 }
@@ -638,7 +638,7 @@ html {
     radial-gradient(circle at 18% 18%, rgba(246, 217, 123, 0.2), transparent 28%),
     radial-gradient(circle at 82% 72%, rgba(253, 240, 163, 0.12), transparent 30%),
     linear-gradient(120deg, rgba(5, 57, 32, 0.97), rgba(17, 36, 22, 0.94)),
-    url("/bg-luxury-green.png");
+    url("/gik/bg-luxury-green.png");
   background-position: center;
   background-size: cover;
   box-shadow: inset 0 1px 0 rgba(253, 240, 163, 0.55);
@@ -877,7 +877,7 @@ html {
   color: var(--dark-green);
   background:
     linear-gradient(90deg, rgba(251, 247, 236, 0.98), rgba(251, 247, 236, 0.9)),
-    url("/bg-material-board.png"),
+    url("/gik/bg-material-board.png"),
     #fbf7ec;
   background-position: center;
   background-size: cover;
@@ -1098,7 +1098,7 @@ html {
   overflow: hidden;
   background:
     linear-gradient(90deg, rgba(5, 57, 32, 0.94), rgba(17, 36, 22, 0.9)),
-    url("/bg-luxury-green.png");
+    url("/gik/bg-luxury-green.png");
   background-position: center;
   background-size: cover;
 }
@@ -1194,7 +1194,7 @@ html {
   background:
     linear-gradient(90deg, rgba(17, 36, 22, 0.86), rgba(5, 57, 32, 0.76)),
     linear-gradient(0deg, rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.28)),
-    url("/hero-construction.png");
+    url("/gik/hero-construction.png");
   background-position: center;
   background-size: cover;
 }
@@ -1304,7 +1304,7 @@ html {
 .bg-material-section {
   background-image:
     linear-gradient(90deg, rgba(251, 247, 236, 0.96), rgba(251, 247, 236, 0.84)),
-    url("/bg-material-board.png");
+    url("/gik/bg-material-board.png");
   background-position: center;
   background-size: cover;
 }
@@ -1312,7 +1312,7 @@ html {
 .bg-luxury-section {
   background-image:
     linear-gradient(90deg, rgba(5, 57, 32, 0.92), rgba(17, 36, 22, 0.86)),
-    url("/bg-luxury-green.png");
+    url("/gik/bg-luxury-green.png");
   background-position: center;
   background-size: cover;
 }
