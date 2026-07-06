@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ContactBand, PageHero, SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { blogPosts, getBlogPost } from "@/data/blog";
+import { sitePath } from "@/lib/asset-path";
 
 type BlogDetailProps = {
   params: Promise<{
@@ -112,7 +113,7 @@ export default async function BlogDetailPage({ params }: BlogDetailProps) {
               <p className="mt-3 text-lg leading-8 text-white/72">
                 ส่งรายละเอียดพื้นที่ ไอเดีย หรืองบประมาณเบื้องต้นให้ทีม 34 Build Master Construction ช่วยประเมินแนวทางก่อนเริ่มงานจริงได้เลย
               </p>
-              <Link href="/contact" className="gold-button mt-6 inline-flex min-h-12 items-center justify-center px-7 font-extrabold text-[#112416]">
+              <Link href={sitePath("/contact")} className="gold-button mt-6 inline-flex min-h-12 items-center justify-center px-7 font-extrabold text-[#112416]">
                 ติดต่อปรึกษา
               </Link>
             </div>
@@ -126,7 +127,7 @@ export default async function BlogDetailPage({ params }: BlogDetailProps) {
           <h2 className="mt-4 text-4xl font-extrabold leading-tight text-[#053920] sm:text-6xl">บทความที่เกี่ยวข้อง</h2>
           <div className="mt-10 grid gap-6 md:grid-cols-2">
             {relatedPosts.map((item) => (
-              <Link key={item.slug} href={`/blog/${item.slug}`} className="group grid gap-5 rounded-[1.7rem] border border-[#aa7426]/24 bg-white/82 p-5 shadow-[0_24px_80px_rgba(17,36,22,0.08)] transition duration-300 hover:-translate-y-1 hover:border-[#aa7426]/55 md:grid-cols-[180px_1fr]">
+              <Link key={item.slug} href={sitePath(`/blog/${item.slug}`)} className="group grid gap-5 rounded-[1.7rem] border border-[#aa7426]/24 bg-white/82 p-5 shadow-[0_24px_80px_rgba(17,36,22,0.08)] transition duration-300 hover:-translate-y-1 hover:border-[#aa7426]/55 md:grid-cols-[180px_1fr]">
                 <div className="relative min-h-[180px] overflow-hidden rounded-[1.2rem] bg-[#112416]">
                   <Image
                     src={item.image}

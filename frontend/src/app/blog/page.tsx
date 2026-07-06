@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ContactBand, PageHero, SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { blogPosts } from "@/data/blog";
+import { sitePath } from "@/lib/asset-path";
 
 export const metadata: Metadata = {
   title: "บทความ | 34 Build Master Construction",
@@ -22,7 +23,7 @@ export default function BlogPage() {
       <section className="relative overflow-hidden bg-[#fffaf0] px-5 py-20 lg:px-8">
         <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_15%_18%,rgba(246,217,123,0.22),transparent_28%),linear-gradient(90deg,rgba(170,116,38,0.05)_1px,transparent_1px)] bg-[length:auto,88px_88px]" />
         <div className="relative mx-auto grid max-w-7xl gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-stretch">
-          <Link href={`/blog/${featuredPost.slug}`} className="group relative min-h-[430px] overflow-hidden rounded-[2rem] border border-[#aa7426]/24 bg-[#112416] shadow-[0_32px_100px_rgba(17,36,22,0.16)]">
+          <Link href={sitePath(`/blog/${featuredPost.slug}`)} className="group relative min-h-[430px] overflow-hidden rounded-[2rem] border border-[#aa7426]/24 bg-[#112416] shadow-[0_32px_100px_rgba(17,36,22,0.16)]">
             <Image
               src={featuredPost.image}
               alt={featuredPost.coverAlt}
@@ -42,7 +43,7 @@ export default function BlogPage() {
 
           <div className="grid gap-5">
             {otherPosts.map((post) => (
-              <Link key={post.slug} href={`/blog/${post.slug}`} className="group grid gap-5 rounded-[1.7rem] border border-[#aa7426]/24 bg-white/82 p-5 shadow-[0_24px_80px_rgba(17,36,22,0.08)] transition duration-300 hover:-translate-y-1 hover:border-[#aa7426]/55 md:grid-cols-[170px_1fr]">
+              <Link key={post.slug} href={sitePath(`/blog/${post.slug}`)} className="group grid gap-5 rounded-[1.7rem] border border-[#aa7426]/24 bg-white/82 p-5 shadow-[0_24px_80px_rgba(17,36,22,0.08)] transition duration-300 hover:-translate-y-1 hover:border-[#aa7426]/55 md:grid-cols-[170px_1fr]">
                 <div className="relative min-h-[170px] overflow-hidden rounded-[1.25rem] bg-[#112416]">
                   <Image
                     src={post.image}
@@ -71,7 +72,7 @@ export default function BlogPage() {
               <p className="section-kicker">Latest Articles</p>
               <h2 className="mt-4 text-4xl font-extrabold leading-tight text-[#053920] sm:text-6xl">บทความทั้งหมด</h2>
             </div>
-            <Link href="/contact" className="gold-button inline-flex min-h-12 items-center justify-center px-7 font-extrabold text-[#112416]">
+            <Link href={sitePath("/contact")} className="gold-button inline-flex min-h-12 items-center justify-center px-7 font-extrabold text-[#112416]">
               ปรึกษาโปรเจกต์ของคุณ
             </Link>
           </div>
@@ -79,7 +80,7 @@ export default function BlogPage() {
           <div className="grid gap-6 md:grid-cols-3">
             {blogPosts.map((post) => (
               <article key={post.slug} className="luxe-card overflow-hidden p-0">
-                <Link href={`/blog/${post.slug}`} className="group block">
+                <Link href={sitePath(`/blog/${post.slug}`)} className="group block">
                   <div className="relative min-h-[230px] overflow-hidden bg-[#112416]">
                     <Image
                       src={post.image}

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { ContactBand, PageHero, SiteFooter, SiteHeader } from "@/components/site-chrome";
+import { assetPath, sitePath } from "@/lib/asset-path";
 
 export const metadata: Metadata = {
   title: "เกี่ยวกับเรา | 34 Build Master Construction",
@@ -61,13 +62,13 @@ export default function AboutPage() {
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
-                href="/contact"
+                href={sitePath("/contact")}
                 className="gold-button inline-flex min-h-12 items-center justify-center px-7 text-base font-extrabold text-[#112416]"
               >
                 คุยกับทีมของเรา
               </Link>
               <Link
-                href="/services"
+                href={sitePath("/services")}
                 className="inline-flex min-h-12 items-center justify-center rounded-full border border-[#aa7426]/45 px-7 text-base font-bold text-[#053920] transition hover:bg-[#053920] hover:text-[#fdf0a3]"
               >
                 ดูบริการทั้งหมด
@@ -77,7 +78,7 @@ export default function AboutPage() {
 
           <div className="about-intro-image relative min-h-[420px] overflow-hidden rounded-lg border border-[#aa7426]/25 bg-[#112416] shadow-[0_28px_86px_rgba(17,36,22,0.14)]">
             <Image
-              src="/hero-construction.png"
+              src={assetPath("/hero-construction.png")}
               alt="ทีมงาน 34 Build Master Construction สำรวจหน้างาน"
               fill
               sizes="(min-width: 1024px) 50vw, 100vw"

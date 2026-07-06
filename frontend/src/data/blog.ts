@@ -1,3 +1,5 @@
+import { assetPath } from "@/lib/asset-path";
+
 export type BlogPost = {
   slug: string;
   title: string;
@@ -23,7 +25,7 @@ export const blogPosts: BlogPost[] = [
     category: "Renovation",
     date: "6 กรกฎาคม 2026",
     readTime: "5 นาที",
-    image: "/bg-material-board.png",
+    image: assetPath("/bg-material-board.png"),
     coverAlt: "ตัวอย่างวัสดุและบอร์ดงานออกแบบสำหรับงานรีโนเวทบ้าน",
     highlights: ["กำหนดขอบเขตงานให้ชัด", "เผื่องบสำหรับงานหน้างาน", "จัดลำดับพื้นที่สำคัญก่อน"],
     content: [
@@ -52,7 +54,7 @@ export const blogPosts: BlogPost[] = [
     category: "Built-in",
     date: "6 กรกฎาคม 2026",
     readTime: "4 นาที",
-    image: "/hero-construction.png",
+    image: assetPath("/hero-construction.png"),
     coverAlt: "ทีมงานสำรวจพื้นที่เพื่อออกแบบงานบิวท์อินให้เหมาะกับบ้าน",
     highlights: ["ซ่อนของใช้ประจำวัน", "คุมเส้นสายให้เรียบ", "เลือกสีและวัสดุให้ต่อเนื่อง"],
     content: [
@@ -81,7 +83,7 @@ export const blogPosts: BlogPost[] = [
     category: "Construction",
     date: "6 กรกฎาคม 2026",
     readTime: "6 นาที",
-    image: "/bg-luxury-green.png",
+    image: assetPath("/bg-luxury-green.png"),
     coverAlt: "พื้นหลังสีเขียวทองในธีม 34 Build Master Construction",
     highlights: ["ตรวจข้อมูลที่ดิน", "วางงบตามหมวดงาน", "นัดตรวจงานเป็นช่วง"],
     content: [

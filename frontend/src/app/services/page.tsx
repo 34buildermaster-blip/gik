@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ContactBand, PageHero, SiteFooter, SiteHeader } from "@/components/site-chrome";
+import { sitePath } from "@/lib/asset-path";
 
 export const metadata: Metadata = {
   title: "บริการ | 34 Build Master Construction",
@@ -41,7 +42,7 @@ export default function ServicesPage() {
               <h2 className="mt-5 text-4xl font-extrabold text-[#053920]">{service.title}</h2>
               <p className="mt-4 text-xl leading-9 text-[#4d5b50]">{service.detail}</p>
               <Link
-                href="/contact"
+                href={sitePath("/contact")}
                 className="mt-7 inline-flex min-h-12 items-center rounded-full border border-[#aa7426]/35 px-6 font-extrabold text-[#053920] transition hover:bg-[#053920] hover:text-[#fdf0a3]"
               >
                 ปรึกษางานนี้

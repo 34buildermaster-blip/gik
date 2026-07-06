@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { assetPath, sitePath } from "@/lib/asset-path";
 
 type IconName =
   | "drafting"
@@ -325,19 +326,19 @@ const projectUpdates = [
     title: "ตรวจหน้างานรีโนเวทบ้านพักอาศัย",
     stage: "Site Survey",
     detail: "อัปเดตพื้นที่จริง วัดระยะ และเช็กจุดสำคัญก่อนจัดแผนงาน",
-    image: "/hero-construction.png",
+    image: assetPath("/hero-construction.png"),
   },
   {
     title: "เลือกวัสดุและโทนงานบิวท์อิน",
     stage: "Material Review",
     detail: "คุมโทนสี วัสดุ และรายละเอียดผิวให้ตรงกับภาพรวมบ้าน",
-    image: "/bg-material-board.png",
+    image: assetPath("/bg-material-board.png"),
   },
   {
     title: "สรุป mood งาน luxury modern",
     stage: "Design Direction",
     detail: "จัดทิศทางดีไซน์ให้หรู เรียบ และต่อยอดเป็นงานจริงได้",
-    image: "/bg-luxury-green.png",
+    image: assetPath("/bg-luxury-green.png"),
   },
 ];
 
@@ -345,15 +346,15 @@ const beforeAfterCases = [
   {
     title: "รีโนเวทพื้นที่พักอาศัยให้โปร่งและใช้งานดีขึ้น",
     category: "Renovation",
-    before: "/bg-material-board.png",
-    after: "/hero-construction.png",
+    before: assetPath("/bg-material-board.png"),
+    after: assetPath("/hero-construction.png"),
     detail: "จัด mood วัสดุ แสง และพื้นที่ใช้งานใหม่ เพื่อให้บ้านดูทันสมัยและดูแลรักษาง่ายขึ้น",
   },
   {
     title: "ปรับภาพรวมงานบิวท์อินให้ต่อเนื่องกับตัวบ้าน",
     category: "Built-in",
-    before: "/bg-luxury-green.png",
-    after: "/bg-material-board.png",
+    before: assetPath("/bg-luxury-green.png"),
+    after: assetPath("/bg-material-board.png"),
     detail: "วางโทนสีและรายละเอียดผิววัสดุให้กลมกลืนกับบ้าน พร้อมเพิ่มพื้นที่เก็บของอย่างเป็นระบบ",
   },
 ];
@@ -386,7 +387,7 @@ export default function Home() {
     <main className="min-h-screen bg-[#fbf7ec] text-lg text-[#112416]">
       <header className="sticky top-0 z-40 border-b border-[#f6d97b]/20 bg-[#053920]/95 text-white shadow-[0_18px_60px_rgba(0,0,0,0.2)] backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
-          <a href="#" className="group flex items-center gap-3" aria-label="34 Build Master Construction">
+          <a href={sitePath("/")} className="group flex items-center gap-3" aria-label="34 Build Master Construction">
             <span className="relative grid size-12 place-items-center overflow-hidden rounded-2xl bg-[#112416] text-lg font-extrabold text-[#fdf0a3] ring-1 ring-[#f6d97b]/40">
               <span className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#fdf0a3] to-transparent" />
               34
@@ -402,19 +403,19 @@ export default function Home() {
           </a>
 
           <nav className="hidden items-center gap-6 text-base font-semibold text-white/78 md:flex">
-            <a href="/" className="transition hover:text-[#f6d97b]">
+            <a href={sitePath("/")} className="transition hover:text-[#f6d97b]">
               หน้าหลัก
             </a>
-            <a href="/about" className="transition hover:text-[#f6d97b]">
+            <a href={sitePath("/about")} className="transition hover:text-[#f6d97b]">
               เกี่ยวกับเรา
             </a>
-            <a href="/services" className="transition hover:text-[#f6d97b]">
+            <a href={sitePath("/services")} className="transition hover:text-[#f6d97b]">
               บริการ
             </a>
             <a href="#updates" className="transition hover:text-[#f6d97b]">
               อัปเดตงาน
             </a>
-            <a href="/contact" className="transition hover:text-[#f6d97b]">
+            <a href={sitePath("/contact")} className="transition hover:text-[#f6d97b]">
               ติดต่อ
             </a>
           </nav>
@@ -446,7 +447,7 @@ export default function Home() {
 
       <section className="relative min-h-[calc(100vh-81px)] overflow-hidden bg-[#053920]">
         <Image
-          src="/hero-construction.png"
+          src={assetPath("/hero-construction.png")}
           alt="ทีมงาน 34 Build Master Construction ตรวจแบบหน้าบ้านโมเดิร์น"
           fill
           priority
@@ -650,7 +651,7 @@ export default function Home() {
               </p>
             </div>
             <a
-              href="/contact"
+              href={sitePath("/contact")}
               className="gold-button inline-flex min-h-12 items-center justify-center gap-2 px-7 text-base font-extrabold text-[#112416]"
             >
               <Icon name="send" className="size-5" />
@@ -1082,7 +1083,7 @@ export default function Home() {
       <footer className="bg-[#112416] px-5 py-14 text-white lg:px-8">
         <div className="mx-auto grid max-w-7xl gap-10 border-t border-[#f6d97b]/20 pt-10 lg:grid-cols-[1.2fr_0.7fr_0.7fr_1fr]">
           <div>
-            <a href="#" className="flex items-center gap-3" aria-label="34 Build Master Construction">
+            <a href={sitePath("/")} className="flex items-center gap-3" aria-label="34 Build Master Construction">
               <span className="grid size-14 place-items-center rounded-2xl border border-[#f6d97b]/40 bg-[#053920] text-xl font-extrabold text-[#fdf0a3]">
                 34
               </span>
@@ -1120,7 +1121,7 @@ export default function Home() {
             <ul className="mt-4 space-y-3 text-white/66">
               {services.map((service) => (
                 <li key={service.title}>
-                  <a className="footer-link" href="/services">
+                  <a className="footer-link" href={sitePath("/services")}>
                     {service.title}
                   </a>
                 </li>
@@ -1132,7 +1133,7 @@ export default function Home() {
             <h3 className="footer-heading">เมนู</h3>
             <ul className="mt-4 space-y-3 text-white/66">
               <li>
-                <a className="footer-link" href="/about">
+                <a className="footer-link" href={sitePath("/about")}>
                   เกี่ยวกับเรา
                 </a>
               </li>
@@ -1142,12 +1143,12 @@ export default function Home() {
                 </a>
               </li>
               <li>
-                <a className="footer-link" href="/services">
+                <a className="footer-link" href={sitePath("/services")}>
                   บริการ
                 </a>
               </li>
               <li>
-                <a className="footer-link" href="/contact">
+                <a className="footer-link" href={sitePath("/contact")}>
                   ติดต่อเรา
                 </a>
               </li>

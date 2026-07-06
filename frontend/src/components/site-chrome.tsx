@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { assetPath, sitePath } from "@/lib/asset-path";
 
 type IconName = "phone" | "mail" | "location" | "send" | "facebook" | "instagram" | "line" | "tiktok";
 
@@ -102,7 +103,7 @@ export function PageHero({
   return (
     <section className="relative grid min-h-[320px] place-items-center overflow-hidden bg-[#053920] px-5 py-16 text-white lg:px-8">
       <Image
-        src="/bg-luxury-green.png"
+        src={assetPath("/bg-luxury-green.png")}
         alt="พื้นหลัง 34 Build Master Construction"
         fill
         priority
@@ -115,7 +116,7 @@ export function PageHero({
           {title}
         </h1>
         <div className="mt-5 flex flex-wrap items-center justify-center gap-3 text-lg font-bold">
-          <Link href={parentHref} className="text-white/76 transition hover:text-[#f6d97b]">
+          <Link href={sitePath(parentHref)} className="text-white/76 transition hover:text-[#f6d97b]">
             {parentLabel}
           </Link>
           <span className="text-[#f6d97b]">/</span>
@@ -131,7 +132,7 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-[#f6d97b]/20 bg-[#053920]/95 text-white shadow-[0_18px_60px_rgba(0,0,0,0.2)] backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 lg:px-8">
-        <Link href="/" className="group flex items-center gap-3" aria-label="34 Build Master Construction">
+        <Link href={sitePath("/")} className="group flex items-center gap-3" aria-label="34 Build Master Construction">
           <span className="relative grid size-12 place-items-center overflow-hidden rounded-2xl bg-[#112416] text-lg font-extrabold text-[#fdf0a3] ring-1 ring-[#f6d97b]/40">
             <span className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#fdf0a3] to-transparent" />
             34
@@ -143,22 +144,22 @@ export function SiteHeader() {
         </Link>
 
         <nav className="hidden items-center gap-6 text-base font-semibold text-white/78 md:flex">
-          <Link href="/" className="transition hover:text-[#f6d97b]">
+          <Link href={sitePath("/")} className="transition hover:text-[#f6d97b]">
             หน้าหลัก
           </Link>
-          <Link href="/about" className="transition hover:text-[#f6d97b]">
+          <Link href={sitePath("/about")} className="transition hover:text-[#f6d97b]">
             เกี่ยวกับเรา
           </Link>
-          <Link href="/services" className="transition hover:text-[#f6d97b]">
+          <Link href={sitePath("/services")} className="transition hover:text-[#f6d97b]">
             บริการ
           </Link>
-          <Link href="/blog" className="transition hover:text-[#f6d97b]">
+          <Link href={sitePath("/blog")} className="transition hover:text-[#f6d97b]">
             บทความ
           </Link>
-          <Link href="/#updates" className="transition hover:text-[#f6d97b]">
+          <Link href={sitePath("/#updates")} className="transition hover:text-[#f6d97b]">
             อัปเดตงาน
           </Link>
-          <Link href="/contact" className="transition hover:text-[#f6d97b]">
+          <Link href={sitePath("/contact")} className="transition hover:text-[#f6d97b]">
             ติดต่อ
           </Link>
         </nav>
@@ -279,7 +280,7 @@ export function SiteFooter() {
     <footer className="bg-[#112416] px-5 py-14 text-white lg:px-8">
       <div className="mx-auto grid max-w-7xl gap-10 border-t border-[#f6d97b]/20 pt-10 lg:grid-cols-[1.2fr_0.7fr_0.7fr_1fr]">
         <div>
-          <Link href="/" className="flex items-center gap-3" aria-label="34 Build Master Construction">
+          <Link href={sitePath("/")} className="flex items-center gap-3" aria-label="34 Build Master Construction">
             <span className="grid size-14 place-items-center rounded-2xl border border-[#f6d97b]/40 bg-[#053920] text-xl font-extrabold text-[#fdf0a3]">
               34
             </span>
@@ -312,7 +313,7 @@ export function SiteFooter() {
           <ul className="mt-4 space-y-3 text-white/66">
             {serviceLinks.map((service) => (
               <li key={service}>
-                <Link className="footer-link" href="/services">
+                <Link className="footer-link" href={sitePath("/services")}>
                   {service}
                 </Link>
               </li>
@@ -324,27 +325,27 @@ export function SiteFooter() {
           <h3 className="footer-heading">เมนู</h3>
           <ul className="mt-4 space-y-3 text-white/66">
             <li>
-              <Link className="footer-link" href="/about">
+              <Link className="footer-link" href={sitePath("/about")}>
                 เกี่ยวกับเรา
               </Link>
             </li>
             <li>
-              <Link className="footer-link" href="/#updates">
+              <Link className="footer-link" href={sitePath("/#updates")}>
                 อัปเดตงาน
               </Link>
             </li>
             <li>
-              <Link className="footer-link" href="/services">
+              <Link className="footer-link" href={sitePath("/services")}>
                 บริการ
               </Link>
             </li>
             <li>
-              <Link className="footer-link" href="/blog">
+              <Link className="footer-link" href={sitePath("/blog")}>
                 บทความ
               </Link>
             </li>
             <li>
-              <Link className="footer-link" href="/contact">
+              <Link className="footer-link" href={sitePath("/contact")}>
                 ติดต่อเรา
               </Link>
             </li>
