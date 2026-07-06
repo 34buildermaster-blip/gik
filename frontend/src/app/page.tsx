@@ -15,9 +15,17 @@ type IconName =
   | "location"
   | "clock"
   | "send"
+  | "facebook"
+  | "instagram"
+  | "line"
+  | "tiktok"
   | "check"
   | "plan"
-  | "tools";
+  | "tools"
+  | "consult"
+  | "measure"
+  | "clipboard"
+  | "handover";
 
 function Icon({ name, className = "" }: { name: IconName; className?: string }) {
   const icon = {
@@ -111,6 +119,32 @@ function Icon({ name, className = "" }: { name: IconName; className?: string }) 
         <path d="m22 2-7 20-4-9-9-4z" />
       </>
     ),
+    facebook: (
+      <>
+        <path d="M14 8h3V4h-3a5 5 0 0 0-5 5v3H6v4h3v6h4v-6h3l1-4h-4V9a1 1 0 0 1 1-1z" />
+      </>
+    ),
+    instagram: (
+      <>
+        <rect height="16" rx="4" width="16" x="4" y="4" />
+        <path d="M16 11.4A4 4 0 1 1 12.6 8" />
+        <path d="M17.5 6.5h.01" />
+      </>
+    ),
+    line: (
+      <>
+        <path d="M5 18.5 6.2 15A7 7 0 1 1 12 18H8.5z" />
+        <path d="M8 11h.01" />
+        <path d="M12 11h.01" />
+        <path d="M16 11h.01" />
+      </>
+    ),
+    tiktok: (
+      <>
+        <path d="M14 4v10.2a3.8 3.8 0 1 1-3-3.7" />
+        <path d="M14 4c.7 2.5 2.4 4 5 4" />
+      </>
+    ),
     check: (
       <>
         <path d="m4 12 5 5L20 6" />
@@ -128,6 +162,38 @@ function Icon({ name, className = "" }: { name: IconName; className?: string }) 
       <>
         <path d="M14 6a4 4 0 0 0 4 4l-8 8a3 3 0 0 1-4-4l8-8z" />
         <path d="m14 6 4-4 4 4-4 4" />
+      </>
+    ),
+    consult: (
+      <>
+        <path d="M7 11.5a5 5 0 1 1 3.5 4.8L6 18l1.4-3.7A4.9 4.9 0 0 1 7 11.5z" />
+        <path d="M13 8.5h.01" />
+        <path d="M16 8.5h.01" />
+        <path d="M10 8.5h.01" />
+      </>
+    ),
+    measure: (
+      <>
+        <path d="M4 17 17 4l3 3L7 20H4z" />
+        <path d="m13 8 3 3" />
+        <path d="m10 11 2 2" />
+        <path d="m7 14 3 3" />
+      </>
+    ),
+    clipboard: (
+      <>
+        <path d="M9 4h6l1 2h3v15H5V6h3z" />
+        <path d="M9 4v3h6V4" />
+        <path d="M8 12h8" />
+        <path d="M8 16h5" />
+      </>
+    ),
+    handover: (
+      <>
+        <path d="M4 12h7l2 3h7" />
+        <path d="M4 16h5l2 3h5" />
+        <path d="m15 8 2 2 4-5" />
+        <path d="M4 8h6" />
       </>
     ),
   }[name];
@@ -235,20 +301,98 @@ const faqs = [
     answer:
       "ได้ ทีมงานสามารถช่วยประเมินเบื้องต้นจากข้อมูลพื้นที่และขอบเขตงานก่อนนัดสำรวจจริง",
   },
+  {
+    question: "งบประมาณเริ่มต้นควรเตรียมไว้ประมาณเท่าไร?",
+    answer:
+      "งบขึ้นอยู่กับขนาดพื้นที่ ประเภทงาน วัสดุ และรายละเอียดการตกแต่ง ทีมสามารถช่วยประเมินเบื้องต้นจากรูปพื้นที่ ขนาดคร่าว ๆ และความต้องการหลักก่อนนัดสำรวจจริงได้",
+  },
+  {
+    question: "โดยทั่วไปใช้เวลาทำงานนานแค่ไหน?",
+    answer:
+      "ระยะเวลาขึ้นอยู่กับขอบเขตงาน หากเป็นงานออกแบบหรือบิวท์อินบางส่วนอาจใช้เวลาสั้นกว่า ส่วนงานรีโนเวทหรือสร้างบ้านต้องดูหน้างานจริง แผนวัสดุ และลำดับงานก่อนสรุปไทม์ไลน์",
+  },
 ];
+
+const socialLinks = [
+  { label: "Facebook", href: "https://facebook.com", icon: "facebook" as const },
+  { label: "Instagram", href: "https://instagram.com", icon: "instagram" as const },
+  { label: "Line", href: "https://line.me", icon: "line" as const },
+  { label: "TikTok", href: "https://tiktok.com", icon: "tiktok" as const },
+];
+
+const projectUpdates = [
+  {
+    title: "ตรวจหน้างานรีโนเวทบ้านพักอาศัย",
+    stage: "Site Survey",
+    detail: "อัปเดตพื้นที่จริง วัดระยะ และเช็กจุดสำคัญก่อนจัดแผนงาน",
+    image: "/hero-construction.png",
+  },
+  {
+    title: "เลือกวัสดุและโทนงานบิวท์อิน",
+    stage: "Material Review",
+    detail: "คุมโทนสี วัสดุ และรายละเอียดผิวให้ตรงกับภาพรวมบ้าน",
+    image: "/bg-material-board.png",
+  },
+  {
+    title: "สรุป mood งาน luxury modern",
+    stage: "Design Direction",
+    detail: "จัดทิศทางดีไซน์ให้หรู เรียบ และต่อยอดเป็นงานจริงได้",
+    image: "/bg-luxury-green.png",
+  },
+];
+
+const beforeAfterCases = [
+  {
+    title: "รีโนเวทพื้นที่พักอาศัยให้โปร่งและใช้งานดีขึ้น",
+    category: "Renovation",
+    before: "/bg-material-board.png",
+    after: "/hero-construction.png",
+    detail: "จัด mood วัสดุ แสง และพื้นที่ใช้งานใหม่ เพื่อให้บ้านดูทันสมัยและดูแลรักษาง่ายขึ้น",
+  },
+  {
+    title: "ปรับภาพรวมงานบิวท์อินให้ต่อเนื่องกับตัวบ้าน",
+    category: "Built-in",
+    before: "/bg-luxury-green.png",
+    after: "/bg-material-board.png",
+    detail: "วางโทนสีและรายละเอียดผิววัสดุให้กลมกลืนกับบ้าน พร้อมเพิ่มพื้นที่เก็บของอย่างเป็นระบบ",
+  },
+];
+
+const testimonials = [
+  {
+    quote:
+      "ทีมช่วยเรียบเรียงความต้องการและแนะนำวัสดุได้ดีมาก งานออกมาดูเรียบร้อยและตรงโทนที่อยากได้",
+    name: "คุณอร",
+    project: "รีโนเวทบ้านพักอาศัย",
+  },
+  {
+    quote:
+      "คุยงานง่าย มีการอัปเดตเป็นระยะ ทำให้เห็นภาพรวมงบและขั้นตอนก่อนตัดสินใจลงงานจริง",
+    name: "คุณณัฐ",
+    project: "ออกแบบและบิวท์อิน",
+  },
+  {
+    quote:
+      "รายละเอียดงานดูพรีเมียมขึ้น บ้านใช้งานได้ดีขึ้น และทีมให้คำแนะนำเรื่องการดูแลหลังจบงานด้วย",
+    name: "คุณแพร",
+    project: "ปรับปรุงพื้นที่ภายใน",
+  },
+];
+
+const serviceAreas = ["เมืองเชียงใหม่", "หางดง", "สันทราย", "แม่ริม", "สารภี", "สันกำแพง"];
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#fbf7ec] text-[17px] text-[#112416] md:text-lg">
+    <main className="min-h-screen bg-[#fbf7ec] text-lg text-[#112416]">
       <header className="sticky top-0 z-40 border-b border-[#f6d97b]/20 bg-[#053920]/95 text-white shadow-[0_18px_60px_rgba(0,0,0,0.2)] backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
           <a href="#" className="group flex items-center gap-3" aria-label="34 Build Master Construction">
-            <span className="relative grid size-12 place-items-center overflow-hidden rounded-2xl bg-[#112416] text-lg font-black text-[#fdf0a3] ring-1 ring-[#f6d97b]/40">
+            <span className="relative grid size-12 place-items-center overflow-hidden rounded-2xl bg-[#112416] text-lg font-extrabold text-[#fdf0a3] ring-1 ring-[#f6d97b]/40">
               <span className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#fdf0a3] to-transparent" />
               34
             </span>
             <span className="leading-tight">
-              <span className="block text-base font-black uppercase tracking-[0.16em]">
+              <span className="block text-base font-extrabold uppercase tracking-[0.16em]">
                 Build Master
               </span>
               <span className="block text-[11px] uppercase tracking-[0.22em] text-[#f6d97b]">
@@ -257,24 +401,42 @@ export default function Home() {
             </span>
           </a>
 
-          <nav className="hidden items-center gap-7 text-sm font-semibold text-white/78 md:flex">
-            <a href="#services" className="transition hover:text-[#f6d97b]">
+          <nav className="hidden items-center gap-6 text-base font-semibold text-white/78 md:flex">
+            <a href="/" className="transition hover:text-[#f6d97b]">
+              หน้าหลัก
+            </a>
+            <a href="/about" className="transition hover:text-[#f6d97b]">
+              เกี่ยวกับเรา
+            </a>
+            <a href="/services" className="transition hover:text-[#f6d97b]">
               บริการ
             </a>
-            <a href="#projects" className="transition hover:text-[#f6d97b]">
-              ผลงาน
+            <a href="#updates" className="transition hover:text-[#f6d97b]">
+              อัปเดตงาน
             </a>
-            <a href="#process" className="transition hover:text-[#f6d97b]">
-              ขั้นตอน
-            </a>
-            <a href="#contact" className="transition hover:text-[#f6d97b]">
+            <a href="/contact" className="transition hover:text-[#f6d97b]">
               ติดต่อ
             </a>
           </nav>
 
+          <div className="hidden items-center gap-2 xl:flex">
+            {socialLinks.map((social) => (
+              <a
+                key={social.label}
+                href={social.href}
+                className="social-icon-link"
+                aria-label={social.label}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <Icon name={social.icon} className="size-4" />
+              </a>
+            ))}
+          </div>
+
           <a
             href="tel:+66819512297"
-            className="gold-button inline-flex min-h-11 items-center justify-center gap-2 px-4 text-sm font-black text-[#112416]"
+            className="gold-button inline-flex min-h-11 items-center justify-center gap-2 px-4 text-base font-extrabold text-[#112416]"
           >
             <Icon name="phone" className="size-4" />
             โทรปรึกษา
@@ -298,10 +460,10 @@ export default function Home() {
         <div className="relative mx-auto flex min-h-[calc(100vh-81px)] max-w-7xl items-center px-5 py-16 lg:px-8">
           <div className="max-w-3xl text-white">
             <div className="reveal-up">
-              <p className="mb-6 inline-flex border border-[#f6d97b]/40 bg-[#112416]/78 px-4 py-2 text-sm font-bold text-[#fff3b8] shadow-[0_20px_60px_rgba(0,0,0,0.34)] backdrop-blur">
+              <p className="mb-6 inline-flex text-sm font-bold text-[#fff3b8] drop-shadow-[0_8px_24px_rgba(0,0,0,0.58)]">
                 สร้างสรรค์คุณภาพ มุ่งมั่นในทุกงานก่อสร้าง
               </p>
-              <h1 className="text-5xl font-black leading-[0.95] text-[#fffaf0] drop-shadow-[0_8px_30px_rgba(0,0,0,0.72)] sm:text-6xl lg:text-8xl">
+              <h1 className="text-5xl font-extrabold leading-[0.95] text-[#fffaf0] drop-shadow-[0_8px_30px_rgba(0,0,0,0.72)] sm:text-6xl lg:text-8xl">
                 34 Build
                 <span className="hero-gold-text block">Master</span>
               </h1>
@@ -314,7 +476,7 @@ export default function Home() {
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <a
                 href="#contact"
-                className="gold-button inline-flex min-h-12 items-center justify-center gap-2 px-7 text-base font-black text-[#112416]"
+                className="gold-button inline-flex min-h-12 items-center justify-center gap-2 px-7 text-base font-extrabold text-[#112416]"
               >
                 <Icon name="phone" className="size-5" />
                 ขอประเมินราคาฟรี
@@ -329,15 +491,15 @@ export default function Home() {
 
             <dl className="mt-12 grid max-w-2xl grid-cols-3 gap-4 border-t border-[#f6d97b]/28 pt-7">
               <div className="luxury-stat">
-                <dt className="gold-text text-3xl font-black">4</dt>
+                <dt className="gold-text text-3xl font-extrabold">4</dt>
                 <dd className="mt-1 text-sm text-white/68">บริการหลัก</dd>
               </div>
               <div className="luxury-stat">
-                <dt className="gold-text text-3xl font-black">1</dt>
+                <dt className="gold-text text-3xl font-extrabold">1</dt>
                 <dd className="mt-1 text-sm text-white/68">ทีมดูแลครบงาน</dd>
               </div>
               <div className="luxury-stat">
-                <dt className="gold-text text-3xl font-black">360</dt>
+                <dt className="gold-text text-3xl font-extrabold">360</dt>
                 <dd className="mt-1 text-sm text-white/68">วางแผนครบมุม</dd>
               </div>
             </dl>
@@ -348,10 +510,10 @@ export default function Home() {
       <section id="services" className="section-reveal bg-material-section relative overflow-hidden px-5 py-24 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-10 lg:grid-cols-[0.78fr_1.22fr] lg:items-end">
-            <div>
+            <div >
               <p className="section-kicker">Services</p>
-              <h2 className="mt-4 text-4xl font-black leading-tight sm:text-6xl">
-                งานก่อสร้างที่ดูพรีเมียม เริ่มจากระบบคิดที่ชัดเจน
+              <h2 className="mt-4 text-4xl font-extrabold leading-tight sm:text-6xl">
+                 งานก่อสร้างเริ่มต้นจากความใส่ใจในทุกรายละเอียด
               </h2>
             </div>
             <p className="max-w-2xl text-lg leading-9 text-[#4d5b50] lg:ml-auto">
@@ -367,14 +529,14 @@ export default function Home() {
                   <span className="icon-medallion">
                     <Icon name={service.icon} className="size-7" />
                   </span>
-                  <span className="text-sm font-black text-[#053920]/25">
+                  <span className="text-sm font-extrabold text-[#053920]/25">
                     {service.number}
                   </span>
                 </div>
-                <p className="mt-7 text-xs font-black uppercase tracking-[0.22em] text-[#aa7426]">
+                <p className="mt-7 text-xs font-extrabold uppercase tracking-[0.22em] text-[#aa7426]">
                   {service.tag}
                 </p>
-                <h3 className="mt-3 text-3xl font-black text-[#053920]">{service.title}</h3>
+                <h3 className="mt-3 text-3xl font-extrabold text-[#053920]">{service.title}</h3>
                 <p className="mt-4 text-lg leading-8 text-[#4d5b50]">{service.description}</p>
                 <div className="mt-7 h-px w-full bg-gradient-to-r from-[#aa7426] via-[#f6d97b] to-transparent transition group-hover:w-4/5" />
               </article>
@@ -387,7 +549,7 @@ export default function Home() {
         <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.86fr_1.14fr]">
           <div>
             <p className="section-kicker text-[#f6d97b]">Selected Work</p>
-            <h2 className="mt-4 text-4xl font-black leading-tight sm:text-6xl">
+            <h2 className="mt-4 text-4xl font-extrabold leading-tight sm:text-6xl">
               ผลงานต้องเล่าเรื่องความละเอียด ไม่ใช่แค่โชว์รูปสวย
             </h2>
             <p className="mt-5 text-lg leading-9 text-white/72">
@@ -397,7 +559,7 @@ export default function Home() {
           </div>
 
           <div className="grid gap-5">
-            {projects.map((project, index) => (
+            {projects.map((project) => (
               <article
                 key={project.title}
                 className="section-card group grid gap-5 border border-[#f6d97b]/18 bg-[#112416]/62 p-5 shadow-[0_30px_90px_rgba(0,0,0,0.24)] transition hover:-translate-y-1 hover:border-[#f6d97b]/48 md:grid-cols-[120px_1fr]"
@@ -406,10 +568,10 @@ export default function Home() {
                   <Icon name={project.icon} className="size-12" />
                 </div>
                 <div>
-                  <p className="text-sm font-black uppercase tracking-[0.2em] text-[#f6d97b]">
+                  <p className="text-sm font-extrabold uppercase tracking-[0.2em] text-[#f6d97b]">
                     {project.type}
                   </p>
-                  <h3 className="mt-3 text-3xl font-black">{project.title}</h3>
+                  <h3 className="mt-3 text-3xl font-extrabold">{project.title}</h3>
                   <p className="mt-3 text-lg leading-8 text-white/68">{project.detail}</p>
                 </div>
               </article>
@@ -418,12 +580,125 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section-reveal bg-material-section px-5 py-24 lg:px-8">
+      <section className="section-reveal before-after-section px-5 py-24 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <div className="grid gap-10 lg:grid-cols-[0.82fr_1.18fr] lg:items-center">
+          <div className="grid gap-8 lg:grid-cols-[0.82fr_1.18fr] lg:items-end">
             <div>
+              <p className="section-kicker">Before / After</p>
+              <h2 className="mt-4 text-4xl font-extrabold leading-tight text-[#053920] sm:text-6xl">
+                เห็นภาพการเปลี่ยนแปลงก่อนตัดสินใจเริ่มงาน
+              </h2>
+            </div>
+            <p className="max-w-2xl text-xl leading-9 text-[#4d5b50] lg:ml-auto">
+              พื้นที่นี้เตรียมไว้สำหรับรูปงานจริง เปรียบเทียบก่อนและหลัง เพื่อให้ลูกค้าเห็นคุณภาพงาน
+              รายละเอียดวัสดุ และความคุ้มค่าของการปรับพื้นที่อย่างชัดเจน
+            </p>
+          </div>
+
+          <div className="mt-12 grid gap-6 lg:grid-cols-2">
+            {beforeAfterCases.map((item) => (
+              <article key={item.title} className="before-after-card">
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="comparison-frame">
+                    <Image
+                      src={item.before}
+                      alt={`${item.title} before`}
+                      fill
+                      sizes="(min-width: 1024px) 25vw, 50vw"
+                      className="object-cover"
+                    />
+                    <span className="comparison-label">Before</span>
+                  </div>
+                  <div className="comparison-frame">
+                    <Image
+                      src={item.after}
+                      alt={`${item.title} after`}
+                      fill
+                      sizes="(min-width: 1024px) 25vw, 50vw"
+                      className="object-cover"
+                    />
+                    <span className="comparison-label">After</span>
+                  </div>
+                </div>
+                <div className="mt-6">
+                  <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-[#aa7426]">
+                    {item.category}
+                  </p>
+                  <h3 className="mt-3 text-3xl font-extrabold leading-tight text-[#053920]">{item.title}</h3>
+                  <p className="mt-3 text-lg leading-8 text-[#4d5b50]">{item.detail}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section
+        id="updates"
+        className="live-updates-section bg-[#053920] px-5 py-24 text-white lg:px-8"
+      >
+        <div className="relative z-10 mx-auto max-w-7xl">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-3xl">
+              <p className="section-kicker text-[#f6d97b]">Live Project Updates</p>
+              <h2 className="mt-4 text-4xl font-extrabold leading-tight text-white sm:text-6xl">
+                อัปเดตโปรเจกต์หน้างานแบบเรียลไทม์
+              </h2>
+              <p className="mt-5 text-xl leading-9 text-white/72">
+                วางพื้นที่นี้ไว้สำหรับรูปโปรเจกต์จริง ความคืบหน้าหน้างาน และภาพวัสดุที่ทีมกำลังดูแลอยู่
+                เพื่อให้ลูกค้าเห็นมาตรฐานการทำงานตั้งแต่ก่อนเริ่มคุยรายละเอียด
+              </p>
+            </div>
+            <a
+              href="/contact"
+              className="gold-button inline-flex min-h-12 items-center justify-center gap-2 px-7 text-base font-extrabold text-[#112416]"
+            >
+              <Icon name="send" className="size-5" />
+              ส่งรูปงานให้ประเมิน
+            </a>
+          </div>
+
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
+            {projectUpdates.map((update) => (
+              <article
+                key={update.title}
+                className="project-update-card section-card group border border-[#f6d97b]/25 bg-[#112416]/85 shadow-[0_30px_100px_rgba(0,0,0,0.28)]"
+                style={{
+                  background:
+                    "linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03)), rgba(17,36,22,0.86)",
+                  borderColor: "rgba(246,217,123,0.28)",
+                }}
+              >
+                <div className="project-update-image">
+                  <Image
+                    src={update.image}
+                    alt={update.title}
+                    fill
+                    sizes="(min-width: 768px) 33vw, 100vw"
+                    className="object-cover transition duration-500 group-hover:scale-105"
+                  />
+                </div>
+                <div className="p-6">
+                  <p className="text-base font-extrabold uppercase tracking-[0.14em] text-[#f6d97b]">
+                    {update.stage}
+                  </p>
+                  <h3 className="mt-3 text-2xl font-extrabold leading-snug text-white">
+                    {update.title}
+                  </h3>
+                  <p className="mt-3 text-lg leading-8 text-white/68">{update.detail}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section-reveal brand-personality-section bg-[#fbf7ec] px-5 py-24 text-[#112416] lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="brand-personality-panel grid gap-10 rounded-[2rem] border border-[#aa7426]/20 bg-white/75 p-5 shadow-[0_30px_100px_rgba(17,36,22,0.12)] lg:grid-cols-[0.82fr_1.18fr] lg:items-center lg:p-9">
+            <div className="brand-copy-panel rounded-[1.6rem] border border-[#053920]/10 bg-white/70 p-5 lg:p-8">
               <p className="section-kicker">Brand Personality</p>
-              <h2 className="mt-4 text-4xl font-black leading-tight sm:text-6xl">
+              <h2 className="mt-4 text-4xl font-extrabold leading-tight text-[#053920] sm:text-6xl">
                 บุคลิกแบรนด์จาก guideline ถูกแปลงเป็นประสบการณ์บนเว็บ
               </h2>
             </div>
@@ -431,12 +706,12 @@ export default function Home() {
               {values.map((value) => (
                 <div
                   key={value.label}
-                  className="section-card border border-[#aa7426]/24 bg-white/92 px-4 py-6 text-center shadow-sm backdrop-blur transition hover:-translate-y-1 hover:border-[#aa7426]/50 hover:shadow-xl"
+                  className="brand-value-card section-card border border-[#aa7426]/25 bg-white/95 px-4 py-6 text-center shadow-[0_18px_54px_rgba(17,36,22,0.1)] transition hover:-translate-y-1"
                 >
                   <div className="icon-medallion mx-auto mb-4">
                     <Icon name={value.icon} className="size-7" />
                   </div>
-                  <p className="text-sm font-black uppercase tracking-[0.08em] text-[#053920]">
+                  <p className="text-sm font-extrabold uppercase tracking-[0.08em] text-[#053920]">
                     {value.label}
                   </p>
                 </div>
@@ -448,55 +723,228 @@ export default function Home() {
 
       <section id="process" className="section-reveal bg-luxury-section px-5 py-24 text-white lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <div className="max-w-3xl">
-            <p className="section-kicker text-[#f6d97b]">Process</p>
-            <h2 className="mt-4 text-4xl font-black leading-tight sm:text-6xl">
+          <div className="mx-auto max-w-4xl text-center">
+            <p className="section-kicker process-kicker mx-auto text-[#f6d97b]">Process</p>
+            <h2 className="mt-4 text-4xl font-extrabold leading-tight sm:text-6xl">
+              <span className="block">ขั้นตอนที่คุมความคาดหวัง</span>
+              <span className="block">ได้ตั้งแต่วันแรก</span>
+              <span className="hidden">
               ขั้นตอนที่คุมความคาดหวังได้ตั้งแต่วันแรก
+              </span>
             </h2>
           </div>
 
-          <ol className="mt-12 grid gap-4 md:grid-cols-4">
+          <ol className="process-flow mt-16 grid gap-10 md:grid-cols-4">
             {process.map((step, index) => (
               <li
                 key={step}
-                className="section-card relative overflow-hidden border border-[#f6d97b]/18 p-6 transition hover:border-[#f6d97b]/50 hover:bg-white/5"
+                className="process-step relative text-center"
               >
-                <div className="flex items-center justify-between gap-4">
-                  <span className="gold-text text-sm font-black">0{index + 1}</span>
-                  <Icon name={index === 0 ? "plan" : index === 1 ? "drafting" : index === 2 ? "tools" : "check"} className="size-7 text-[#f6d97b]" />
+                <div className="process-icon mx-auto">
+                  <Icon
+                    name={index === 0 ? "consult" : index === 1 ? "measure" : index === 2 ? "clipboard" : "handover"}
+                    className="size-8"
+                  />
                 </div>
-                <p className="mt-10 text-2xl font-black leading-snug">{step}</p>
-                <span className="absolute bottom-0 left-0 h-1 w-16 bg-gradient-to-r from-[#aa7426] to-[#fdf0a3]" />
+                <p className="mt-5 text-sm font-extrabold uppercase tracking-[0.18em] text-[#f6d97b]">
+                  Step {index + 1}
+                </p>
+                <p className="mx-auto mt-4 max-w-56 text-xl font-extrabold leading-8 text-white/92">{step}</p>
               </li>
             ))}
           </ol>
         </div>
       </section>
 
-      <section className="section-reveal grid overflow-hidden bg-white lg:grid-cols-2">
-        <div className="bg-[#fbf7ec] px-5 py-24 lg:px-16">
-          <p className="section-kicker">FAQ</p>
-          <h2 className="mt-4 text-4xl font-black leading-tight sm:text-6xl">
-            คำถามที่ช่วยให้ลูกค้าตัดสินใจง่ายขึ้น
-          </h2>
-        </div>
-        <div className="divide-y divide-[#112416]/10 border-t border-[#112416]/10 lg:border-l lg:border-t-0">
-          {faqs.map((faq) => (
-            <div key={faq.question} className="px-5 py-8 transition hover:bg-[#fbf7ec] lg:px-10">
-              <h3 className="text-2xl font-black text-[#053920]">{faq.question}</h3>
-              <p className="mt-3 text-lg leading-8 text-[#4d5b50]">{faq.answer}</p>
-            </div>
-          ))}
+      <section className="section-reveal testimonials-section px-5 py-24 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="mx-auto max-w-4xl text-center">
+            <p className="section-kicker process-kicker mx-auto">Testimonials</p>
+            <h2 className="mt-4 text-4xl font-extrabold leading-tight text-[#053920] sm:text-6xl">
+              เสียงจากลูกค้าที่เริ่มงานอย่างมั่นใจ
+            </h2>
+            <p className="mx-auto mt-5 max-w-3xl text-xl leading-9 text-[#4d5b50]">
+              รีวิวส่วนนี้เตรียมไว้สำหรับใส่คำชมจากลูกค้าจริง เพื่อเพิ่มความน่าเชื่อถือและช่วยให้ผู้ชมตัดสินใจติดต่อได้ง่ายขึ้น
+            </p>
+          </div>
+
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
+            {testimonials.map((item) => (
+              <article key={item.name} className="testimonial-card">
+                <div className="text-5xl font-extrabold leading-none text-[#aa7426]/28">“</div>
+                <p className="mt-2 text-xl font-semibold leading-9 text-[#112416]">{item.quote}</p>
+                <div className="mt-8 border-t border-[#aa7426]/18 pt-5">
+                  <p className="text-lg font-extrabold text-[#053920]">{item.name}</p>
+                  <p className="mt-1 text-base font-semibold text-[#aa7426]">{item.project}</p>
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 
-      <section id="contact" className="section-reveal bg-luxury-section px-5 py-24 text-white lg:px-8">
+      <section className="section-reveal faq-luxe-section px-5 py-24 lg:px-8">
+        <div className="relative mx-auto max-w-7xl">
+          <div className="mx-auto max-w-6xl text-center">
+            <p className="section-kicker mx-auto">FAQ</p>
+            <h2 className="faq-heading mt-4 text-4xl font-extrabold leading-tight text-[#053920] sm:text-5xl xl:text-6xl">
+              คำถามสำคัญ ก่อนเริ่มคุยเรื่องบ้าน
+            </h2>
+            <p className="mt-5 text-xl leading-9 text-[#4d5b50]">
+              รวมคำตอบที่ช่วยให้เจ้าของบ้านเห็นภาพขั้นตอน งบประมาณ และการเตรียมข้อมูลเบื้องต้นได้ชัดขึ้น
+            </p>
+          </div>
+
+          <div className="mt-12 grid gap-6 lg:grid-cols-[0.42fr_0.58fr] lg:items-start">
+            <div className="faq-intro-panel section-card">
+              <p className="text-base font-semibold uppercase tracking-[0.18em] text-[#f6d97b]">
+                Quick Guide
+              </p>
+              <h3 className="mt-4 text-3xl font-extrabold leading-tight text-white">
+                เตรียมข้อมูลให้พร้อม คุยงานได้เร็วขึ้น
+              </h3>
+              <p className="mt-4 text-lg leading-8 text-white/68">
+                ถ้ามีรูปพื้นที่ ขนาดคร่าว ๆ และงบประมาณที่ตั้งใจไว้ ทีมจะช่วยประเมินแนวทางให้เห็นภาพได้ไวขึ้น
+              </p>
+              <div className="mt-8 grid gap-3">
+                <div className="faq-mini-stat">
+                  <span>01</span>
+                  ประเภทงาน
+                </div>
+                <div className="faq-mini-stat">
+                  <span>02</span>
+                  ข้อมูลเริ่มต้น
+                </div>
+                <div className="faq-mini-stat">
+                  <span>03</span>
+                  ประเมินงบ
+                </div>
+              </div>
+            </div>
+
+            <div className="grid gap-4">
+              {faqs.map((faq, index) => (
+                <details key={faq.question} className="faq-accordion section-card group" open={index === 0}>
+                  <summary>
+                    <span className="faq-count">0{index + 1}</span>
+                    <span className="faq-question">{faq.question}</span>
+                    <span className="faq-toggle" aria-hidden="true" />
+                  </summary>
+                  <div className="faq-answer">
+                    <p>{faq.answer}</p>
+                  </div>
+                </details>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="section-reveal service-area-section px-5 py-24 text-white lg:px-8">
+        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+          <div>
+            <p className="section-kicker text-[#f6d97b]">Service Area</p>
+            <h2 className="mt-4 text-4xl font-extrabold leading-tight sm:text-6xl">
+              รับงานออกแบบ รีโนเวท และก่อสร้างในเชียงใหม่
+            </h2>
+            <p className="mt-5 max-w-2xl text-xl leading-9 text-white/72">
+              ทีมพร้อมนัดสำรวจพื้นที่จริง ประเมินขอบเขตงาน และวางแผนเบื้องต้นสำหรับบ้านพักอาศัยและพื้นที่ใช้งานส่วนตัว
+              ในเชียงใหม่และโซนใกล้เคียง
+            </p>
+          </div>
+
+          <div className="service-area-panel">
+            <div className="flex items-center gap-4">
+              <span className="service-area-icon">
+                <Icon name="location" className="size-8" />
+              </span>
+              <div>
+                <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-[#f6d97b]">
+                  Chiang Mai
+                </p>
+                <h3 className="mt-1 text-3xl font-extrabold">พื้นที่ให้บริการหลัก</h3>
+              </div>
+            </div>
+            <div className="mt-8 flex flex-wrap gap-3">
+              {serviceAreas.map((area) => (
+                <span key={area} className="service-area-chip">
+                  {area}
+                </span>
+              ))}
+            </div>
+            <p className="mt-6 text-lg leading-8 text-white/68">
+              พื้นที่นอกเหนือจากนี้สามารถส่งโลเคชันหรือรูปหน้างานให้ทีมช่วยประเมินเบื้องต้นก่อนได้
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="section-reveal cta-hero-banner px-5 py-24 text-white lg:px-8">
+        <div className="cta-hero-content mx-auto max-w-5xl text-center">
+          <p className="text-lg font-extrabold text-[#f6d97b] md:text-2xl">
+            “ความฝันเรื่องบ้านของคุณ คือหน้าที่ของเรา”
+          </p>
+          <h2 className="mt-4 text-4xl font-extrabold leading-tight sm:text-6xl">
+            <span className="block">เริ่มปรึกษาและวางแผนงานกับ</span>
+            <span className="block whitespace-nowrap text-[0.9em] sm:text-[0.95em]">
+              34 Build Master Construction
+            </span>
+          </h2>
+          <p className="mx-auto mt-5 max-w-3xl text-xl leading-9 text-white/78">
+            ส่งรูปพื้นที่ ไอเดีย หรือรายละเอียดเบื้องต้นให้ทีมช่วยประเมินก่อนเริ่มงานจริง ผ่านช่องทางที่คุณสะดวก
+          </p>
+
+          <div className="cta-banner-actions">
+              <a
+                href="https://facebook.com"
+                className="cta-banner-button"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <span className="cta-banner-icon">
+                  <Icon name="facebook" className="size-6" />
+                </span>
+                <span>
+                  <span className="block text-xs font-bold uppercase tracking-[0.16em]">Facebook</span>
+                  <span className="block text-lg font-extrabold">ส่งข้อความหาเรา</span>
+                </span>
+              </a>
+
+              <a
+                href="https://line.me"
+                className="cta-banner-button"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <span className="cta-banner-icon">
+                  <Icon name="line" className="size-6" />
+                </span>
+                <span>
+                  <span className="block text-xs font-bold uppercase tracking-[0.16em]">LINE OA</span>
+                  <span className="block text-lg font-extrabold">แอดไลน์ปรึกษางาน</span>
+                </span>
+              </a>
+
+              <a href="tel:+66819512297" className="cta-banner-button">
+                <span className="cta-banner-icon">
+                  <Icon name="phone" className="size-6" />
+                </span>
+                <span>
+                  <span className="block text-xs font-bold uppercase tracking-[0.16em]">Phone</span>
+                  <span className="block text-lg font-extrabold">081-9512-297</span>
+                </span>
+              </a>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" className="bg-luxury-section px-5 py-20 text-white lg:px-8 lg:py-24">
         <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-stretch">
           <div className="relative overflow-hidden rounded-[2rem] border border-[#f6d97b]/28 bg-[#112416]/72 p-6 shadow-[0_36px_120px_rgba(0,0,0,0.28)] md:p-10">
             <div className="luxury-rings absolute -right-56 -top-56 h-[420px] w-[420px] rounded-full opacity-60" />
             <div className="relative">
               <p className="section-kicker text-[#f6d97b]">Contact</p>
-              <h2 className="mt-4 text-4xl font-black leading-tight sm:text-6xl">
+              <h2 className="mt-4 text-4xl font-extrabold leading-tight sm:text-6xl">
                 เล่าไอเดียบ้านของคุณ แล้วให้ทีมช่วยประเมินขั้นแรก
               </h2>
               <p className="mt-5 max-w-2xl text-lg leading-9 text-white/72">
@@ -510,10 +958,10 @@ export default function Home() {
                     <Icon name="phone" className="size-6" />
                   </span>
                   <span>
-                    <span className="block text-sm font-black uppercase tracking-[0.18em] text-[#f6d97b]">
+                    <span className="block text-sm font-extrabold uppercase tracking-[0.18em] text-[#f6d97b]">
                       Phone
                     </span>
-                    <span className="mt-1 block text-2xl font-black">081-9512-297</span>
+                    <span className="mt-1 block text-2xl font-extrabold">081-9512-297</span>
                   </span>
                 </a>
                 <a href="mailto:34buildmaster@gmail.com" className="contact-info-row group">
@@ -521,10 +969,10 @@ export default function Home() {
                     <Icon name="mail" className="size-6" />
                   </span>
                   <span>
-                    <span className="block text-sm font-black uppercase tracking-[0.18em] text-[#f6d97b]">
+                    <span className="block text-sm font-extrabold uppercase tracking-[0.18em] text-[#f6d97b]">
                       Email
                     </span>
-                    <span className="mt-1 block break-all text-xl font-black">
+                    <span className="mt-1 block break-all text-xl font-extrabold">
                       34buildmaster@gmail.com
                     </span>
                   </span>
@@ -534,10 +982,10 @@ export default function Home() {
                     <Icon name="location" className="size-6" />
                   </span>
                   <span>
-                    <span className="block text-sm font-black uppercase tracking-[0.18em] text-[#f6d97b]">
+                    <span className="block text-sm font-extrabold uppercase tracking-[0.18em] text-[#f6d97b]">
                       Service Area
                     </span>
-                    <span className="mt-1 block text-xl font-black">
+                    <span className="mt-1 block text-xl font-extrabold">
                       เชียงใหม่ และพื้นที่ใกล้เคียง
                     </span>
                   </span>
@@ -555,7 +1003,7 @@ export default function Home() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="section-kicker">Request Quote</p>
-                <h3 className="mt-4 text-3xl font-black leading-tight sm:text-4xl">
+                <h3 className="mt-4 text-3xl font-extrabold leading-tight sm:text-4xl">
                   ฝากรายละเอียดเพื่อให้ทีมติดต่อกลับ
                 </h3>
               </div>
@@ -605,7 +1053,7 @@ export default function Home() {
 
             <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
               <button
-                className="gold-button inline-flex min-h-12 items-center justify-center gap-2 px-7 font-black text-[#112416]"
+                className="gold-button inline-flex min-h-12 items-center justify-center gap-2 px-7 font-extrabold text-[#112416]"
                 type="submit"
               >
                 <Icon name="send" className="size-5" />
@@ -619,15 +1067,27 @@ export default function Home() {
         </div>
       </section>
 
+      <div className="floating-contact" aria-label="ช่องทางติดต่อด่วน">
+        <a href="tel:+66819512297" aria-label="โทรหา 34 Build Master Construction">
+          <Icon name="phone" className="size-5" />
+        </a>
+        <a href="https://line.me" aria-label="ติดต่อผ่าน LINE OA" target="_blank" rel="noreferrer">
+          <Icon name="line" className="size-5" />
+        </a>
+        <a href="https://facebook.com" aria-label="ติดต่อผ่าน Facebook" target="_blank" rel="noreferrer">
+          <Icon name="facebook" className="size-5" />
+        </a>
+      </div>
+
       <footer className="bg-[#112416] px-5 py-14 text-white lg:px-8">
         <div className="mx-auto grid max-w-7xl gap-10 border-t border-[#f6d97b]/20 pt-10 lg:grid-cols-[1.2fr_0.7fr_0.7fr_1fr]">
           <div>
             <a href="#" className="flex items-center gap-3" aria-label="34 Build Master Construction">
-              <span className="grid size-14 place-items-center rounded-2xl border border-[#f6d97b]/40 bg-[#053920] text-xl font-black text-[#fdf0a3]">
+              <span className="grid size-14 place-items-center rounded-2xl border border-[#f6d97b]/40 bg-[#053920] text-xl font-extrabold text-[#fdf0a3]">
                 34
               </span>
               <span className="leading-tight">
-                <span className="block text-lg font-black uppercase tracking-[0.16em]">
+                <span className="block text-lg font-extrabold uppercase tracking-[0.16em]">
                   Build Master
                 </span>
                 <span className="block text-xs uppercase tracking-[0.24em] text-[#f6d97b]">
@@ -639,6 +1099,20 @@ export default function Home() {
               สร้างสรรค์คุณภาพ มุ่งมั่นในทุกงานก่อสร้าง
               สำหรับงานออกแบบ รีโนเวท สร้างบ้าน และบิวท์อิน
             </p>
+            <div className="mt-6 flex items-center gap-2">
+              {socialLinks.map((social) => (
+                <a
+                  key={social.label}
+                  href={social.href}
+                  className="social-icon-link"
+                  aria-label={social.label}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Icon name={social.icon} className="size-4" />
+                </a>
+              ))}
+            </div>
           </div>
 
           <div>
@@ -646,7 +1120,7 @@ export default function Home() {
             <ul className="mt-4 space-y-3 text-white/66">
               {services.map((service) => (
                 <li key={service.title}>
-                  <a className="footer-link" href="#services">
+                  <a className="footer-link" href="/services">
                     {service.title}
                   </a>
                 </li>
@@ -658,17 +1132,22 @@ export default function Home() {
             <h3 className="footer-heading">เมนู</h3>
             <ul className="mt-4 space-y-3 text-white/66">
               <li>
-                <a className="footer-link" href="#projects">
-                  ผลงาน
+                <a className="footer-link" href="/about">
+                  เกี่ยวกับเรา
                 </a>
               </li>
               <li>
-                <a className="footer-link" href="#process">
-                  ขั้นตอน
+                <a className="footer-link" href="#updates">
+                  อัปเดตงาน
                 </a>
               </li>
               <li>
-                <a className="footer-link" href="#contact">
+                <a className="footer-link" href="/services">
+                  บริการ
+                </a>
+              </li>
+              <li>
+                <a className="footer-link" href="/contact">
                   ติดต่อเรา
                 </a>
               </li>
@@ -697,7 +1176,7 @@ export default function Home() {
             </ul>
           </div>
         </div>
-        <div className="mx-auto mt-10 flex max-w-7xl flex-col gap-3 border-t border-[#f6d97b]/14 pt-6 text-sm text-white/46 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mx-auto mt-10 flex max-w-7xl flex-col gap-3 border-t border-[#f6d97b]/14 pt-6 text-base text-white/46 sm:flex-row sm:items-center sm:justify-between">
           <p>© 2026 34 Build Master Construction. All rights reserved.</p>
           <p>Modern Luxury Premium Construction</p>
         </div>
