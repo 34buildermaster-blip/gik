@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { assetPath, sitePath } from "@/lib/asset-path";
+import { assetPath } from "@/lib/asset-path";
 
 type IconName = "phone" | "mail" | "location" | "send" | "facebook" | "instagram" | "line" | "tiktok";
 
@@ -81,6 +81,14 @@ const socialLinks = [
 ];
 
 const serviceLinks = ["ออกแบบบ้าน", "รีโนเวทบ้าน", "สร้างบ้าน", "บิวท์อิน"];
+const navLinks = [
+  { href: "/", label: "หน้าหลัก" },
+  { href: "/about", label: "เกี่ยวกับเรา" },
+  { href: "/services", label: "บริการ" },
+  { href: "/blog", label: "บทความ" },
+  { href: "/#updates", label: "อัปเดตงาน" },
+  { href: "/contact", label: "ติดต่อ" },
+];
 
 export function PageHero({
   title,
@@ -116,7 +124,7 @@ export function PageHero({
           {title}
         </h1>
         <div className="mt-5 flex flex-wrap items-center justify-center gap-3 text-lg font-bold">
-          <Link href={sitePath(parentHref)} className="text-white/76 transition hover:text-[#f6d97b]">
+          <Link href={parentHref} className="text-white/76 transition hover:text-[#f6d97b]">
             {parentLabel}
           </Link>
           <span className="text-[#f6d97b]">/</span>
@@ -132,7 +140,7 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-[#f6d97b]/20 bg-[#053920]/95 text-white shadow-[0_18px_60px_rgba(0,0,0,0.2)] backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 lg:px-8">
-        <Link href={sitePath("/")} className="group flex items-center gap-3" aria-label="34 Build Master Construction">
+        <Link href="/" className="group flex items-center gap-3" aria-label="34 Build Master Construction">
           <span className="relative grid size-12 place-items-center overflow-hidden rounded-2xl bg-[#112416] text-lg font-extrabold text-[#fdf0a3] ring-1 ring-[#f6d97b]/40">
             <span className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#fdf0a3] to-transparent" />
             34
@@ -144,24 +152,11 @@ export function SiteHeader() {
         </Link>
 
         <nav className="hidden items-center gap-6 text-base font-semibold text-white/78 md:flex">
-          <Link href={sitePath("/")} className="transition hover:text-[#f6d97b]">
-            หน้าหลัก
-          </Link>
-          <Link href={sitePath("/about")} className="transition hover:text-[#f6d97b]">
-            เกี่ยวกับเรา
-          </Link>
-          <Link href={sitePath("/services")} className="transition hover:text-[#f6d97b]">
-            บริการ
-          </Link>
-          <Link href={sitePath("/blog")} className="transition hover:text-[#f6d97b]">
-            บทความ
-          </Link>
-          <Link href={sitePath("/#updates")} className="transition hover:text-[#f6d97b]">
-            อัปเดตงาน
-          </Link>
-          <Link href={sitePath("/contact")} className="transition hover:text-[#f6d97b]">
-            ติดต่อ
-          </Link>
+          {navLinks.map((item) => (
+            <Link key={item.href} href={item.href} className="transition hover:text-[#f6d97b]">
+              {item.label}
+            </Link>
+          ))}
         </nav>
 
         <div className="hidden items-center gap-2 xl:flex">
@@ -181,11 +176,49 @@ export function SiteHeader() {
 
         <a
           href="tel:+66819512297"
-          className="gold-button inline-flex min-h-11 items-center justify-center gap-2 px-4 text-base font-extrabold text-[#112416]"
+          className="gold-button hidden min-h-11 items-center justify-center gap-2 px-4 text-base font-extrabold text-[#112416] sm:inline-flex"
         >
           <Icon name="phone" className="size-4" />
           โทรปรึกษา
         </a>
+
+        <details className="relative md:hidden">
+          <summary className="grid size-11 cursor-pointer list-none place-items-center rounded-full border border-[#f6d97b]/45 bg-[#112416]/72 text-[#fdf0a3] shadow-[0_18px_48px_rgba(0,0,0,0.24)] [&::-webkit-details-marker]:hidden">
+            <span className="sr-only">เปิดเมนู</span>
+            <span className="flex w-5 flex-col gap-1.5">
+              <span className="h-0.5 rounded-full bg-current" />
+              <span className="h-0.5 rounded-full bg-current" />
+              <span className="h-0.5 rounded-full bg-current" />
+            </span>
+          </summary>
+          <div className="absolute right-0 top-14 w-[min(82vw,320px)] overflow-hidden rounded-[1.5rem] border border-[#f6d97b]/28 bg-[#053920]/98 p-3 shadow-[0_28px_80px_rgba(0,0,0,0.34)] backdrop-blur">
+            <nav className="grid gap-1 text-base font-bold text-white/82">
+              {navLinks.map((item) => (
+                <Link key={item.href} href={item.href} className="rounded-2xl px-4 py-3 transition hover:bg-white/8 hover:text-[#f6d97b]">
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+            <div className="mt-3 flex items-center justify-between gap-2 border-t border-[#f6d97b]/16 pt-3">
+              {socialLinks.map((social) => (
+                <a
+                  key={social.label}
+                  href={social.href}
+                  className="social-icon-link"
+                  aria-label={social.label}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Icon name={social.icon} className="size-4" />
+                </a>
+              ))}
+              <a href="tel:+66819512297" className="gold-button inline-flex min-h-10 items-center justify-center gap-2 px-4 text-sm font-extrabold text-[#112416]">
+                <Icon name="phone" className="size-4" />
+                โทร
+              </a>
+            </div>
+          </div>
+        </details>
       </div>
     </header>
   );
@@ -280,7 +313,7 @@ export function SiteFooter() {
     <footer className="bg-[#112416] px-5 py-14 text-white lg:px-8">
       <div className="mx-auto grid max-w-7xl gap-10 border-t border-[#f6d97b]/20 pt-10 lg:grid-cols-[1.2fr_0.7fr_0.7fr_1fr]">
         <div>
-          <Link href={sitePath("/")} className="flex items-center gap-3" aria-label="34 Build Master Construction">
+          <Link href="/" className="flex items-center gap-3" aria-label="34 Build Master Construction">
             <span className="grid size-14 place-items-center rounded-2xl border border-[#f6d97b]/40 bg-[#053920] text-xl font-extrabold text-[#fdf0a3]">
               34
             </span>
@@ -313,7 +346,7 @@ export function SiteFooter() {
           <ul className="mt-4 space-y-3 text-white/66">
             {serviceLinks.map((service) => (
               <li key={service}>
-                <Link className="footer-link" href={sitePath("/services")}>
+                <Link className="footer-link" href="/services">
                   {service}
                 </Link>
               </li>
@@ -325,27 +358,27 @@ export function SiteFooter() {
           <h3 className="footer-heading">เมนู</h3>
           <ul className="mt-4 space-y-3 text-white/66">
             <li>
-              <Link className="footer-link" href={sitePath("/about")}>
+              <Link className="footer-link" href="/about">
                 เกี่ยวกับเรา
               </Link>
             </li>
             <li>
-              <Link className="footer-link" href={sitePath("/#updates")}>
+              <Link className="footer-link" href="/#updates">
                 อัปเดตงาน
               </Link>
             </li>
             <li>
-              <Link className="footer-link" href={sitePath("/services")}>
+              <Link className="footer-link" href="/services">
                 บริการ
               </Link>
             </li>
             <li>
-              <Link className="footer-link" href={sitePath("/blog")}>
+              <Link className="footer-link" href="/blog">
                 บทความ
               </Link>
             </li>
             <li>
-              <Link className="footer-link" href={sitePath("/contact")}>
+              <Link className="footer-link" href="/contact">
                 ติดต่อเรา
               </Link>
             </li>

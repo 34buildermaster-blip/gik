@@ -381,6 +381,14 @@ const testimonials = [
 ];
 
 const serviceAreas = ["เมืองเชียงใหม่", "หางดง", "สันทราย", "แม่ริม", "สารภี", "สันกำแพง"];
+const homeNavLinks = [
+  { href: sitePath("/"), label: "หน้าหลัก" },
+  { href: sitePath("/about"), label: "เกี่ยวกับเรา" },
+  { href: sitePath("/services"), label: "บริการ" },
+  { href: sitePath("/blog"), label: "บทความ" },
+  { href: "#updates", label: "อัปเดตงาน" },
+  { href: sitePath("/contact"), label: "ติดต่อ" },
+];
 
 export default function Home() {
   return (
@@ -403,21 +411,11 @@ export default function Home() {
           </a>
 
           <nav className="hidden items-center gap-6 text-base font-semibold text-white/78 md:flex">
-            <a href={sitePath("/")} className="transition hover:text-[#f6d97b]">
-              หน้าหลัก
-            </a>
-            <a href={sitePath("/about")} className="transition hover:text-[#f6d97b]">
-              เกี่ยวกับเรา
-            </a>
-            <a href={sitePath("/services")} className="transition hover:text-[#f6d97b]">
-              บริการ
-            </a>
-            <a href="#updates" className="transition hover:text-[#f6d97b]">
-              อัปเดตงาน
-            </a>
-            <a href={sitePath("/contact")} className="transition hover:text-[#f6d97b]">
-              ติดต่อ
-            </a>
+            {homeNavLinks.map((item) => (
+              <a key={item.href} href={item.href} className="transition hover:text-[#f6d97b]">
+                {item.label}
+              </a>
+            ))}
           </nav>
 
           <div className="hidden items-center gap-2 xl:flex">
@@ -437,11 +435,49 @@ export default function Home() {
 
           <a
             href="tel:+66819512297"
-            className="gold-button inline-flex min-h-11 items-center justify-center gap-2 px-4 text-base font-extrabold text-[#112416]"
+            className="gold-button hidden min-h-11 items-center justify-center gap-2 px-4 text-base font-extrabold text-[#112416] sm:inline-flex"
           >
             <Icon name="phone" className="size-4" />
             โทรปรึกษา
           </a>
+
+          <details className="relative md:hidden">
+            <summary className="grid size-11 cursor-pointer list-none place-items-center rounded-full border border-[#f6d97b]/45 bg-[#112416]/72 text-[#fdf0a3] shadow-[0_18px_48px_rgba(0,0,0,0.24)] [&::-webkit-details-marker]:hidden">
+              <span className="sr-only">เปิดเมนู</span>
+              <span className="flex w-5 flex-col gap-1.5">
+                <span className="h-0.5 rounded-full bg-current" />
+                <span className="h-0.5 rounded-full bg-current" />
+                <span className="h-0.5 rounded-full bg-current" />
+              </span>
+            </summary>
+            <div className="absolute right-0 top-14 w-[min(82vw,320px)] overflow-hidden rounded-[1.5rem] border border-[#f6d97b]/28 bg-[#053920]/98 p-3 shadow-[0_28px_80px_rgba(0,0,0,0.34)] backdrop-blur">
+              <nav className="grid gap-1 text-base font-bold text-white/82">
+                {homeNavLinks.map((item) => (
+                  <a key={item.href} href={item.href} className="rounded-2xl px-4 py-3 transition hover:bg-white/8 hover:text-[#f6d97b]">
+                    {item.label}
+                  </a>
+                ))}
+              </nav>
+              <div className="mt-3 flex items-center justify-between gap-2 border-t border-[#f6d97b]/16 pt-3">
+                {socialLinks.map((social) => (
+                  <a
+                    key={social.label}
+                    href={social.href}
+                    className="social-icon-link"
+                    aria-label={social.label}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <Icon name={social.icon} className="size-4" />
+                  </a>
+                ))}
+                <a href="tel:+66819512297" className="gold-button inline-flex min-h-10 items-center justify-center gap-2 px-4 text-sm font-extrabold text-[#112416]">
+                  <Icon name="phone" className="size-4" />
+                  โทร
+                </a>
+              </div>
+            </div>
+          </details>
         </div>
       </header>
 
