@@ -57,11 +57,7 @@ async function fetchJson<T>(path: string): Promise<ApiResult<T> | null> {
 export async function getIntegratedBlogPosts(): Promise<IntegratedBlogPost[]> {
   const result = await fetchJson<{ data: ApiBlogPost[] }>("/api/articles");
 
-  if (result === null) {
-    return blogPosts.map((post) => ({ ...post, source: "fallback" }));
-  }
-
-  if (!result.ok || !Array.isArray(result.data?.data)) {
+  if (result === null || !result.ok || !Array.isArray(result.data?.data)) {
     return [];
   }
 
