@@ -9,8 +9,8 @@
                 <p class="muted">จัดการบทความและข้อมูล SEO ของเว็บไซต์ 34 Build Master Construction</p>
             </div>
             <div class="field">
-                <label for="email">อีเมล</label>
-                <input id="email" name="email" type="email" value="{{ old('email') }}" required autofocus>
+                <label for="login">ชื่อผู้ใช้หรืออีเมล</label>
+                <input id="login" name="login" type="text" value="{{ old('login') }}" required autofocus>
             </div>
             <div class="field">
                 <label for="password">รหัสผ่าน</label>

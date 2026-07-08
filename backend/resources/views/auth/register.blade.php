@@ -9,8 +9,12 @@
                 <p class="muted">สร้างผู้ดูแลระบบสำหรับจัดการบทความและ SEO</p>
             </div>
             <div class="field">
-                <label for="name">ชื่อผู้ใช้</label>
+                <label for="name">ชื่อที่แสดง</label>
                 <input id="name" name="name" type="text" value="{{ old('name') }}" required autofocus>
+            </div>
+            <div class="field">
+                <label for="username">Username</label>
+                <input id="username" name="username" type="text" value="{{ old('username') }}" required>
             </div>
             <div class="field">
                 <label for="email">อีเมล</label>

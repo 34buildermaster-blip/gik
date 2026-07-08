@@ -18,15 +18,21 @@ class AuthController extends Controller
 
     public function login(Request $request): RedirectResponse
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
+        $data = $request->validate([
+            'login' => ['required', 'string'],
             'password' => ['required', 'string'],
         ]);
 
+        $loginField = filter_var($data['login'], FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+        $credentials = [
+            $loginField => $data['login'],
+            'password' => $data['password'],
+        ];
+
         if (! Auth::attempt($credentials, $request->boolean('remember'))) {
             return back()
-                ->withErrors(['email' => 'อีเมลหรือรหัสผ่านไม่ถูกต้อง'])
-                ->onlyInput('email');
+                ->withErrors(['login' => 'ชื่อผู้ใช้ อีเมล หรือรหัสผ่านไม่ถูกต้อง'])
+                ->onlyInput('login');
         }
 
         $request->session()->regenerate();
@@ -43,6 +49,7 @@ class AuthController extends Controller
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:50', 'regex:/^[A-Za-z0-9_.-]+$/', 'unique:users,username'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'confirmed', Password::min(8)],
         ]);
