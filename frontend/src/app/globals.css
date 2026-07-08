@@ -8,8 +8,8 @@
   --gold: #aa7426;
   --light-gold: #f6d97b;
   --soft-gold: #fdf0a3;
-  --font-body: "IBM Plex Sans Thai", Tahoma, Arial, sans-serif;
-  --font-heading: "Noto Serif Thai", "IBM Plex Sans Thai", Tahoma, serif;
+  --font-body: "Noto Sans Thai", Tahoma, Arial, sans-serif;
+  --font-heading: "Anuphan", "Noto Sans Thai", Tahoma, Arial, sans-serif;
 }
 
 @theme inline {
@@ -46,60 +46,60 @@ h2,
 h3,
 .faq-heading {
   font-family: var(--font-heading);
-  font-weight: 600 !important;
+  font-weight: 700 !important;
   letter-spacing: 0;
   text-wrap: balance;
 }
 
 h1 {
-  line-height: 1.08 !important;
+  line-height: 1.04 !important;
 }
 
 h2 {
-  line-height: 1.16 !important;
+  line-height: 1.12 !important;
 }
 
 h3 {
-  line-height: 1.22 !important;
+  line-height: 1.18 !important;
 }
 
 h1.text-8xl {
-  font-size: clamp(3.65rem, 7.2vw, 5.85rem);
+  font-size: clamp(3.75rem, 7.4vw, 6rem);
 }
 
 h1.text-7xl {
-  font-size: clamp(3.15rem, 5.4vw, 4.35rem);
+  font-size: clamp(3.2rem, 5.6vw, 4.5rem);
 }
 
 h2.text-6xl {
-  font-size: clamp(2.45rem, 4.25vw, 3.45rem);
+  font-size: clamp(2.5rem, 4.45vw, 3.6rem);
 }
 
 h2.text-5xl {
-  font-size: clamp(2.25rem, 3.8vw, 3.05rem);
+  font-size: clamp(2.3rem, 3.95vw, 3.15rem);
 }
 
 h3.text-3xl {
-  font-size: clamp(1.65rem, 2.3vw, 1.95rem);
+  font-size: clamp(1.72rem, 2.38vw, 2.05rem);
 }
 
 @media (min-width: 640px) {
   h2.sm\:text-6xl {
-    font-size: clamp(2.45rem, 4.25vw, 3.45rem);
+    font-size: clamp(2.5rem, 4.45vw, 3.6rem);
   }
 
   h2.sm\:text-5xl {
-    font-size: clamp(2.25rem, 3.8vw, 3.05rem);
+    font-size: clamp(2.3rem, 3.95vw, 3.15rem);
   }
 
   h3.sm\:text-4xl {
-    font-size: clamp(1.8rem, 2.55vw, 2.2rem);
+    font-size: clamp(1.9rem, 2.7vw, 2.25rem);
   }
 }
 
 @media (min-width: 1280px) {
   h2.xl\:text-6xl {
-    font-size: clamp(2.45rem, 4.25vw, 3.45rem);
+    font-size: clamp(2.5rem, 4.45vw, 3.6rem);
   }
 }
 
