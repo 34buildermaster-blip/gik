@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { ContactBand, PageHero, SiteFooter, SiteHeader } from "@/components/site-chrome";
-import { blogPosts } from "@/data/blog";
+import { getIntegratedBlogPosts } from "@/lib/blog-api";
 
 export const metadata: Metadata = {
   title: "บทความ | 34 Build Master Construction",
@@ -10,9 +10,10 @@ export const metadata: Metadata = {
     "บทความความรู้เรื่องออกแบบบ้าน รีโนเวท สร้างบ้าน และบิวท์อิน จาก 34 Build Master Construction",
 };
 
-export default function BlogPage() {
-  const featuredPost = blogPosts[0];
-  const otherPosts = blogPosts.slice(1);
+export default async function BlogPage() {
+  const posts = await getIntegratedBlogPosts();
+  const featuredPost = posts[0];
+  const otherPosts = posts.slice(1, 4);
 
   return (
     <main className="min-h-screen bg-[#fbf7ec] text-lg text-[#112416]">
@@ -77,7 +78,7 @@ export default function BlogPage() {
           </div>
 
           <div className="grid gap-6 md:grid-cols-3">
-            {blogPosts.map((post) => (
+            {posts.map((post) => (
               <article key={post.slug} className="luxe-card overflow-hidden p-0">
                 <Link href={`/blog/${post.slug}`} className="group block">
                   <div className="relative min-h-[230px] overflow-hidden bg-[#112416]">

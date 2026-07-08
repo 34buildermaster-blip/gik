@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ContactBand, PageHero, SiteFooter, SiteHeader } from "@/components/site-chrome";
-import { blogPosts, getBlogPost } from "@/data/blog";
+import { getIntegratedBlogPost, getIntegratedBlogPosts } from "@/lib/blog-api";
 
 type BlogDetailProps = {
   params: Promise<{
@@ -11,13 +11,15 @@ type BlogDetailProps = {
   }>;
 };
 
-export function generateStaticParams() {
-  return blogPosts.map((post) => ({ slug: post.slug }));
+export async function generateStaticParams() {
+  const posts = await getIntegratedBlogPosts();
+
+  return posts.map((post) => ({ slug: post.slug }));
 }
 
 export async function generateMetadata({ params }: BlogDetailProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = getBlogPost(slug);
+  const post = await getIntegratedBlogPost(slug);
 
   if (!post) {
     return {
@@ -26,8 +28,8 @@ export async function generateMetadata({ params }: BlogDetailProps): Promise<Met
   }
 
   return {
-    title: `${post.title} | 34 Build Master Construction`,
-    description: post.excerpt,
+    title: `${post.seo?.title || post.title} | 34 Build Master Construction`,
+    description: post.seo?.description || post.excerpt,
     openGraph: {
       title: post.title,
       description: post.excerpt,
@@ -40,13 +42,14 @@ export async function generateMetadata({ params }: BlogDetailProps): Promise<Met
 
 export default async function BlogDetailPage({ params }: BlogDetailProps) {
   const { slug } = await params;
-  const post = getBlogPost(slug);
+  const post = await getIntegratedBlogPost(slug);
 
   if (!post) {
     notFound();
   }
 
-  const relatedPosts = blogPosts.filter((item) => item.slug !== post.slug).slice(0, 2);
+  const allPosts = await getIntegratedBlogPosts();
+  const relatedPosts = allPosts.filter((item) => item.slug !== post.slug).slice(0, 2);
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
