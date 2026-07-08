@@ -24,38 +24,55 @@ function normalizePost(post: ApiBlogPost): IntegratedBlogPost {
   };
 }
 
-async function fetchJson<T>(path: string): Promise<T | null> {
+type ApiResult<T> = {
+  ok: boolean;
+  status: number;
+  data?: T;
+};
+
+async function fetchJson<T>(path: string): Promise<ApiResult<T> | null> {
   try {
     const response = await fetch(`${apiBaseUrl}${path}`, {
-      next: { revalidate: 60 },
+      cache: "no-store",
       headers: { Accept: "application/json" },
     });
 
     if (!response.ok) {
-      return null;
+      return {
+        ok: false,
+        status: response.status,
+      };
     }
 
-    return (await response.json()) as T;
+    return {
+      ok: true,
+      status: response.status,
+      data: (await response.json()) as T,
+    };
   } catch {
     return null;
   }
 }
 
 export async function getIntegratedBlogPosts(): Promise<IntegratedBlogPost[]> {
-  const payload = await fetchJson<{ data: ApiBlogPost[] }>("/api/articles");
+  const result = await fetchJson<{ data: ApiBlogPost[] }>("/api/articles");
 
-  if (!payload?.data?.length) {
+  if (result === null) {
     return blogPosts.map((post) => ({ ...post, source: "fallback" }));
   }
 
-  return payload.data.map(normalizePost);
+  if (!result.ok || !Array.isArray(result.data?.data)) {
+    return [];
+  }
+
+  return result.data.data.map(normalizePost);
 }
 
 export async function getIntegratedBlogPost(slug: string): Promise<IntegratedBlogPost | null> {
-  const payload = await fetchJson<{ data: ApiBlogPost }>(`/api/articles/${slug}`);
+  const result = await fetchJson<{ data: ApiBlogPost }>(`/api/articles/${slug}`);
 
-  if (payload?.data) {
-    return normalizePost(payload.data);
+  if (result?.ok && result.data?.data) {
+    return normalizePost(result.data.data);
   }
 
   const fallback = blogPosts.find((post) => post.slug === slug);

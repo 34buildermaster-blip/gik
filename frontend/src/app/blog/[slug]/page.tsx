@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ContactBand, PageHero, SiteFooter, SiteHeader } from "@/components/site-chrome";
+import { blogPosts } from "@/data/blog";
 import { getIntegratedBlogPost, getIntegratedBlogPosts } from "@/lib/blog-api";
 
 type BlogDetailProps = {
@@ -13,8 +14,9 @@ type BlogDetailProps = {
 
 export async function generateStaticParams() {
   const posts = await getIntegratedBlogPosts();
+  const slugs = new Set([...blogPosts.map((post) => post.slug), ...posts.map((post) => post.slug)]);
 
-  return posts.map((post) => ({ slug: post.slug }));
+  return Array.from(slugs).map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: BlogDetailProps): Promise<Metadata> {
