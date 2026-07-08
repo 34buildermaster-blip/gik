@@ -198,6 +198,46 @@
             padding: 7px 10px;
             cursor: pointer;
         }
+        .rich-toolbar button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            min-width: 38px;
+            padding: 0;
+        }
+        .rich-toolbar button strong,
+        .rich-toolbar button em,
+        .rich-toolbar button u,
+        .rich-toolbar button s {
+            font-size: 14px;
+            line-height: 1;
+        }
+        .tool-icon {
+            width: 18px;
+            height: 18px;
+            fill: none;
+            stroke: currentColor;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-width: 2;
+        }
+        .rich-toolbar button.is-loading .tool-icon,
+        .rich-toolbar button.is-loading strong,
+        .rich-toolbar button.is-loading em,
+        .rich-toolbar button.is-loading u,
+        .rich-toolbar button.is-loading s {
+            display: none;
+        }
+        .rich-toolbar button.is-loading::after {
+            content: "";
+            width: 15px;
+            height: 15px;
+            border: 2px solid rgba(5, 57, 32, .2);
+            border-top-color: var(--green);
+            border-radius: 999px;
+            animation: spin .8s linear infinite;
+        }
         .rich-toolbar input[type="color"] {
             width: 42px;
             padding: 4px;
@@ -211,6 +251,9 @@
         .rich-toolbar button:disabled {
             cursor: progress;
             opacity: .62;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
         .rich-canvas {
             min-height: 420px;

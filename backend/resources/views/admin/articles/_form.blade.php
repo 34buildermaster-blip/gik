@@ -27,35 +27,69 @@
             <label for="content">เนื้อหาบทความ</label>
             <div class="rich-editor" data-rich-editor>
                 <div class="rich-toolbar" aria-label="เครื่องมือเขียนบทความ">
-                    <button type="button" data-command="undo" title="Undo">↶</button>
-                    <button type="button" data-command="redo" title="Redo">↷</button>
+                    <button type="button" data-command="undo" title="Undo" aria-label="Undo">
+                        <svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7H4v5"></path><path d="M4 12c2.2-4.4 6.5-6.2 10.3-4.8 3.9 1.4 5.8 5.6 4.4 9.4"></path></svg>
+                    </button>
+                    <button type="button" data-command="redo" title="Redo" aria-label="Redo">
+                        <svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 7h5v5"></path><path d="M20 12c-2.2-4.4-6.5-6.2-10.3-4.8-3.9 1.4-5.8 5.6-4.4 9.4"></path></svg>
+                    </button>
                     <select data-format-block title="รูปแบบข้อความ">
                         <option value="p">ย่อหน้า</option>
                         <option value="h2">หัวข้อใหญ่</option>
                         <option value="h3">หัวข้อรอง</option>
                         <option value="h4">หัวข้อย่อย</option>
                     </select>
-                    <button type="button" data-command="bold" title="ตัวหนา"><strong>B</strong></button>
-                    <button type="button" data-command="italic" title="ตัวเอียง"><em>I</em></button>
-                    <button type="button" data-command="underline" title="ขีดเส้นใต้"><u>U</u></button>
-                    <button type="button" data-command="strikeThrough" title="ขีดฆ่า"><s>S</s></button>
+                    <button type="button" data-command="bold" title="ตัวหนา" aria-label="ตัวหนา"><strong aria-hidden="true">B</strong></button>
+                    <button type="button" data-command="italic" title="ตัวเอียง" aria-label="ตัวเอียง"><em aria-hidden="true">I</em></button>
+                    <button type="button" data-command="underline" title="ขีดเส้นใต้" aria-label="ขีดเส้นใต้"><u aria-hidden="true">U</u></button>
+                    <button type="button" data-command="strikeThrough" title="ขีดฆ่า" aria-label="ขีดฆ่า"><s aria-hidden="true">S</s></button>
                     <input type="color" data-color-command="foreColor" value="#053920" title="สีตัวอักษร">
                     <input type="color" data-color-command="hiliteColor" value="#f6d97b" title="ไฮไลต์">
-                    <button type="button" data-command="justifyLeft" title="ชิดซ้าย">≡</button>
-                    <button type="button" data-command="justifyCenter" title="กึ่งกลาง">≣</button>
-                    <button type="button" data-command="justifyRight" title="ชิดขวา">≡</button>
-                    <button type="button" data-command="insertUnorderedList" title="Bullet list">• List</button>
-                    <button type="button" data-command="insertOrderedList" title="Number list">1. List</button>
-                    <button type="button" data-command="formatBlock" data-value="blockquote" title="Quote">Quote</button>
-                    <button type="button" data-link title="ใส่ลิงก์">Link</button>
-                    <button type="button" data-upload-markdown title="นำเข้าไฟล์ Markdown">Import .md</button>
-                    <button type="button" data-upload-image title="อัปโหลดรูปจากเครื่อง">Upload Image</button>
-                    <button type="button" data-upload-video title="อัปโหลดวิดีโอจากเครื่อง">Upload Video</button>
-                    <button type="button" data-image title="ใส่รูปจาก URL">Image URL</button>
-                    <button type="button" data-table title="เพิ่มตาราง">Table</button>
-                    <button type="button" data-command="insertHorizontalRule" title="เส้นคั่น">HR</button>
-                    <button type="button" data-command="removeFormat" title="ล้างรูปแบบ">Clear</button>
-                    <button type="button" data-source-toggle title="ดู HTML">HTML</button>
+                    <button type="button" data-command="justifyLeft" title="ชิดซ้าย" aria-label="ชิดซ้าย">
+                        <svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16"></path><path d="M4 10h10"></path><path d="M4 14h16"></path><path d="M4 18h10"></path></svg>
+                    </button>
+                    <button type="button" data-command="justifyCenter" title="กึ่งกลาง" aria-label="กึ่งกลาง">
+                        <svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16"></path><path d="M7 10h10"></path><path d="M4 14h16"></path><path d="M7 18h10"></path></svg>
+                    </button>
+                    <button type="button" data-command="justifyRight" title="ชิดขวา" aria-label="ชิดขวา">
+                        <svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16"></path><path d="M10 10h10"></path><path d="M4 14h16"></path><path d="M10 18h10"></path></svg>
+                    </button>
+                    <button type="button" data-command="insertUnorderedList" title="Bullet list" aria-label="Bullet list">
+                        <svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h13"></path><path d="M8 12h13"></path><path d="M8 18h13"></path><path d="M3 6h.01"></path><path d="M3 12h.01"></path><path d="M3 18h.01"></path></svg>
+                    </button>
+                    <button type="button" data-command="insertOrderedList" title="Number list" aria-label="Number list">
+                        <svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6h11"></path><path d="M10 12h11"></path><path d="M10 18h11"></path><path d="M4 6h1v4"></path><path d="M4 10h2"></path><path d="M4 14h2l-2 4h2"></path></svg>
+                    </button>
+                    <button type="button" data-command="formatBlock" data-value="blockquote" title="Quote" aria-label="Quote">
+                        <svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10h-4c0-4 2-6 6-6v3c-2 0-2 1-2 3v5h-4v-5"></path><path d="M20 10h-4c0-4 2-6 6-6v3c-2 0-2 1-2 3v5h-4v-5"></path></svg>
+                    </button>
+                    <button type="button" data-link title="ใส่ลิงก์" aria-label="ใส่ลิงก์">
+                        <svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1"></path><path d="M14 11a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1"></path></svg>
+                    </button>
+                    <button type="button" data-upload-markdown title="นำเข้าไฟล์ Markdown" aria-label="นำเข้าไฟล์ Markdown">
+                        <svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3v5h5"></path><path d="M19 21H5V3h9l5 5v13z"></path><path d="M8 16v-5l2 3 2-3v5"></path><path d="M15 11v5"></path><path d="M13 14l2 2 2-2"></path></svg>
+                    </button>
+                    <button type="button" data-upload-image title="อัปโหลดรูปจากเครื่อง" aria-label="อัปโหลดรูปจากเครื่อง">
+                        <svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19h14V5H5v14z"></path><path d="M8 14l2.5-3 2 2.5 1.5-2 3 4.5"></path><path d="M9 8h.01"></path><path d="M12 4v6"></path><path d="M9 7l3-3 3 3"></path></svg>
+                    </button>
+                    <button type="button" data-upload-video title="อัปโหลดวิดีโอจากเครื่อง" aria-label="อัปโหลดวิดีโอจากเครื่อง">
+                        <svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h11v10H4z"></path><path d="M15 11l5-3v8l-5-3"></path><path d="M8 5l3-3 3 3"></path><path d="M11 2v8"></path></svg>
+                    </button>
+                    <button type="button" data-image title="ใส่รูปจาก URL" aria-label="ใส่รูปจาก URL">
+                        <svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16V5H4v14z"></path><path d="M8 14l2.5-3 2 2.5 1.5-2 3 4.5"></path><path d="M9 8h.01"></path><path d="M15 8h5"></path><path d="M18 5v6"></path></svg>
+                    </button>
+                    <button type="button" data-table title="เพิ่มตาราง" aria-label="เพิ่มตาราง">
+                        <svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z"></path><path d="M4 10h16"></path><path d="M4 15h16"></path><path d="M10 5v14"></path><path d="M16 5v14"></path></svg>
+                    </button>
+                    <button type="button" data-command="insertHorizontalRule" title="เส้นคั่น" aria-label="เส้นคั่น">
+                        <svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16"></path></svg>
+                    </button>
+                    <button type="button" data-command="removeFormat" title="ล้างรูปแบบ" aria-label="ล้างรูปแบบ">
+                        <svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16l8-8 6 6-5 5H7l-3-3z"></path><path d="M14 6l4 4"></path><path d="M4 21h16"></path></svg>
+                    </button>
+                    <button type="button" data-source-toggle title="ดู HTML" aria-label="ดู HTML">
+                        <svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 9l-4 3 4 3"></path><path d="M16 9l4 3-4 3"></path><path d="M14 5l-4 14"></path></svg>
+                    </button>
                 </div>
                 <input type="file" data-markdown-input accept=".md,.markdown,.txt,text/markdown,text/plain" hidden>
                 <input type="file" data-media-input="image" accept="image/*" hidden>
@@ -148,11 +182,10 @@
                 return;
             }
 
-            const originalText = button.textContent;
             const formData = new FormData();
             formData.append('media', file);
             button.disabled = true;
-            button.textContent = 'Uploading...';
+            button.classList.add('is-loading');
 
             try {
                 const response = await fetch(uploadUrl, {
@@ -183,7 +216,7 @@
             } finally {
                 input.value = '';
                 button.disabled = false;
-                button.textContent = originalText;
+                button.classList.remove('is-loading');
             }
         };
         const uploadMarkdown = async (file, button) => {
@@ -200,13 +233,12 @@
             const shouldReplace = hasContent
                 ? window.confirm('แทนที่เนื้อหาปัจจุบันด้วยไฟล์ Markdown นี้ไหม? กด Cancel เพื่อแทรกต่อท้าย')
                 : true;
-            const originalText = button?.textContent || 'Import .md';
             const formData = new FormData();
             formData.append('markdown', file);
 
             if (button) {
                 button.disabled = true;
-                button.textContent = 'Importing...';
+                button.classList.add('is-loading');
             }
 
             try {
@@ -248,7 +280,7 @@
 
                 if (button) {
                     button.disabled = false;
-                    button.textContent = originalText;
+                    button.classList.remove('is-loading');
                 }
             }
         };
