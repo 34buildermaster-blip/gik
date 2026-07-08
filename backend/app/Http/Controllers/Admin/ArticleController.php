@@ -29,6 +29,7 @@ class ArticleController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $data = $this->validatedData($request);
+        $data['content'] = $this->cleanContent($data['content']);
         $data['user_id'] = $request->user()->id;
         $data['slug'] = $this->uniqueSlug($data['title']);
         $data['cover_image'] = $this->uploadCoverImage($request);
@@ -51,6 +52,7 @@ class ArticleController extends Controller
     public function update(Request $request, Article $article): RedirectResponse
     {
         $data = $this->validatedData($request);
+        $data['content'] = $this->cleanContent($data['content']);
         $data['slug'] = $this->uniqueSlug($data['title'], $article);
 
         if ($request->hasFile('cover_image')) {
@@ -113,6 +115,18 @@ class ArticleController extends Controller
         }
 
         return $slug;
+    }
+
+    private function cleanContent(string $content): string
+    {
+        $allowedTags = '<p><br><strong><b><em><i><u><s><span><h2><h3><h4><ul><ol><li><blockquote><a><figure><figcaption><img><table><thead><tbody><tr><th><td><hr>';
+
+        $content = strip_tags($content, $allowedTags);
+        $content = preg_replace('/\s+on\w+="[^"]*"/i', '', $content) ?? $content;
+        $content = preg_replace("/\s+on\w+='[^']*'/i", '', $content) ?? $content;
+        $content = preg_replace('/javascript:/i', '', $content) ?? $content;
+
+        return trim($content);
     }
 
     private function uploadCoverImage(Request $request): ?string

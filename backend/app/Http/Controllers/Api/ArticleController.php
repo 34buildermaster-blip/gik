@@ -47,6 +47,7 @@ class ArticleController extends Controller
             'coverAlt' => $article->title,
             'highlights' => $this->makeHighlights($article),
             'content' => $this->makeContentSections($article),
+            'contentHtml' => $this->prepareContentHtml($content),
             'seo' => [
                 'title' => $article->seo_title ?: $article->title,
                 'description' => $article->seo_description ?: $article->excerpt,
@@ -69,7 +70,8 @@ class ArticleController extends Controller
 
     private function makeContentSections(Article $article): array
     {
-        $blocks = preg_split('/\R{2,}/u', trim((string) $article->content), -1, PREG_SPLIT_NO_EMPTY) ?: [];
+        $plainContent = trim(strip_tags((string) $article->content));
+        $blocks = preg_split('/\R{2,}/u', $plainContent, -1, PREG_SPLIT_NO_EMPTY) ?: [];
 
         if ($blocks === []) {
             return [
@@ -88,6 +90,23 @@ class ArticleController extends Controller
             $blocks,
             array_keys($blocks),
         );
+    }
+
+    private function prepareContentHtml(string $content): string
+    {
+        if ($content === '') {
+            return '';
+        }
+
+        if ($content !== strip_tags($content)) {
+            return $content;
+        }
+
+        $paragraphs = preg_split('/\R{2,}/u', $content, -1, PREG_SPLIT_NO_EMPTY) ?: [];
+
+        return collect($paragraphs)
+            ->map(fn (string $paragraph): string => '<p>'.e(trim($paragraph)).'</p>')
+            ->implode('');
     }
 
     private function thaiDate($date): string

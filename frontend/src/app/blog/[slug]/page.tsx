@@ -102,14 +102,18 @@ export default async function BlogDetailPage({ params }: BlogDetailProps) {
               />
             </div>
 
-            <div className="grid gap-10">
-              {post.content.map((section) => (
-                <section key={section.heading}>
-                  <h2 className="text-3xl font-extrabold leading-tight text-[#053920] md:text-4xl">{section.heading}</h2>
-                  <p className="mt-4 text-xl leading-9 text-[#4d5b50]">{section.body}</p>
-                </section>
-              ))}
-            </div>
+            {post.contentHtml ? (
+              <div className="article-content" dangerouslySetInnerHTML={{ __html: post.contentHtml }} />
+            ) : (
+              <div className="grid gap-10">
+                {post.content.map((section) => (
+                  <section key={section.heading}>
+                    <h2 className="text-3xl font-extrabold leading-tight text-[#053920] md:text-4xl">{section.heading}</h2>
+                    <p className="mt-4 text-xl leading-9 text-[#4d5b50]">{section.body}</p>
+                  </section>
+                ))}
+              </div>
+            )}
 
             <div className="mt-12 rounded-[1.5rem] bg-[#053920] p-6 text-white md:p-8">
               <p className="text-sm font-extrabold uppercase tracking-[0.2em] text-[#f6d97b]">Next Step</p>

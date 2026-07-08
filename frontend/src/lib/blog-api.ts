@@ -2,6 +2,7 @@ import { blogPosts, type BlogPost } from "@/data/blog";
 
 type ApiBlogPost = Omit<BlogPost, "image"> & {
   image: string | null;
+  contentHtml?: string | null;
   seo?: {
     title?: string | null;
     description?: string | null;
@@ -10,6 +11,7 @@ type ApiBlogPost = Omit<BlogPost, "image"> & {
 };
 
 export type IntegratedBlogPost = BlogPost & {
+  contentHtml?: string | null;
   seo?: ApiBlogPost["seo"];
   source?: "api" | "fallback";
 };
