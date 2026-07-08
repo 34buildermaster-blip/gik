@@ -394,17 +394,17 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-[#fbf7ec] text-lg text-[#112416]">
       <header className="sticky top-0 z-40 border-b border-[#f6d97b]/20 bg-[#053920]/95 text-white shadow-[0_18px_60px_rgba(0,0,0,0.2)] backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
-          <a href={sitePath("/")} className="group flex items-center gap-3" aria-label="34 Build Master Construction">
-            <span className="relative grid size-12 place-items-center overflow-hidden rounded-2xl bg-[#112416] text-lg font-extrabold text-[#fdf0a3] ring-1 ring-[#f6d97b]/40">
+        <div className="mx-auto grid max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-5 py-4 md:flex md:justify-between lg:px-8">
+          <a href={sitePath("/")} className="group flex min-w-0 items-center gap-3" aria-label="34 Build Master Construction">
+            <span className="relative grid size-12 shrink-0 place-items-center overflow-hidden rounded-2xl bg-[#112416] text-lg font-extrabold text-[#fdf0a3] ring-1 ring-[#f6d97b]/40">
               <span className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#fdf0a3] to-transparent" />
               34
             </span>
-            <span className="leading-tight">
-              <span className="block text-base font-extrabold uppercase tracking-[0.16em]">
+            <span className="min-w-0 leading-tight">
+              <span className="block truncate text-sm font-extrabold uppercase tracking-[0.12em] sm:text-base sm:tracking-[0.16em]">
                 Build Master
               </span>
-              <span className="block text-[11px] uppercase tracking-[0.22em] text-[#f6d97b]">
+              <span className="block truncate text-[10px] uppercase tracking-[0.18em] text-[#f6d97b] sm:text-[11px] sm:tracking-[0.22em]">
                 Construction
               </span>
             </span>
@@ -441,7 +441,7 @@ export default function Home() {
             โทรปรึกษา
           </a>
 
-          <details className="relative md:hidden">
+          <details className="relative shrink-0 md:hidden">
             <summary className="grid size-11 cursor-pointer list-none place-items-center rounded-full border border-[#f6d97b]/45 bg-[#112416]/72 text-[#fdf0a3] shadow-[0_18px_48px_rgba(0,0,0,0.24)] [&::-webkit-details-marker]:hidden">
               <span className="sr-only">เปิดเมนู</span>
               <span className="flex w-5 flex-col gap-1.5">

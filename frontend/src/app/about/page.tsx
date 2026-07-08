@@ -48,16 +48,16 @@ export default function AboutPage() {
 
       <section className="about-intro-section relative overflow-hidden bg-[#fffaf0] px-5 py-24 lg:px-8">
         <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.9fr_1fr] lg:items-center">
-          <div>
+          <div className="min-w-0">
             <p className="section-kicker">About 34 BM</p>
-            <h2 className="mt-4 max-w-4xl text-[2.25rem] font-extrabold leading-tight text-[#053920] sm:text-[2.9rem] lg:text-5xl xl:text-6xl">
+            <h2 className="mt-4 max-w-[11ch] text-[1.9rem] font-extrabold leading-[1.16] text-[#053920] [overflow-wrap:anywhere] sm:max-w-4xl sm:text-[2.9rem] sm:leading-tight lg:text-5xl xl:text-6xl">
               แบรนด์ที่ให้คุณค่ากับบ้านของคุณ
             </h2>
-            <p className="mt-5 text-xl leading-9 text-[#4d5b50]">
+            <p className="mt-5 text-xl leading-9 text-[#4d5b50] [overflow-wrap:anywhere]">
               34 Build Master Construction รับออกแบบ รีโนเวท สร้างบ้าน และงานบิวท์อิน
               สำหรับเจ้าของบ้านที่ต้องการงานเรียบร้อย ดูดี ใช้งานได้จริง และมีทีมช่วยดูภาพรวมตั้งแต่เริ่มคิดจนส่งมอบงาน
             </p>
-            <p className="mt-4 text-xl leading-9 text-[#4d5b50]">
+            <p className="mt-4 text-xl leading-9 text-[#4d5b50] [overflow-wrap:anywhere]">
               เราเชื่อว่างานบ้านที่ดีเริ่มจากการฟังโจทย์ให้ละเอียด วางแผนให้ชัด และทำงานด้วยมาตรฐานที่ตรวจสอบได้
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -104,7 +104,7 @@ export default function AboutPage() {
         <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.84fr_1.16fr] lg:items-center">
           <div>
             <p className="section-kicker">Our Approach</p>
-            <h2 className="mt-4 text-4xl font-extrabold leading-tight text-[#053920] sm:text-6xl">
+            <h2 className="mt-4 text-4xl font-extrabold leading-tight text-[#053920] [overflow-wrap:anywhere] sm:text-6xl">
               เราไม่ได้เริ่มจากแบบ แต่เริ่มจากวิธีใช้ชีวิตของเจ้าของบ้าน
             </h2>
           </div>
@@ -125,7 +125,7 @@ export default function AboutPage() {
         <div className="mx-auto max-w-7xl">
           <div className="mx-auto max-w-4xl text-center">
             <p className="section-kicker process-kicker mx-auto text-[#f6d97b]">What We Care</p>
-            <h2 className="mt-4 text-4xl font-extrabold leading-tight text-white sm:text-6xl">
+            <h2 className="mt-4 text-4xl font-extrabold leading-tight text-white [overflow-wrap:anywhere] sm:text-6xl">
               สิ่งที่เราใส่ใจในทุกโปรเจกต์
             </h2>
           </div>
@@ -145,7 +145,7 @@ export default function AboutPage() {
         <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.82fr_1.18fr] lg:items-start">
           <div>
             <p className="section-kicker">How We Work</p>
-            <h2 className="mt-4 text-4xl font-extrabold leading-tight text-[#053920] sm:text-6xl">
+            <h2 className="mt-4 text-4xl font-extrabold leading-tight text-[#053920] [overflow-wrap:anywhere] sm:text-6xl">
               ขั้นตอนทำงานที่ช่วยให้เจ้าของบ้านเห็นภาพตั้งแต่ต้น
             </h2>
           </div>
