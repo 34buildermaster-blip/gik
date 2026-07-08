@@ -42,6 +42,7 @@
                             <td>{{ $article->updated_at->format('d/m/Y') }}</td>
                             <td>
                                 <div class="row-actions">
+                                    <a class="button secondary" href="{{ route('admin.articles.preview', $article) }}" target="_blank">Preview</a>
                                     <a class="button secondary" href="{{ route('admin.articles.edit', $article) }}">แก้ไข</a>
                                     <form method="POST" action="{{ route('admin.articles.destroy', $article) }}" onsubmit="return confirm('ต้องการลบบทความนี้ใช่ไหม?')">
                                         @csrf

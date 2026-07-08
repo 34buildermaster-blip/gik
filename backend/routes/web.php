@@ -27,5 +27,6 @@ Route::middleware('auth')
         Route::get('/', DashboardController::class)->name('dashboard');
         Route::post('/articles/markdown', [ArticleController::class, 'importMarkdown'])->name('articles.markdown');
         Route::post('/articles/media', [ArticleController::class, 'uploadMedia'])->name('articles.media');
+        Route::get('/articles/{article}/preview', [ArticleController::class, 'preview'])->name('articles.preview');
         Route::resource('articles', ArticleController::class)->except(['show']);
     });

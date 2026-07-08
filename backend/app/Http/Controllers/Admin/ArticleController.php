@@ -50,6 +50,17 @@ class ArticleController extends Controller
         ]);
     }
 
+    public function preview(Article $article): View
+    {
+        $plainContent = Str::of(strip_tags($article->content))->squish()->toString();
+        $characterCount = mb_strlen($plainContent);
+
+        return view('admin.articles.preview', [
+            'article' => $article,
+            'characterCount' => $characterCount,
+        ]);
+    }
+
     public function update(Request $request, Article $article): RedirectResponse
     {
         $data = $this->validatedData($request);
