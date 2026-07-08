@@ -208,6 +208,10 @@
             border-color: rgba(170, 116, 38, .55);
             background: rgba(246, 217, 123, .24);
         }
+        .rich-toolbar button:disabled {
+            cursor: progress;
+            opacity: .62;
+        }
         .rich-canvas {
             min-height: 420px;
             overflow-x: auto;
@@ -217,6 +221,10 @@
         }
         .rich-canvas:focus {
             box-shadow: inset 0 0 0 4px rgba(246, 217, 123, .15);
+        }
+        .rich-canvas.is-dragging {
+            box-shadow: inset 0 0 0 4px rgba(246, 217, 123, .42);
+            background: rgba(246, 217, 123, .1);
         }
         .rich-canvas h2,
         .rich-canvas h3,

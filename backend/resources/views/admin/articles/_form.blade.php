@@ -48,6 +48,7 @@
                     <button type="button" data-command="insertOrderedList" title="Number list">1. List</button>
                     <button type="button" data-command="formatBlock" data-value="blockquote" title="Quote">Quote</button>
                     <button type="button" data-link title="ใส่ลิงก์">Link</button>
+                    <button type="button" data-upload-markdown title="นำเข้าไฟล์ Markdown">Import .md</button>
                     <button type="button" data-upload-image title="อัปโหลดรูปจากเครื่อง">Upload Image</button>
                     <button type="button" data-upload-video title="อัปโหลดวิดีโอจากเครื่อง">Upload Video</button>
                     <button type="button" data-image title="ใส่รูปจาก URL">Image URL</button>
@@ -56,12 +57,13 @@
                     <button type="button" data-command="removeFormat" title="ล้างรูปแบบ">Clear</button>
                     <button type="button" data-source-toggle title="ดู HTML">HTML</button>
                 </div>
+                <input type="file" data-markdown-input accept=".md,.markdown,.txt,text/markdown,text/plain" hidden>
                 <input type="file" data-media-input="image" accept="image/*" hidden>
                 <input type="file" data-media-input="video" accept="video/mp4,video/webm,video/quicktime" hidden>
                 <div class="rich-canvas" contenteditable="true" data-editor-canvas>{!! old('content', $article->content) !!}</div>
                 <textarea id="content" name="content" required hidden>{{ old('content', $article->content) }}</textarea>
             </div>
-            <p class="muted" style="margin: 0;">รองรับหัวข้อ รายการ ลิงก์ ตาราง รูปภาพ วิดีโอ สีตัวอักษร และรูปแบบ HTML สำหรับบทความ SEO</p>
+            <p class="muted" style="margin: 0;">รองรับไฟล์ .md, หัวข้อ รายการ ลิงก์ ตาราง รูปภาพ วิดีโอ สีตัวอักษร และรูปแบบ HTML สำหรับบทความ SEO</p>
         </div>
 
         <div class="field">
@@ -104,10 +106,16 @@
         const canvas = editor.querySelector('[data-editor-canvas]');
         const textarea = editor.querySelector('textarea[name="content"]');
         const sourceButton = editor.querySelector('[data-source-toggle]');
+        const markdownUrl = @json(route('admin.articles.markdown'));
         const uploadUrl = @json(route('admin.articles.media'));
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        const form = editor.closest('form');
+        const titleInput = form?.querySelector('input[name="title"]');
+        const excerptInput = form?.querySelector('textarea[name="excerpt"]');
+        const markdownInput = editor.querySelector('[data-markdown-input]');
         const imageInput = editor.querySelector('[data-media-input="image"]');
         const videoInput = editor.querySelector('[data-media-input="video"]');
+        const markdownButton = editor.querySelector('[data-upload-markdown]');
         const imageUploadButton = editor.querySelector('[data-upload-image]');
         const videoUploadButton = editor.querySelector('[data-upload-video]');
         let sourceMode = false;
@@ -178,6 +186,72 @@
                 button.textContent = originalText;
             }
         };
+        const uploadMarkdown = async (file, button) => {
+            if (sourceMode) {
+                window.alert('กรุณาปิดโหมด HTML ก่อนนำเข้าไฟล์ Markdown');
+                return;
+            }
+
+            if (!file) {
+                return;
+            }
+
+            const hasContent = canvas.textContent.trim().length > 0;
+            const shouldReplace = hasContent
+                ? window.confirm('แทนที่เนื้อหาปัจจุบันด้วยไฟล์ Markdown นี้ไหม? กด Cancel เพื่อแทรกต่อท้าย')
+                : true;
+            const originalText = button?.textContent || 'Import .md';
+            const formData = new FormData();
+            formData.append('markdown', file);
+
+            if (button) {
+                button.disabled = true;
+                button.textContent = 'Importing...';
+            }
+
+            try {
+                const response = await fetch(markdownUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    throw new Error('Import failed');
+                }
+
+                const article = await response.json();
+
+                if (shouldReplace) {
+                    canvas.innerHTML = article.html || '';
+                    sync();
+                } else {
+                    insertHtml(`${article.html || ''}<p><br></p>`);
+                }
+
+                if (titleInput && !titleInput.value.trim() && article.title) {
+                    titleInput.value = article.title;
+                }
+
+                if (excerptInput && !excerptInput.value.trim() && article.excerpt) {
+                    excerptInput.value = article.excerpt;
+                }
+            } catch (error) {
+                window.alert('นำเข้าไฟล์ Markdown ไม่สำเร็จ กรุณาตรวจสอบไฟล์ .md แล้วลองใหม่');
+            } finally {
+                if (markdownInput) {
+                    markdownInput.value = '';
+                }
+
+                if (button) {
+                    button.disabled = false;
+                    button.textContent = originalText;
+                }
+            }
+        };
 
         editor.querySelectorAll('[data-command]').forEach((button) => {
             button.addEventListener('click', () => {
@@ -223,6 +297,8 @@
             }
         });
 
+        markdownButton?.addEventListener('click', () => markdownInput?.click());
+        markdownInput?.addEventListener('change', () => uploadMarkdown(markdownInput.files?.[0], markdownButton));
         imageUploadButton?.addEventListener('click', () => imageInput?.click());
         videoUploadButton?.addEventListener('click', () => videoInput?.click());
         imageInput?.addEventListener('change', () => uploadMedia(imageInput, imageUploadButton));
@@ -262,7 +338,23 @@
         });
 
         canvas.addEventListener('input', sync);
-        canvas.closest('form')?.addEventListener('submit', sync);
+        canvas.addEventListener('dragover', (event) => {
+            if ([...(event.dataTransfer?.items || [])].some((item) => item.kind === 'file')) {
+                event.preventDefault();
+                canvas.classList.add('is-dragging');
+            }
+        });
+        canvas.addEventListener('dragleave', () => canvas.classList.remove('is-dragging'));
+        canvas.addEventListener('drop', (event) => {
+            const file = event.dataTransfer?.files?.[0];
+
+            if (file && /\.(md|markdown|txt)$/i.test(file.name)) {
+                event.preventDefault();
+                canvas.classList.remove('is-dragging');
+                uploadMarkdown(file, markdownButton);
+            }
+        });
+        form?.addEventListener('submit', sync);
         sync();
     });
 </script>

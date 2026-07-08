@@ -118,6 +118,40 @@ class ArticleController extends Controller
         ]);
     }
 
+    public function importMarkdown(Request $request): JsonResponse
+    {
+        $request->validate([
+            'markdown' => ['required', 'file', 'max:5120'],
+        ]);
+
+        $file = $request->file('markdown');
+        $extension = Str::lower($file->getClientOriginalExtension());
+
+        if (! in_array($extension, ['md', 'markdown', 'txt'], true)) {
+            return response()->json([
+                'message' => 'รองรับเฉพาะไฟล์ .md, .markdown หรือ .txt',
+            ], 422);
+        }
+
+        $markdown = File::get($file->getRealPath());
+        $title = $this->extractMarkdownTitle($markdown)
+            ?: pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        $html = $this->cleanContent($this->normalizeMarkdownHtml(Str::markdown($markdown, [
+            'allow_unsafe_links' => false,
+            'html_input' => 'strip',
+        ])));
+        $excerpt = Str::of(strip_tags($html))
+            ->squish()
+            ->limit(240)
+            ->toString();
+
+        return response()->json([
+            'title' => $title,
+            'excerpt' => $excerpt,
+            'html' => $html,
+        ]);
+    }
+
     private function validatedData(Request $request): array
     {
         return $request->validate([
@@ -160,6 +194,27 @@ class ArticleController extends Controller
         $content = preg_replace('/javascript:/i', '', $content) ?? $content;
 
         return trim($content);
+    }
+
+    private function extractMarkdownTitle(string $markdown): ?string
+    {
+        if (preg_match('/^\s*#\s+(.+)$/m', $markdown, $matches) !== 1) {
+            return null;
+        }
+
+        return Str::of($matches[1])
+            ->replaceMatches('/[*_`~\[\]#]/', '')
+            ->squish()
+            ->limit(255, '')
+            ->toString();
+    }
+
+    private function normalizeMarkdownHtml(string $html): string
+    {
+        $html = preg_replace('/<h1([^>]*)>/i', '<h2$1>', $html) ?? $html;
+        $html = preg_replace('/<\/h1>/i', '</h2>', $html) ?? $html;
+
+        return $html;
     }
 
     private function uploadCoverImage(Request $request): ?string

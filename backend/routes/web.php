@@ -25,6 +25,7 @@ Route::middleware('auth')
     ->name('admin.')
     ->group(function (): void {
         Route::get('/', DashboardController::class)->name('dashboard');
+        Route::post('/articles/markdown', [ArticleController::class, 'importMarkdown'])->name('articles.markdown');
         Route::post('/articles/media', [ArticleController::class, 'uploadMedia'])->name('articles.media');
         Route::resource('articles', ArticleController::class)->except(['show']);
     });
