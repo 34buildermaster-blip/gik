@@ -31,7 +31,13 @@
         }
         a { color: inherit; text-decoration: none; }
         img { display: block; max-width: 100%; }
-        .shell { min-height: 100vh; display: grid; grid-template-columns: 280px 1fr; }
+        .shell {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            transition: grid-template-columns .22s ease;
+        }
+        .shell.is-sidebar-collapsed { grid-template-columns: 92px 1fr; }
         .sidebar {
             background:
                 radial-gradient(circle at 20% 0%, rgba(246, 217, 123, .18), transparent 30%),
@@ -42,7 +48,9 @@
             top: 0;
             height: 100vh;
             overflow: auto;
+            transition: padding .22s ease;
         }
+        .shell.is-sidebar-collapsed .sidebar { padding: 24px 16px; }
         .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 34px; }
         .brand-mark {
             width: 50px;
@@ -57,6 +65,54 @@
         }
         .brand-title { display: block; font-weight: 900; text-transform: uppercase; letter-spacing: .12em; line-height: 1.1; }
         .brand-sub { display: block; color: var(--gold); font-size: 12px; text-transform: uppercase; letter-spacing: .2em; }
+        .sidebar-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+        .sidebar-head .brand { margin-bottom: 0; min-width: 0; }
+        .sidebar-toggle {
+            width: 42px;
+            height: 42px;
+            flex: 0 0 auto;
+            display: inline-grid;
+            place-items: center;
+            border: 1px solid rgba(246, 217, 123, .32);
+            border-radius: 14px;
+            background: rgba(255, 255, 255, .07);
+            color: var(--gold);
+            cursor: pointer;
+        }
+        .sidebar-toggle:hover {
+            border-color: rgba(246, 217, 123, .62);
+            background: rgba(246, 217, 123, .13);
+        }
+        .sidebar-toggle svg,
+        .nav-icon {
+            width: 19px;
+            height: 19px;
+            fill: none;
+            stroke: currentColor;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-width: 2;
+        }
+        .shell.is-sidebar-collapsed .brand {
+            justify-content: center;
+        }
+        .shell.is-sidebar-collapsed .brand-title,
+        .shell.is-sidebar-collapsed .brand-sub {
+            display: none;
+        }
+        .shell.is-sidebar-collapsed .sidebar-head {
+            align-items: center;
+            flex-direction: column;
+        }
+        .shell.is-sidebar-collapsed .sidebar-toggle svg {
+            transform: rotate(180deg);
+        }
         .nav { display: grid; gap: 8px; }
         .nav a, .logout-button {
             width: 100%;
@@ -67,10 +123,32 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 12px;
             padding: 13px 15px;
             font: inherit;
             font-weight: 700;
             cursor: pointer;
+        }
+        .nav-label {
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .nav-arrow {
+            color: rgba(246, 217, 123, .72);
+            font-size: 18px;
+            line-height: 1;
+        }
+        .shell.is-sidebar-collapsed .nav a,
+        .shell.is-sidebar-collapsed .logout-button {
+            justify-content: center;
+            padding: 13px 0;
+        }
+        .shell.is-sidebar-collapsed .nav-label,
+        .shell.is-sidebar-collapsed .nav-arrow {
+            display: none;
         }
         .nav a:hover, .logout-button:hover {
             border-color: rgba(246, 217, 123, .5);
@@ -372,7 +450,24 @@
         .pagination { margin-top: 20px; }
         @media (max-width: 900px) {
             .shell { grid-template-columns: 1fr; }
+            .shell.is-sidebar-collapsed { grid-template-columns: 1fr; }
             .sidebar { position: static; height: auto; }
+            .shell.is-sidebar-collapsed .sidebar { padding: 20px; }
+            .shell.is-sidebar-collapsed .brand-title,
+            .shell.is-sidebar-collapsed .brand-sub,
+            .shell.is-sidebar-collapsed .nav-label,
+            .shell.is-sidebar-collapsed .nav-arrow {
+                display: block;
+            }
+            .shell.is-sidebar-collapsed .sidebar-head {
+                align-items: flex-start;
+                flex-direction: row;
+            }
+            .shell.is-sidebar-collapsed .nav a,
+            .shell.is-sidebar-collapsed .logout-button {
+                justify-content: space-between;
+                padding: 13px 15px;
+            }
             .main { padding: 20px; }
             .stats, .form-grid { grid-template-columns: 1fr; }
             .topbar { align-items: flex-start; flex-direction: column; }
@@ -383,22 +478,43 @@
     @if ($auth)
         {{ $slot }}
     @else
-        <div class="shell">
+        <div class="shell" data-admin-shell>
             <aside class="sidebar">
-                <a class="brand" href="{{ route('admin.dashboard') }}">
-                    <span class="brand-mark">34</span>
-                    <span>
-                        <span class="brand-title">Build Master</span>
-                        <span class="brand-sub">Construction</span>
-                    </span>
-                </a>
+                <div class="sidebar-head">
+                    <a class="brand" href="{{ route('admin.dashboard') }}" title="34 Build Master Admin">
+                        <span class="brand-mark">34</span>
+                        <span>
+                            <span class="brand-title">Build Master</span>
+                            <span class="brand-sub">Construction</span>
+                        </span>
+                    </a>
+                    <button class="sidebar-toggle" type="button" data-sidebar-toggle title="ย่อ/ขยายเมนู" aria-label="ย่อ/ขยายเมนู">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg>
+                    </button>
+                </div>
                 <nav class="nav">
-                    <a href="{{ route('admin.dashboard') }}">แดชบอร์ด <span>&rsaquo;</span></a>
-                    <a href="{{ route('admin.articles.index') }}">บทความ <span>&rsaquo;</span></a>
-                    <a href="{{ url('/') }}" target="_blank">ดูหน้าเว็บ <span>&rsaquo;</span></a>
+                    <a href="{{ route('admin.dashboard') }}" title="แดชบอร์ด">
+                        <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13h8V3H3v10z"></path><path d="M13 21h8V11h-8v10z"></path><path d="M13 3v6h8V3h-8z"></path><path d="M3 21h8v-6H3v6z"></path></svg>
+                        <span class="nav-label">แดชบอร์ด</span>
+                        <span class="nav-arrow">&rsaquo;</span>
+                    </a>
+                    <a href="{{ route('admin.articles.index') }}" title="บทความ">
+                        <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h11a3 3 0 0 1 3 3v15H6a2 2 0 0 1-2-1.5z"></path><path d="M8 7h8"></path><path d="M8 11h8"></path><path d="M8 15h5"></path></svg>
+                        <span class="nav-label">บทความ</span>
+                        <span class="nav-arrow">&rsaquo;</span>
+                    </a>
+                    <a href="{{ url('/') }}" target="_blank" title="ดูหน้าเว็บ">
+                        <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z"></path><path d="M3.6 9h16.8"></path><path d="M3.6 15h16.8"></path><path d="M12 3a14 14 0 0 1 0 18"></path><path d="M12 3a14 14 0 0 0 0 18"></path></svg>
+                        <span class="nav-label">ดูหน้าเว็บ</span>
+                        <span class="nav-arrow">&rsaquo;</span>
+                    </a>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button class="logout-button" type="submit">ออกจากระบบ <span>&rsaquo;</span></button>
+                        <button class="logout-button" type="submit" title="ออกจากระบบ">
+                            <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5"></path><path d="M21 12H9"></path></svg>
+                            <span class="nav-label">ออกจากระบบ</span>
+                            <span class="nav-arrow">&rsaquo;</span>
+                        </button>
                     </form>
                 </nav>
             </aside>
@@ -421,6 +537,30 @@
                 {{ $slot }}
             </main>
         </div>
+        <script>
+            (() => {
+                const shell = document.querySelector('[data-admin-shell]');
+                const toggle = document.querySelector('[data-sidebar-toggle]');
+
+                if (!shell || !toggle) {
+                    return;
+                }
+
+                const storageKey = '34bm-admin-sidebar-collapsed';
+                const applyState = (isCollapsed) => {
+                    shell.classList.toggle('is-sidebar-collapsed', isCollapsed);
+                    toggle.setAttribute('aria-expanded', String(!isCollapsed));
+                };
+
+                applyState(localStorage.getItem(storageKey) === 'true');
+
+                toggle.addEventListener('click', () => {
+                    const isCollapsed = !shell.classList.contains('is-sidebar-collapsed');
+                    applyState(isCollapsed);
+                    localStorage.setItem(storageKey, String(isCollapsed));
+                });
+            })();
+        </script>
     @endif
 </body>
 </html>
