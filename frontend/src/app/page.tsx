@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { assetPath, sitePath } from "@/lib/asset-path";
+import { siteConfig, socialLinks } from "@/lib/site-config";
 
 type IconName =
   | "drafting"
@@ -314,13 +315,6 @@ const faqs = [
   },
 ];
 
-const socialLinks = [
-  { label: "Facebook", href: "https://facebook.com", icon: "facebook" as const },
-  { label: "Instagram", href: "https://instagram.com", icon: "instagram" as const },
-  { label: "Line", href: "https://line.me", icon: "line" as const },
-  { label: "TikTok", href: "https://tiktok.com", icon: "tiktok" as const },
-];
-
 const projectUpdates = [
   {
     title: "ตรวจหน้างานรีโนเวทบ้านพักอาศัย",
@@ -434,7 +428,7 @@ export default function Home() {
           </div>
 
           <a
-            href="tel:+66819512297"
+            href={siteConfig.phoneHref}
             className="gold-button hidden min-h-11 items-center justify-center gap-2 px-4 text-base font-extrabold text-[#112416] sm:inline-flex"
           >
             <Icon name="phone" className="size-4" />
@@ -471,7 +465,7 @@ export default function Home() {
                     <Icon name={social.icon} className="size-4" />
                   </a>
                 ))}
-                <a href="tel:+66819512297" className="gold-button inline-flex min-h-10 items-center justify-center gap-2 px-4 text-sm font-extrabold text-[#112416]">
+                <a href={siteConfig.phoneHref} className="gold-button inline-flex min-h-10 items-center justify-center gap-2 px-4 text-sm font-extrabold text-[#112416]">
                   <Icon name="phone" className="size-4" />
                   โทร
                 </a>
@@ -765,9 +759,6 @@ export default function Home() {
             <h2 className="mt-4 text-4xl font-extrabold leading-tight sm:text-6xl">
               <span className="block">ขั้นตอนที่คุมความคาดหวัง</span>
               <span className="block">ได้ตั้งแต่วันแรก</span>
-              <span className="hidden">
-              ขั้นตอนที่คุมความคาดหวังได้ตั้งแต่วันแรก
-              </span>
             </h2>
           </div>
 
@@ -933,7 +924,7 @@ export default function Home() {
 
           <div className="cta-banner-actions">
               <a
-                href="https://facebook.com"
+                href={socialLinks[0].href}
                 className="cta-banner-button"
                 target="_blank"
                 rel="noreferrer"
@@ -948,7 +939,7 @@ export default function Home() {
               </a>
 
               <a
-                href="https://line.me"
+                href={socialLinks[2].href}
                 className="cta-banner-button"
                 target="_blank"
                 rel="noreferrer"
@@ -962,7 +953,7 @@ export default function Home() {
                 </span>
               </a>
 
-              <a href="tel:+66819512297" className="cta-banner-button">
+              <a href={siteConfig.phoneHref} className="cta-banner-button">
                 <span className="cta-banner-icon">
                   <Icon name="phone" className="size-6" />
                 </span>
@@ -990,7 +981,7 @@ export default function Home() {
               </p>
 
               <div className="mt-10 grid gap-4">
-                <a href="tel:+66819512297" className="contact-info-row group">
+                <a href={siteConfig.phoneHref} className="contact-info-row group">
                   <span className="icon-medallion shrink-0">
                     <Icon name="phone" className="size-6" />
                   </span>
@@ -998,10 +989,10 @@ export default function Home() {
                     <span className="block text-sm font-extrabold uppercase tracking-[0.18em] text-[#f6d97b]">
                       Phone
                     </span>
-                    <span className="mt-1 block text-2xl font-extrabold">081-9512-297</span>
+                    <span className="mt-1 block text-2xl font-extrabold">{siteConfig.phoneDisplay}</span>
                   </span>
                 </a>
-                <a href="mailto:34buildmaster@gmail.com" className="contact-info-row group">
+                <a href={`mailto:${siteConfig.email}`} className="contact-info-row group">
                   <span className="icon-medallion shrink-0">
                     <Icon name="mail" className="size-6" />
                   </span>
@@ -1010,7 +1001,7 @@ export default function Home() {
                       Email
                     </span>
                     <span className="mt-1 block break-all text-xl font-extrabold">
-                      34buildmaster@gmail.com
+                      {siteConfig.email}
                     </span>
                   </span>
                 </a>
@@ -1032,7 +1023,7 @@ export default function Home() {
           </div>
 
           <form
-            action="mailto:34buildmaster@gmail.com"
+          action={`mailto:${siteConfig.email}`}
             className="section-card border border-[#f6d97b]/30 bg-[#fbf7ec]/95 p-6 text-[#112416] shadow-[0_36px_120px_rgba(0,0,0,0.18)] backdrop-blur md:p-8"
             encType="text/plain"
             method="post"
@@ -1105,13 +1096,13 @@ export default function Home() {
       </section>
 
       <div className="floating-contact" aria-label="ช่องทางติดต่อด่วน">
-        <a href="tel:+66819512297" aria-label="โทรหา 34 Build Master Construction">
+        <a href={siteConfig.phoneHref} aria-label="โทรหา 34 Build Master Construction">
           <Icon name="phone" className="size-5" />
         </a>
-        <a href="https://line.me" aria-label="ติดต่อผ่าน LINE OA" target="_blank" rel="noreferrer">
+        <a href={socialLinks[2].href} aria-label="ติดต่อผ่าน LINE OA" target="_blank" rel="noreferrer">
           <Icon name="line" className="size-5" />
         </a>
-        <a href="https://facebook.com" aria-label="ติดต่อผ่าน Facebook" target="_blank" rel="noreferrer">
+        <a href={socialLinks[0].href} aria-label="ติดต่อผ่าน Facebook" target="_blank" rel="noreferrer">
           <Icon name="facebook" className="size-5" />
         </a>
       </div>
@@ -1196,14 +1187,14 @@ export default function Home() {
             <ul className="mt-4 space-y-4 text-white/72">
               <li className="flex gap-3">
                 <Icon name="phone" className="mt-1 size-5 shrink-0 text-[#f6d97b]" />
-                <a className="footer-link" href="tel:+66819512297">
-                  081-9512-297
+                <a className="footer-link" href={siteConfig.phoneHref}>
+                  {siteConfig.phoneDisplay}
                 </a>
               </li>
               <li className="flex gap-3">
                 <Icon name="mail" className="mt-1 size-5 shrink-0 text-[#f6d97b]" />
-                <a className="footer-link break-all" href="mailto:34buildmaster@gmail.com">
-                  34buildmaster@gmail.com
+                <a className="footer-link break-all" href={`mailto:${siteConfig.email}`}>
+                  {siteConfig.email}
                 </a>
               </li>
               <li className="flex gap-3">

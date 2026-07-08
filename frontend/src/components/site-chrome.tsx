@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { assetPath } from "@/lib/asset-path";
+import { primaryPages, siteConfig, socialLinks } from "@/lib/site-config";
 
 type IconName = "phone" | "mail" | "location" | "send" | "facebook" | "instagram" | "line" | "tiktok";
 
@@ -73,19 +74,9 @@ function Icon({ name, className = "" }: { name: IconName; className?: string }) 
   );
 }
 
-const socialLinks = [
-  { label: "Facebook", href: "https://facebook.com", icon: "facebook" as const },
-  { label: "Instagram", href: "https://instagram.com", icon: "instagram" as const },
-  { label: "Line", href: "https://line.me", icon: "line" as const },
-  { label: "TikTok", href: "https://tiktok.com", icon: "tiktok" as const },
-];
-
 const serviceLinks = ["ออกแบบบ้าน", "รีโนเวทบ้าน", "สร้างบ้าน", "บิวท์อิน"];
 const navLinks = [
-  { href: "/", label: "หน้าหลัก" },
-  { href: "/about", label: "เกี่ยวกับเรา" },
-  { href: "/services", label: "บริการ" },
-  { href: "/blog", label: "บทความ" },
+  ...primaryPages.slice(0, 4).map((item) => ({ href: item.path, label: item.label })),
   { href: "/#updates", label: "อัปเดตงาน" },
   { href: "/contact", label: "ติดต่อ" },
 ];
@@ -175,7 +166,7 @@ export function SiteHeader() {
         </div>
 
         <a
-          href="tel:+66819512297"
+          href={siteConfig.phoneHref}
           className="gold-button hidden min-h-11 items-center justify-center gap-2 px-4 text-base font-extrabold text-[#112416] sm:inline-flex"
         >
           <Icon name="phone" className="size-4" />
@@ -212,7 +203,7 @@ export function SiteHeader() {
                   <Icon name={social.icon} className="size-4" />
                 </a>
               ))}
-              <a href="tel:+66819512297" className="gold-button inline-flex min-h-10 items-center justify-center gap-2 px-4 text-sm font-extrabold text-[#112416]">
+              <a href={siteConfig.phoneHref} className="gold-button inline-flex min-h-10 items-center justify-center gap-2 px-4 text-sm font-extrabold text-[#112416]">
                 <Icon name="phone" className="size-4" />
                 โทร
               </a>
@@ -228,7 +219,7 @@ export function ContactForm() {
   return (
     <form
       className="luxe-card grid gap-5 p-7 md:p-8"
-      action="mailto:34buildmaster@gmail.com"
+      action={`mailto:${siteConfig.email}`}
       method="post"
       encType="text/plain"
     >
@@ -280,22 +271,22 @@ export function ContactBand() {
             </p>
 
             <div className="mt-10 grid gap-4">
-              <a href="tel:+66819512297" className="contact-info-row group">
+              <a href={siteConfig.phoneHref} className="contact-info-row group">
                 <span className="icon-medallion shrink-0">
                   <Icon name="phone" className="size-6" />
                 </span>
                 <span>
                   <span className="block text-sm font-extrabold uppercase tracking-[0.18em] text-[#f6d97b]">Phone</span>
-                  <span className="mt-1 block text-2xl font-extrabold">081-9512-297</span>
+                  <span className="mt-1 block text-2xl font-extrabold">{siteConfig.phoneDisplay}</span>
                 </span>
               </a>
-              <a href="mailto:34buildmaster@gmail.com" className="contact-info-row group">
+              <a href={`mailto:${siteConfig.email}`} className="contact-info-row group">
                 <span className="icon-medallion shrink-0">
                   <Icon name="mail" className="size-6" />
                 </span>
                 <span>
                   <span className="block text-sm font-extrabold uppercase tracking-[0.18em] text-[#f6d97b]">Email</span>
-                  <span className="mt-1 block break-all text-xl font-extrabold">34buildmaster@gmail.com</span>
+                  <span className="mt-1 block break-all text-xl font-extrabold">{siteConfig.email}</span>
                 </span>
               </a>
             </div>
@@ -390,19 +381,19 @@ export function SiteFooter() {
           <ul className="mt-4 space-y-4 text-white/72">
             <li className="flex gap-3">
               <Icon name="phone" className="mt-1 size-5 shrink-0 text-[#f6d97b]" />
-              <a className="footer-link" href="tel:+66819512297">
-                081-9512-297
+              <a className="footer-link" href={siteConfig.phoneHref}>
+                {siteConfig.phoneDisplay}
               </a>
             </li>
             <li className="flex gap-3">
               <Icon name="mail" className="mt-1 size-5 shrink-0 text-[#f6d97b]" />
-              <a className="footer-link break-all" href="mailto:34buildmaster@gmail.com">
-                34buildmaster@gmail.com
+              <a className="footer-link break-all" href={`mailto:${siteConfig.email}`}>
+                {siteConfig.email}
               </a>
             </li>
             <li className="flex gap-3">
               <Icon name="location" className="mt-1 size-5 shrink-0 text-[#f6d97b]" />
-              <span>เชียงใหม่ และพื้นที่ใกล้เคียง</span>
+              <span>{siteConfig.area}</span>
             </li>
           </ul>
         </div>

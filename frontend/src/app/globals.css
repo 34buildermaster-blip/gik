@@ -1577,17 +1577,52 @@ html {
   .faq-intro-panel {
     position: relative;
     top: auto;
+    padding: 1.2rem;
   }
 
   .faq-accordion summary {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: auto 1fr auto;
+    gap: 0.75rem;
+    padding: 1rem 1rem 1rem 1.15rem;
   }
 
   .faq-count {
-    grid-column: 1 / -1;
+    width: 2.35rem;
+    height: 2.35rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+  }
+
+  .faq-question {
+    font-size: 1.08rem;
+    line-height: 1.45;
+  }
+
+  .faq-toggle {
+    width: 2.15rem;
+    height: 2.15rem;
+  }
+
+  .faq-toggle::before,
+  .faq-toggle::after {
+    width: 0.72rem;
   }
 
   .faq-answer {
-    padding-left: 1.35rem;
+    padding: 0 1rem 1.15rem 1.15rem;
+    font-size: 1rem;
+    line-height: 1.75;
+  }
+
+  .faq-answer p {
+    padding-top: 0.85rem;
+  }
+
+  .faq-mini-stat {
+    padding: 0.75rem 0.9rem;
+  }
+
+  .faq-luxe-section {
+    background-position: center top;
   }
 }

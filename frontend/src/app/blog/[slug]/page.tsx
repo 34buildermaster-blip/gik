@@ -5,12 +5,22 @@ import { notFound } from "next/navigation";
 import { ContactBand, PageHero, SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { blogPosts } from "@/data/blog";
 import { getIntegratedBlogPost, getIntegratedBlogPosts } from "@/lib/blog-api";
+import { siteConfig } from "@/lib/site-config";
 
 type BlogDetailProps = {
   params: Promise<{
     slug: string;
   }>;
 };
+
+function absoluteAssetUrl(src: string) {
+  if (/^https?:\/\//.test(src)) {
+    return src;
+  }
+
+  const assetWithoutBasePath = src.replace(/^\/gik(?=\/)/, "").replace(/^\//, "");
+  return `${siteConfig.siteUrl}/${assetWithoutBasePath}`;
+}
 
 export async function generateStaticParams() {
   const posts = await getIntegratedBlogPosts();
@@ -29,15 +39,27 @@ export async function generateMetadata({ params }: BlogDetailProps): Promise<Met
     };
   }
 
+  const imageUrl = absoluteAssetUrl(post.image);
+
   return {
-    title: `${post.seo?.title || post.title} | 34 Build Master Construction`,
+    title: post.seo?.title || post.title,
     description: post.seo?.description || post.excerpt,
+    alternates: {
+      canonical: `${siteConfig.siteUrl}/blog/${post.slug}`,
+    },
     openGraph: {
       title: post.title,
       description: post.excerpt,
-      images: [post.image],
+      url: `${siteConfig.siteUrl}/blog/${post.slug}`,
+      images: [imageUrl],
       type: "article",
       locale: "th_TH",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.seo?.description || post.excerpt,
+      images: [imageUrl],
     },
   };
 }
@@ -52,12 +74,14 @@ export default async function BlogDetailPage({ params }: BlogDetailProps) {
 
   const allPosts = await getIntegratedBlogPosts();
   const relatedPosts = allPosts.filter((item) => item.slug !== post.slug).slice(0, 2);
+  const imageUrl = absoluteAssetUrl(post.image);
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: post.title,
     description: post.excerpt,
-    image: post.image,
+    image: imageUrl,
+    mainEntityOfPage: `${siteConfig.siteUrl}/blog/${post.slug}`,
     author: {
       "@type": "Organization",
       name: "34 Build Master Construction",
