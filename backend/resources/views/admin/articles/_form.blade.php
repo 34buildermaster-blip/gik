@@ -39,6 +39,23 @@
                         <option value="h3">หัวข้อรอง</option>
                         <option value="h4">หัวข้อย่อย</option>
                     </select>
+                    <select class="toolbar-font-select" data-font-family title="แบบฟอนต์">
+                        <option value="">Font</option>
+                        <option value="'Prompt', sans-serif">Prompt</option>
+                        <option value="'Tahoma', sans-serif">Tahoma</option>
+                        <option value="'Arial', sans-serif">Arial</option>
+                        <option value="'Georgia', serif">Georgia</option>
+                    </select>
+                    <select class="toolbar-size-select" data-font-size title="ขนาดตัวอักษร">
+                        <option value="">Size</option>
+                        <option value="14px">14</option>
+                        <option value="16px">16</option>
+                        <option value="18px">18</option>
+                        <option value="20px">20</option>
+                        <option value="24px">24</option>
+                        <option value="30px">30</option>
+                        <option value="36px">36</option>
+                    </select>
                     <button type="button" data-command="bold" title="ตัวหนา" aria-label="ตัวหนา"><strong aria-hidden="true">B</strong></button>
                     <button type="button" data-command="italic" title="ตัวเอียง" aria-label="ตัวเอียง"><em aria-hidden="true">I</em></button>
                     <button type="button" data-command="underline" title="ขีดเส้นใต้" aria-label="ขีดเส้นใต้"><u aria-hidden="true">U</u></button>
@@ -97,7 +114,7 @@
                 <div class="rich-canvas" contenteditable="true" data-editor-canvas>{!! old('content', $article->content) !!}</div>
                 <textarea id="content" name="content" required hidden>{{ old('content', $article->content) }}</textarea>
             </div>
-            <p class="muted" style="margin: 0;">รองรับไฟล์ .md, หัวข้อ รายการ ลิงก์ ตาราง รูปภาพ วิดีโอ สีตัวอักษร และรูปแบบ HTML สำหรับบทความ SEO</p>
+            <p class="muted" style="margin: 0;">รองรับไฟล์ .md, หัวข้อ ฟอนต์ ขนาดตัวอักษร รายการ ลิงก์ ตาราง รูปภาพ วิดีโอ สีตัวอักษร และรูปแบบ HTML สำหรับบทความ SEO</p>
         </div>
 
         <div class="field">
@@ -154,8 +171,60 @@
         const videoUploadButton = editor.querySelector('[data-upload-video]');
         let sourceMode = false;
 
+        const fontSizeMap = {
+            1: '12px',
+            2: '14px',
+            3: '16px',
+            4: '18px',
+            5: '24px',
+            6: '30px',
+            7: '36px',
+        };
+
+        const normalizeEditorHtml = (html) => {
+            const wrapper = document.createElement('div');
+            wrapper.innerHTML = html;
+
+            wrapper.querySelectorAll('font').forEach((font) => {
+                const span = document.createElement('span');
+                const styles = [];
+                const existingStyle = font.getAttribute('style');
+                const face = font.getAttribute('face');
+                const color = font.getAttribute('color');
+                const size = font.getAttribute('size');
+
+                if (existingStyle) {
+                    styles.push(existingStyle.replace(/;$/, ''));
+                }
+
+                if (face) {
+                    styles.push(`font-family: ${face}`);
+                }
+
+                if (color) {
+                    styles.push(`color: ${color}`);
+                }
+
+                if (size && fontSizeMap[size]) {
+                    styles.push(`font-size: ${fontSizeMap[size]}`);
+                }
+
+                if (styles.length > 0) {
+                    span.setAttribute('style', styles.join('; '));
+                }
+
+                while (font.firstChild) {
+                    span.appendChild(font.firstChild);
+                }
+
+                font.replaceWith(span);
+            });
+
+            return wrapper.innerHTML;
+        };
+
         const sync = () => {
-            textarea.value = sourceMode ? canvas.textContent : canvas.innerHTML;
+            textarea.value = sourceMode ? canvas.textContent : normalizeEditorHtml(canvas.innerHTML);
         };
         const escapeAttribute = (value) => value
             .replaceAll('&', '&amp;')
@@ -164,6 +233,50 @@
             .replaceAll('>', '&gt;');
 
         const focusCanvas = () => canvas.focus();
+        const selectionIsInsideCanvas = () => {
+            const selection = window.getSelection();
+
+            if (!selection || selection.rangeCount === 0) {
+                return false;
+            }
+
+            const range = selection.getRangeAt(0);
+
+            return canvas.contains(range.commonAncestorContainer);
+        };
+        const applyInlineStyle = (style) => {
+            if (sourceMode) {
+                window.alert('กรุณาปิดโหมด HTML ก่อนปรับรูปแบบข้อความ');
+                return;
+            }
+
+            focusCanvas();
+
+            if (!selectionIsInsideCanvas()) {
+                window.alert('เลือกข้อความในบทความก่อนปรับฟอนต์หรือขนาดตัวอักษร');
+                return;
+            }
+
+            const selection = window.getSelection();
+            const range = selection.getRangeAt(0);
+            const span = document.createElement('span');
+            span.setAttribute('style', style);
+
+            if (range.collapsed) {
+                span.appendChild(document.createTextNode('\u200b'));
+                range.insertNode(span);
+                range.setStart(span.firstChild, 1);
+                range.setEnd(span.firstChild, 1);
+            } else {
+                span.appendChild(range.extractContents());
+                range.insertNode(span);
+                range.selectNodeContents(span);
+            }
+
+            selection.removeAllRanges();
+            selection.addRange(range);
+            sync();
+        };
         const insertHtml = (html) => {
             focusCanvas();
             document.execCommand('insertHTML', false, html);
@@ -305,6 +418,24 @@
             focusCanvas();
             document.execCommand('formatBlock', false, event.target.value);
             sync();
+        });
+
+        editor.querySelector('[data-font-family]')?.addEventListener('change', (event) => {
+            const fontFamily = event.target.value;
+
+            if (fontFamily) {
+                applyInlineStyle(`font-family: ${fontFamily}`);
+                event.target.value = '';
+            }
+        });
+
+        editor.querySelector('[data-font-size]')?.addEventListener('change', (event) => {
+            const fontSize = event.target.value;
+
+            if (fontSize) {
+                applyInlineStyle(`font-size: ${fontSize}`);
+                event.target.value = '';
+            }
         });
 
         editor.querySelector('[data-link]')?.addEventListener('click', () => {

@@ -242,6 +242,12 @@
             width: 42px;
             padding: 4px;
         }
+        .rich-toolbar .toolbar-font-select {
+            min-width: 132px;
+        }
+        .rich-toolbar .toolbar-size-select {
+            min-width: 78px;
+        }
         .rich-toolbar button:hover,
         .rich-toolbar button.is-active,
         .rich-toolbar select:hover {
