@@ -233,16 +233,23 @@
             .replaceAll('>', '&gt;');
 
         const focusCanvas = () => canvas.focus();
-        const selectionIsInsideCanvas = () => {
+        const getCanvasSelection = () => {
             const selection = window.getSelection();
 
             if (!selection || selection.rangeCount === 0) {
-                return false;
+                return null;
             }
 
             const range = selection.getRangeAt(0);
 
-            return canvas.contains(range.commonAncestorContainer);
+            if (!canvas.contains(range.commonAncestorContainer)) {
+                return null;
+            }
+
+            return { selection, range };
+        };
+        const selectionIsInsideCanvas = () => {
+            return getCanvasSelection() !== null;
         };
         const applyInlineStyle = (style) => {
             if (sourceMode) {
@@ -280,6 +287,95 @@
         const insertHtml = (html) => {
             focusCanvas();
             document.execCommand('insertHTML', false, html);
+            sync();
+        };
+        const getSelectedPlainText = (range) => {
+            const wrapper = document.createElement('div');
+            wrapper.appendChild(range.cloneContents());
+
+            wrapper.querySelectorAll('br').forEach((br) => br.replaceWith('\n'));
+            wrapper.querySelectorAll('p, div, li, tr, h2, h3, h4').forEach((element) => {
+                element.appendChild(document.createTextNode('\n'));
+            });
+
+            return wrapper.textContent
+                .replace(/\u00a0/g, ' ')
+                .replace(/\r/g, '')
+                .replace(/\n{3,}/g, '\n\n')
+                .trim();
+        };
+        const splitTableLine = (line, delimiter) => {
+            if (delimiter === 'pipe') {
+                return line.replace(/^\s*\|/, '').replace(/\|\s*$/, '').split('|');
+            }
+
+            if (delimiter === 'tab') {
+                return line.split('\t');
+            }
+
+            if (delimiter === 'comma') {
+                return line.split(',');
+            }
+
+            return line.split(/\s{2,}/);
+        };
+        const parseSelectedTableRows = (text) => {
+            const lines = text
+                .split('\n')
+                .map((line) => line.trim())
+                .filter(Boolean);
+
+            if (lines.length === 0) {
+                return [];
+            }
+
+            const delimiter = lines.some((line) => line.includes('\t'))
+                ? 'tab'
+                : lines.some((line) => line.includes('|'))
+                    ? 'pipe'
+                    : lines.some((line) => line.includes(','))
+                        ? 'comma'
+                        : 'spaces';
+
+            const rows = lines
+                .map((line) => splitTableLine(line, delimiter)
+                    .map((cell) => cell.trim())
+                    .filter((cell) => cell.length > 0))
+                .filter((row) => !row.every((cell) => /^:?-{3,}:?$/.test(cell)))
+                .filter((row) => row.length > 0);
+
+            const maxColumns = Math.max(...rows.map((row) => row.length));
+
+            if (rows.length < 2 && maxColumns < 2) {
+                return [];
+            }
+
+            return rows.map((row) => {
+                while (row.length < maxColumns) {
+                    row.push('');
+                }
+
+                return row;
+            });
+        };
+        const buildTableHtml = (rows) => {
+            let html = '<table><tbody>';
+
+            rows.forEach((row, rowIndex) => {
+                html += '<tr>';
+                row.forEach((cell) => {
+                    const safeCell = escapeAttribute(cell);
+                    html += rowIndex === 0 ? `<th>${safeCell}</th>` : `<td>${safeCell}</td>`;
+                });
+                html += '</tr>';
+            });
+
+            return `${html}</tbody></table><p><br></p>`;
+        };
+        const replaceSelectionWithHtml = (range, html) => {
+            const fragment = range.createContextualFragment(html);
+            range.deleteContents();
+            range.insertNode(fragment);
             sync();
         };
         const uploadMedia = async (input, button) => {
@@ -467,7 +563,22 @@
         imageInput?.addEventListener('change', () => uploadMedia(imageInput, imageUploadButton));
         videoInput?.addEventListener('change', () => uploadMedia(videoInput, videoUploadButton));
 
+        editor.querySelector('[data-table]')?.addEventListener('mousedown', (event) => {
+            event.preventDefault();
+        });
+
         editor.querySelector('[data-table]')?.addEventListener('click', () => {
+            const activeSelection = getCanvasSelection();
+            const selectedText = activeSelection && !activeSelection.range.collapsed
+                ? getSelectedPlainText(activeSelection.range)
+                : '';
+            const selectedRows = parseSelectedTableRows(selectedText);
+
+            if (selectedRows.length > 0 && activeSelection) {
+                replaceSelectionWithHtml(activeSelection.range, buildTableHtml(selectedRows));
+                return;
+            }
+
             focusCanvas();
             const rows = Math.min(Math.max(parseInt(window.prompt('จำนวนแถว', '4') || '4', 10), 1), 12);
             const cols = Math.min(Math.max(parseInt(window.prompt('จำนวนคอลัมน์', '4') || '4', 10), 1), 8);
