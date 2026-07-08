@@ -367,11 +367,17 @@ html {
   background: rgba(253, 240, 163, 0.16);
 }
 
-.article-content img {
+.article-content img,
+.article-content video {
   width: 100%;
   height: auto;
   border-radius: 1.4rem;
   box-shadow: 0 24px 80px rgba(17, 36, 22, 0.14);
+}
+
+.article-content video {
+  aspect-ratio: 16 / 9;
+  background: var(--dark-green);
 }
 
 .footer-heading {

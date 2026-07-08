@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Article;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -85,6 +86,38 @@ class ArticleController extends Controller
             ->with('success', 'ลบบทความเรียบร้อยแล้ว');
     }
 
+    public function uploadMedia(Request $request): JsonResponse
+    {
+        $request->validate([
+            'media' => [
+                'required',
+                'file',
+                'max:102400',
+                'mimetypes:image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime',
+            ],
+        ]);
+
+        $file = $request->file('media');
+        $directory = public_path('uploads/article-media');
+        File::ensureDirectoryExists($directory);
+
+        $name = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        $extension = $file->getClientOriginalExtension() ?: $file->guessExtension() ?: 'bin';
+        $filename = now()->format('YmdHis').'-'.Str::slug($name).'-'.Str::random(8).'.'.$extension;
+        $mimeType = $file->getMimeType() ?: '';
+        $file->move($directory, $filename);
+
+        $path = "uploads/article-media/{$filename}";
+
+        return response()->json([
+            'url' => url($path),
+            'path' => $path,
+            'type' => Str::startsWith($mimeType, 'video/') ? 'video' : 'image',
+            'mimeType' => $mimeType,
+            'name' => $name ?: 'media',
+        ]);
+    }
+
     private function validatedData(Request $request): array
     {
         return $request->validate([
@@ -119,7 +152,7 @@ class ArticleController extends Controller
 
     private function cleanContent(string $content): string
     {
-        $allowedTags = '<p><br><strong><b><em><i><u><s><span><h2><h3><h4><ul><ol><li><blockquote><a><figure><figcaption><img><table><thead><tbody><tr><th><td><hr>';
+        $allowedTags = '<p><br><strong><b><em><i><u><s><span><h2><h3><h4><ul><ol><li><blockquote><a><figure><figcaption><img><video><source><table><thead><tbody><tr><th><td><hr>';
 
         $content = strip_tags($content, $allowedTags);
         $content = preg_replace('/\s+on\w+="[^"]*"/i', '', $content) ?? $content;

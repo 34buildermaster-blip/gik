@@ -48,16 +48,20 @@
                     <button type="button" data-command="insertOrderedList" title="Number list">1. List</button>
                     <button type="button" data-command="formatBlock" data-value="blockquote" title="Quote">Quote</button>
                     <button type="button" data-link title="ใส่ลิงก์">Link</button>
-                    <button type="button" data-image title="ใส่รูปจาก URL">Image</button>
+                    <button type="button" data-upload-image title="อัปโหลดรูปจากเครื่อง">Upload Image</button>
+                    <button type="button" data-upload-video title="อัปโหลดวิดีโอจากเครื่อง">Upload Video</button>
+                    <button type="button" data-image title="ใส่รูปจาก URL">Image URL</button>
                     <button type="button" data-table title="เพิ่มตาราง">Table</button>
                     <button type="button" data-command="insertHorizontalRule" title="เส้นคั่น">HR</button>
                     <button type="button" data-command="removeFormat" title="ล้างรูปแบบ">Clear</button>
                     <button type="button" data-source-toggle title="ดู HTML">HTML</button>
                 </div>
+                <input type="file" data-media-input="image" accept="image/*" hidden>
+                <input type="file" data-media-input="video" accept="video/mp4,video/webm,video/quicktime" hidden>
                 <div class="rich-canvas" contenteditable="true" data-editor-canvas>{!! old('content', $article->content) !!}</div>
                 <textarea id="content" name="content" required hidden>{{ old('content', $article->content) }}</textarea>
             </div>
-            <p class="muted" style="margin: 0;">รองรับหัวข้อ รายการ ลิงก์ ตาราง สีตัวอักษร และรูปแบบ HTML สำหรับบทความ SEO</p>
+            <p class="muted" style="margin: 0;">รองรับหัวข้อ รายการ ลิงก์ ตาราง รูปภาพ วิดีโอ สีตัวอักษร และรูปแบบ HTML สำหรับบทความ SEO</p>
         </div>
 
         <div class="field">
@@ -100,6 +104,12 @@
         const canvas = editor.querySelector('[data-editor-canvas]');
         const textarea = editor.querySelector('textarea[name="content"]');
         const sourceButton = editor.querySelector('[data-source-toggle]');
+        const uploadUrl = @json(route('admin.articles.media'));
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        const imageInput = editor.querySelector('[data-media-input="image"]');
+        const videoInput = editor.querySelector('[data-media-input="video"]');
+        const imageUploadButton = editor.querySelector('[data-upload-image]');
+        const videoUploadButton = editor.querySelector('[data-upload-video]');
         let sourceMode = false;
 
         const sync = () => {
@@ -112,6 +122,62 @@
             .replaceAll('>', '&gt;');
 
         const focusCanvas = () => canvas.focus();
+        const insertHtml = (html) => {
+            focusCanvas();
+            document.execCommand('insertHTML', false, html);
+            sync();
+        };
+        const uploadMedia = async (input, button) => {
+            if (sourceMode) {
+                window.alert('กรุณาปิดโหมด HTML ก่อนอัปโหลดไฟล์');
+                input.value = '';
+                return;
+            }
+
+            const file = input.files?.[0];
+
+            if (!file) {
+                return;
+            }
+
+            const originalText = button.textContent;
+            const formData = new FormData();
+            formData.append('media', file);
+            button.disabled = true;
+            button.textContent = 'Uploading...';
+
+            try {
+                const response = await fetch(uploadUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    throw new Error('Upload failed');
+                }
+
+                const media = await response.json();
+                const safeUrl = escapeAttribute(media.url || '');
+                const safeName = escapeAttribute(media.name || file.name || 'media');
+                const safeMimeType = escapeAttribute(media.mimeType || file.type || '');
+
+                if (media.type === 'video') {
+                    insertHtml(`<figure><video controls preload="metadata"><source src="${safeUrl}" type="${safeMimeType}">เบราว์เซอร์ไม่รองรับวิดีโอ</video><figcaption>${safeName}</figcaption></figure><p><br></p>`);
+                } else {
+                    insertHtml(`<figure><img src="${safeUrl}" alt="${safeName}"><figcaption>${safeName}</figcaption></figure><p><br></p>`);
+                }
+            } catch (error) {
+                window.alert('อัปโหลดไฟล์ไม่สำเร็จ กรุณาตรวจสอบชนิดไฟล์หรือขนาดไฟล์แล้วลองใหม่');
+            } finally {
+                input.value = '';
+                button.disabled = false;
+                button.textContent = originalText;
+            }
+        };
 
         editor.querySelectorAll('[data-command]').forEach((button) => {
             button.addEventListener('click', () => {
@@ -153,10 +219,14 @@
                 const alt = window.prompt('คำอธิบายรูปภาพ', '') || '';
                 const safeUrl = escapeAttribute(url);
                 const safeAlt = escapeAttribute(alt);
-                document.execCommand('insertHTML', false, `<figure><img src="${safeUrl}" alt="${safeAlt}"><figcaption>${safeAlt}</figcaption></figure><p><br></p>`);
-                sync();
+                insertHtml(`<figure><img src="${safeUrl}" alt="${safeAlt}"><figcaption>${safeAlt}</figcaption></figure><p><br></p>`);
             }
         });
+
+        imageUploadButton?.addEventListener('click', () => imageInput?.click());
+        videoUploadButton?.addEventListener('click', () => videoInput?.click());
+        imageInput?.addEventListener('change', () => uploadMedia(imageInput, imageUploadButton));
+        videoInput?.addEventListener('change', () => uploadMedia(videoInput, videoUploadButton));
 
         editor.querySelector('[data-table]')?.addEventListener('click', () => {
             focusCanvas();

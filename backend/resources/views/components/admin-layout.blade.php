@@ -5,6 +5,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -241,10 +242,15 @@
         .rich-canvas figure {
             margin: 22px 0;
         }
-        .rich-canvas figure img {
+        .rich-canvas figure img,
+        .rich-canvas figure video {
             width: 100%;
             border-radius: 16px;
             box-shadow: 0 18px 58px rgba(17, 36, 22, .12);
+        }
+        .rich-canvas figure video {
+            background: #112416;
+            aspect-ratio: 16 / 9;
         }
         .rich-canvas figcaption {
             margin-top: 8px;
