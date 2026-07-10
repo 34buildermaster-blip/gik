@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { projectUpdates } from "@/data/project-updates";
 import { assetPath, sitePath } from "@/lib/asset-path";
 import { siteConfig, socialLinks } from "@/lib/site-config";
 
@@ -315,27 +316,6 @@ const faqs = [
   },
 ];
 
-const projectUpdates = [
-  {
-    title: "ตรวจหน้างานรีโนเวทบ้านพักอาศัย",
-    stage: "Site Survey",
-    detail: "อัปเดตพื้นที่จริง วัดระยะ และเช็กจุดสำคัญก่อนจัดแผนงาน",
-    image: assetPath("/hero-construction.png"),
-  },
-  {
-    title: "เลือกวัสดุและโทนงานบิวท์อิน",
-    stage: "Material Review",
-    detail: "คุมโทนสี วัสดุ และรายละเอียดผิวให้ตรงกับภาพรวมบ้าน",
-    image: assetPath("/bg-material-board.png"),
-  },
-  {
-    title: "สรุป mood งาน luxury modern",
-    stage: "Design Direction",
-    detail: "จัดทิศทางดีไซน์ให้หรู เรียบ และต่อยอดเป็นงานจริงได้",
-    image: assetPath("/bg-luxury-green.png"),
-  },
-];
-
 const beforeAfterCases = [
   {
     title: "รีโนเวทพื้นที่พักอาศัยให้โปร่งและใช้งานดีขึ้น",
@@ -380,7 +360,7 @@ const homeNavLinks = [
   { href: sitePath("/about"), label: "เกี่ยวกับเรา" },
   { href: sitePath("/services"), label: "บริการ" },
   { href: sitePath("/blog"), label: "บทความ" },
-  { href: "#updates", label: "อัปเดตงาน" },
+  { href: sitePath("/updates"), label: "อัปเดตงาน" },
   { href: sitePath("/contact"), label: "ติดต่อ" },
 ];
 
@@ -681,11 +661,11 @@ export default function Home() {
               </p>
             </div>
             <a
-              href={sitePath("/contact")}
+              href={sitePath("/updates")}
               className="gold-button inline-flex min-h-12 items-center justify-center gap-2 px-7 text-base font-extrabold text-[#112416]"
             >
               <Icon name="send" className="size-5" />
-              ส่งรูปงานให้ประเมิน
+              ดูอัปเดตงานทั้งหมด
             </a>
           </div>
 
@@ -1165,7 +1145,7 @@ export default function Home() {
                 </a>
               </li>
               <li>
-                <a className="footer-link" href="#updates">
+                <a className="footer-link" href={sitePath("/updates")}>
                   อัปเดตงาน
                 </a>
               </li>

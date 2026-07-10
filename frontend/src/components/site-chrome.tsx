@@ -77,7 +77,7 @@ function Icon({ name, className = "" }: { name: IconName; className?: string }) 
 const serviceLinks = ["ออกแบบบ้าน", "รีโนเวทบ้าน", "สร้างบ้าน", "บิวท์อิน"];
 const navLinks = [
   ...primaryPages.slice(0, 4).map((item) => ({ href: item.path, label: item.label })),
-  { href: "/#updates", label: "อัปเดตงาน" },
+  { href: "/updates", label: "อัปเดตงาน" },
   { href: "/contact", label: "ติดต่อ" },
 ];
 
@@ -354,7 +354,7 @@ export function SiteFooter() {
               </Link>
             </li>
             <li>
-              <Link className="footer-link" href="/#updates">
+              <Link className="footer-link" href="/updates">
                 อัปเดตงาน
               </Link>
             </li>
