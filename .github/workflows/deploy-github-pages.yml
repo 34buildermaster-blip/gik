@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - FontEnd
+      - Integration
   workflow_dispatch:
 
 permissions:
