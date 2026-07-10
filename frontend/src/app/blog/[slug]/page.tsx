@@ -3,7 +3,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ContactBand, PageHero, SiteFooter, SiteHeader } from "@/components/site-chrome";
-import { blogPosts, getBlogPost } from "@/data/blog";
+import { blogPosts } from "@/data/blog";
+import { getIntegratedBlogPost, getIntegratedBlogPosts } from "@/lib/blog-api";
+import { siteConfig } from "@/lib/site-config";
 
 type BlogDetailProps = {
   params: Promise<{
@@ -11,13 +13,25 @@ type BlogDetailProps = {
   }>;
 };
 
-export function generateStaticParams() {
-  return blogPosts.map((post) => ({ slug: post.slug }));
+function absoluteAssetUrl(src: string) {
+  if (/^https?:\/\//.test(src)) {
+    return src;
+  }
+
+  const assetWithoutBasePath = src.replace(/^\/gik(?=\/)/, "").replace(/^\//, "");
+  return `${siteConfig.siteUrl}/${assetWithoutBasePath}`;
+}
+
+export async function generateStaticParams() {
+  const posts = await getIntegratedBlogPosts();
+  const slugs = new Set([...blogPosts.map((post) => post.slug), ...posts.map((post) => post.slug)]);
+
+  return Array.from(slugs).map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: BlogDetailProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = getBlogPost(slug);
+  const post = await getIntegratedBlogPost(slug);
 
   if (!post) {
     return {
@@ -25,34 +39,49 @@ export async function generateMetadata({ params }: BlogDetailProps): Promise<Met
     };
   }
 
+  const imageUrl = absoluteAssetUrl(post.image);
+
   return {
-    title: `${post.title} | 34 Build Master Construction`,
-    description: post.excerpt,
+    title: post.seo?.title || post.title,
+    description: post.seo?.description || post.excerpt,
+    alternates: {
+      canonical: `${siteConfig.siteUrl}/blog/${post.slug}`,
+    },
     openGraph: {
       title: post.title,
       description: post.excerpt,
-      images: [post.image],
+      url: `${siteConfig.siteUrl}/blog/${post.slug}`,
+      images: [imageUrl],
       type: "article",
       locale: "th_TH",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.seo?.description || post.excerpt,
+      images: [imageUrl],
     },
   };
 }
 
 export default async function BlogDetailPage({ params }: BlogDetailProps) {
   const { slug } = await params;
-  const post = getBlogPost(slug);
+  const post = await getIntegratedBlogPost(slug);
 
   if (!post) {
     notFound();
   }
 
-  const relatedPosts = blogPosts.filter((item) => item.slug !== post.slug).slice(0, 2);
+  const allPosts = await getIntegratedBlogPosts();
+  const relatedPosts = allPosts.filter((item) => item.slug !== post.slug).slice(0, 2);
+  const imageUrl = absoluteAssetUrl(post.image);
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: post.title,
     description: post.excerpt,
-    image: post.image,
+    image: imageUrl,
+    mainEntityOfPage: `${siteConfig.siteUrl}/blog/${post.slug}`,
     author: {
       "@type": "Organization",
       name: "34 Build Master Construction",
@@ -97,14 +126,18 @@ export default async function BlogDetailPage({ params }: BlogDetailProps) {
               />
             </div>
 
-            <div className="grid gap-10">
-              {post.content.map((section) => (
-                <section key={section.heading}>
-                  <h2 className="text-3xl font-extrabold leading-tight text-[#053920] md:text-4xl">{section.heading}</h2>
-                  <p className="mt-4 text-xl leading-9 text-[#4d5b50]">{section.body}</p>
-                </section>
-              ))}
-            </div>
+            {post.contentHtml ? (
+              <div className="article-content" dangerouslySetInnerHTML={{ __html: post.contentHtml }} />
+            ) : (
+              <div className="grid gap-10">
+                {post.content.map((section) => (
+                  <section key={section.heading}>
+                    <h2 className="text-3xl font-extrabold leading-tight text-[#053920] md:text-4xl">{section.heading}</h2>
+                    <p className="mt-4 text-xl leading-9 text-[#4d5b50]">{section.body}</p>
+                  </section>
+                ))}
+              </div>
+            )}
 
             <div className="mt-12 rounded-[1.5rem] bg-[#053920] p-6 text-white md:p-8">
               <p className="text-sm font-extrabold uppercase tracking-[0.2em] text-[#f6d97b]">Next Step</p>
