@@ -41,6 +41,7 @@
                     </select>
                     <select class="toolbar-font-select" data-font-family title="แบบฟอนต์">
                         <option value="">Font</option>
+                        <option value="'LINE Seed Sans TH', sans-serif">LINE Seed Sans TH</option>
                         <option value="'Prompt', sans-serif">Prompt</option>
                         <option value="'Tahoma', sans-serif">Tahoma</option>
                         <option value="'Arial', sans-serif">Arial</option>

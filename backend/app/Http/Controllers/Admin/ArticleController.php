@@ -13,10 +13,26 @@ use Illuminate\View\View;
 
 class ArticleController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
+        $search = $request->string('q')->trim()->toString();
+        $status = $request->string('status')->toString();
+
         return view('admin.articles.index', [
-            'articles' => Article::latest()->paginate(10),
+            'articles' => Article::query()
+                ->when($search !== '', function ($query) use ($search): void {
+                    $query->where(function ($query) use ($search): void {
+                        $query
+                            ->where('title', 'like', "%{$search}%")
+                            ->orWhere('excerpt', 'like', "%{$search}%");
+                    });
+                })
+                ->when(in_array($status, ['draft', 'published'], true), fn ($query) => $query->where('status', $status))
+                ->latest('updated_at')
+                ->paginate(10)
+                ->withQueryString(),
+            'search' => $search,
+            'status' => $status,
         ]);
     }
 

@@ -3,6 +3,10 @@
     <div class="auth-page">
         <form class="auth-card card form" method="POST" action="{{ route('register.store') }}">
             @csrf
+            <a class="auth-brand" href="{{ route('login') }}">
+                <span class="auth-brand-mark">34</span>
+                <span><strong>Build Master Admin</strong><span>Construction workspace</span></span>
+            </a>
             <div>
                 <p class="eyebrow">Create Admin</p>
                 <h1>สมัครสมาชิก</h1>

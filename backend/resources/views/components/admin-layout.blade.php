@@ -7,9 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title }}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --green: #053920;
@@ -640,8 +637,9 @@
             .preview-seo { position: static; }
         }
     </style>
+    <link rel="stylesheet" href="{{ asset('css/admin-modern.css') }}">
 </head>
-<body>
+<body class="{{ $auth ? 'auth-body' : 'admin-body' }}">
     @if ($auth)
         {{ $slot }}
     @else
@@ -650,9 +648,9 @@
                 <div class="sidebar-head">
                     <a class="brand" href="{{ route('admin.dashboard') }}" title="34 Build Master Admin">
                         <span class="brand-mark">34</span>
-                        <span>
+                        <span class="brand-copy">
                             <span class="brand-title">Build Master</span>
-                            <span class="brand-sub">Construction</span>
+                            <span class="brand-sub">Admin workspace</span>
                         </span>
                     </a>
                     <button class="sidebar-toggle" type="button" data-sidebar-toggle title="ย่อ/ขยายเมนู" aria-label="ย่อ/ขยายเมนู">
@@ -660,16 +658,23 @@
                     </button>
                 </div>
                 <nav class="nav">
-                    <a href="{{ route('admin.dashboard') }}" title="แดชบอร์ด">
+                    <p class="nav-group-label">เมนู</p>
+                    <a class="{{ request()->routeIs('admin.dashboard') ? 'is-active' : '' }}" href="{{ route('admin.dashboard') }}" title="แดชบอร์ด">
                         <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13h8V3H3v10z"></path><path d="M13 21h8V11h-8v10z"></path><path d="M13 3v6h8V3h-8z"></path><path d="M3 21h8v-6H3v6z"></path></svg>
                         <span class="nav-label">แดชบอร์ด</span>
                         <span class="nav-arrow">&rsaquo;</span>
                     </a>
-                    <a href="{{ route('admin.articles.index') }}" title="บทความ">
+                    <a class="{{ request()->routeIs('admin.articles.*') ? 'is-active' : '' }}" href="{{ route('admin.articles.index') }}" title="บทความ">
                         <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h11a3 3 0 0 1 3 3v15H6a2 2 0 0 1-2-1.5z"></path><path d="M8 7h8"></path><path d="M8 11h8"></path><path d="M8 15h5"></path></svg>
                         <span class="nav-label">บทความ</span>
                         <span class="nav-arrow">&rsaquo;</span>
                     </a>
+                    <a href="{{ route('admin.articles.index', ['status' => 'draft']) }}" title="ฉบับร่าง">
+                        <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4z"></path></svg>
+                        <span class="nav-label">ฉบับร่าง</span>
+                        <span class="nav-arrow">&rsaquo;</span>
+                    </a>
+                    <p class="nav-group-label">ทั่วไป</p>
                     <a href="{{ url('/') }}" target="_blank" title="ดูหน้าเว็บ">
                         <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z"></path><path d="M3.6 9h16.8"></path><path d="M3.6 15h16.8"></path><path d="M12 3a14 14 0 0 1 0 18"></path><path d="M12 3a14 14 0 0 0 0 18"></path></svg>
                         <span class="nav-label">ดูหน้าเว็บ</span>
@@ -684,8 +689,40 @@
                         </button>
                     </form>
                 </nav>
+                <div class="sidebar-bottom">
+                    <a class="sidebar-site-card" href="{{ url('/') }}" target="_blank">
+                        <strong>เว็บไซต์ 34 Build Master</strong>
+                        <span>ตรวจดูเนื้อหาที่เผยแพร่บนหน้าจริง</span>
+                        <em>เปิดเว็บไซต์</em>
+                    </a>
+                </div>
             </aside>
             <main class="main">
+                <header class="admin-header">
+                    <button class="mobile-menu-button" type="button" data-mobile-menu-toggle aria-label="เปิดเมนู">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg>
+                    </button>
+                    <form class="admin-search" method="GET" action="{{ route('admin.articles.index') }}">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+                        <input name="q" type="search" value="{{ request('q') }}" placeholder="ค้นหาบทความ..." aria-label="ค้นหาบทความ">
+                        <span class="search-hint">Enter</span>
+                    </form>
+                    <div class="admin-header-actions">
+                        <a class="icon-button" href="mailto:34buildmaster@gmail.com" title="อีเมล" aria-label="อีเมล">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"></rect><path d="m4 7 8 6 8-6"></path></svg>
+                        </a>
+                        <a class="icon-button" href="{{ route('admin.articles.index', ['status' => 'draft']) }}" title="บทความฉบับร่าง" aria-label="บทความฉบับร่าง">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path><path d="M10 21h4"></path></svg>
+                        </a>
+                        <div class="user-chip">
+                            <span class="user-avatar">{{ mb_strtoupper(mb_substr(auth()->user()->name, 0, 1)) }}</span>
+                            <span class="user-copy">
+                                <strong>{{ auth()->user()->name }}</strong>
+                                <span>{{ auth()->user()->email }}</span>
+                            </span>
+                        </div>
+                    </div>
+                </header>
                 @if (session('success'))
                     <div class="alert">{{ session('success') }}</div>
                 @endif
@@ -704,27 +741,40 @@
                 {{ $slot }}
             </main>
         </div>
+        <button class="sidebar-backdrop" type="button" data-sidebar-backdrop aria-label="ปิดเมนู"></button>
         <script>
             (() => {
                 const shell = document.querySelector('[data-admin-shell]');
                 const toggle = document.querySelector('[data-sidebar-toggle]');
+                const mobileToggle = document.querySelector('[data-mobile-menu-toggle]');
+                const backdrop = document.querySelector('[data-sidebar-backdrop]');
 
-                if (!shell || !toggle) {
+                if (!shell) {
                     return;
                 }
 
                 const storageKey = '34bm-admin-sidebar-collapsed';
                 const applyState = (isCollapsed) => {
                     shell.classList.toggle('is-sidebar-collapsed', isCollapsed);
-                    toggle.setAttribute('aria-expanded', String(!isCollapsed));
+                    toggle?.setAttribute('aria-expanded', String(!isCollapsed));
                 };
 
                 applyState(localStorage.getItem(storageKey) === 'true');
 
-                toggle.addEventListener('click', () => {
+                toggle?.addEventListener('click', () => {
                     const isCollapsed = !shell.classList.contains('is-sidebar-collapsed');
                     applyState(isCollapsed);
                     localStorage.setItem(storageKey, String(isCollapsed));
+                });
+
+                const closeMobileMenu = () => document.body.classList.remove('is-mobile-menu-open');
+                mobileToggle?.addEventListener('click', () => document.body.classList.toggle('is-mobile-menu-open'));
+                backdrop?.addEventListener('click', closeMobileMenu);
+                document.querySelectorAll('.sidebar .nav a').forEach((link) => link.addEventListener('click', closeMobileMenu));
+                window.addEventListener('resize', () => {
+                    if (window.innerWidth > 900) {
+                        closeMobileMenu();
+                    }
                 });
             })();
         </script>

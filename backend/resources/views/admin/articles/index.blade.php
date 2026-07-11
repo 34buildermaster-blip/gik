@@ -3,12 +3,28 @@
         <div>
             <p class="eyebrow">Articles</p>
             <h1>จัดการบทความ</h1>
-            <p class="muted">เพิ่ม ลบ แก้ไขบทความ พร้อมรูปภาพประกอบและข้อมูล SEO</p>
+            <p class="muted" style="margin: 7px 0 0;">เพิ่ม แก้ไข ตรวจตัวอย่าง และควบคุมการเผยแพร่บทความบนเว็บไซต์</p>
         </div>
-        <a class="button" href="{{ route('admin.articles.create') }}">+ เพิ่มบทความ</a>
+        <a class="button" href="{{ route('admin.articles.create') }}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+            เพิ่มบทความ
+        </a>
     </div>
 
     <section class="card panel">
+        <div class="list-toolbar">
+            <div class="filter-tabs" aria-label="กรองสถานะบทความ">
+                <a class="filter-chip {{ ! in_array($status, ['draft', 'published'], true) ? 'is-active' : '' }}" href="{{ route('admin.articles.index', array_filter(['q' => $search])) }}">ทั้งหมด</a>
+                <a class="filter-chip {{ $status === 'published' ? 'is-active' : '' }}" href="{{ route('admin.articles.index', array_filter(['q' => $search, 'status' => 'published'])) }}">เผยแพร่แล้ว</a>
+                <a class="filter-chip {{ $status === 'draft' ? 'is-active' : '' }}" href="{{ route('admin.articles.index', array_filter(['q' => $search, 'status' => 'draft'])) }}">ฉบับร่าง</a>
+            </div>
+            <p class="result-note">
+                @if ($search !== '')
+                    ผลการค้นหา “{{ $search }}” ·
+                @endif
+                {{ $articles->total() }} รายการ
+            </p>
+        </div>
         <div class="table-wrap">
             <table>
                 <thead>
@@ -55,7 +71,9 @@
                     @empty
                         <tr>
                             <td colspan="5">
-                                <p class="muted">ยังไม่มีบทความในระบบ</p>
+                                <p class="muted" style="text-align: center; padding: 22px 0;">
+                                    {{ $search !== '' ? 'ไม่พบบทความที่ตรงกับคำค้นหา' : 'ยังไม่มีบทความในรายการนี้' }}
+                                </p>
                             </td>
                         </tr>
                     @endforelse

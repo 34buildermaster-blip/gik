@@ -3,6 +3,10 @@
     <div class="auth-page">
         <form class="auth-card card form" method="POST" action="{{ route('login.store') }}">
             @csrf
+            <a class="auth-brand" href="{{ route('login') }}">
+                <span class="auth-brand-mark">34</span>
+                <span><strong>Build Master Admin</strong><span>Construction workspace</span></span>
+            </a>
             <div>
                 <p class="eyebrow">Admin Login</p>
                 <h1>เข้าสู่ระบบ</h1>
@@ -16,7 +20,7 @@
                 <label for="password">รหัสผ่าน</label>
                 <input id="password" name="password" type="password" required>
             </div>
-            <label>
+            <label class="auth-remember">
                 <input name="remember" type="checkbox" value="1">
                 จดจำการเข้าสู่ระบบ
             </label>
