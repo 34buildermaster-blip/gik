@@ -1,6 +1,35 @@
 import type { Metadata } from "next";
+import localFont from "next/font/local";
 import { siteConfig, socialLinks } from "@/lib/site-config";
 import "./globals.css";
+
+const lineSeedSansThai = localFont({
+  src: [
+    {
+      path: "./fonts/LINESeedSansTH_W_Rg.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "./fonts/LINESeedSansTH_W_Rg.woff2",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "./fonts/LINESeedSansTH_W_Bd.woff2",
+      weight: "600",
+      style: "normal",
+    },
+    {
+      path: "./fonts/LINESeedSansTH_W_Bd.woff2",
+      weight: "700",
+      style: "normal",
+    },
+  ],
+  variable: "--font-line-seed-th",
+  display: "swap",
+  fallback: ["Tahoma", "Arial", "sans-serif"],
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.siteUrl),
@@ -78,14 +107,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="th" className="h-full antialiased">
+    <html lang="th" className={`${lineSeedSansThai.variable} h-full antialiased`}>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}

@@ -8,8 +8,8 @@
   --gold: #aa7426;
   --light-gold: #f6d97b;
   --soft-gold: #fdf0a3;
-  --font-body: "Noto Sans Thai", Tahoma, Arial, sans-serif;
-  --font-heading: "Anuphan", "Noto Sans Thai", Tahoma, Arial, sans-serif;
+  --font-body: var(--font-line-seed-th), Tahoma, Arial, sans-serif;
+  --font-heading: var(--font-line-seed-th), Tahoma, Arial, sans-serif;
 }
 
 @theme inline {
@@ -43,7 +43,6 @@ html {
 
 h1,
 h2,
-h3,
 .faq-heading {
   font-family: var(--font-heading);
   font-weight: 700 !important;
@@ -51,16 +50,23 @@ h3,
   text-wrap: balance;
 }
 
+h3 {
+  font-family: var(--font-heading);
+  font-weight: 600 !important;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+
 h1 {
-  line-height: 1.04 !important;
+  line-height: 1.08 !important;
 }
 
 h2 {
-  line-height: 1.12 !important;
+  line-height: 1.16 !important;
 }
 
 h3 {
-  line-height: 1.18 !important;
+  line-height: 1.24 !important;
 }
 
 h1.text-8xl {
@@ -121,7 +127,7 @@ textarea {
 }
 
 .font-semibold {
-  font-weight: 550;
+  font-weight: 600;
 }
 
 .section-kicker,
