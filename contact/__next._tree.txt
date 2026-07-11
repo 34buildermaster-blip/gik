@@ -1,3 +1,4 @@
-:HL["/gik/_next/static/chunks/3m4a9e18op03h.css","style"]
-:HL["https://fonts.googleapis.com/css2?family=Anuphan:wght@400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"contact","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"s1m8NBRwIBQRTNlf4at5j"}
+:HL["/gik/_next/static/chunks/2181iobcfcqa1.css","style"]
+:HL["/gik/_next/static/media/LINESeedSansTH_W_Bd-s.p.38p8rx8vmjq_s.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/gik/_next/static/media/LINESeedSansTH_W_Rg-s.p.1zk9avbvwlzda.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"contact","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"Lb9quhnPS7MZdpWUNrneL"}
