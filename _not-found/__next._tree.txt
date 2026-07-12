@@ -1,2 +1,2 @@
-:HL["/gik/_next/static/chunks/1l83heqdqelg1.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"/_not-found","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"U7b4hFBO4TFWc4u99obX7"}
+:HL["/gik/_next/static/chunks/0r17lfov73u4t.css","style"]
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"/_not-found","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"0uB8UYfZUV0XDau4vsz0n"}
