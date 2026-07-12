@@ -1,4 +1,4 @@
-:HL["/gik/_next/static/chunks/2u16lci000kix.css","style"]
+:HL["/gik/_next/static/chunks/0_oviyaubo-9d.css","style"]
 :HL["/gik/_next/static/media/LINESeedSansTH_W_Bd-s.p.38p8rx8vmjq_s.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 :HL["/gik/_next/static/media/LINESeedSansTH_W_Rg-s.p.1zk9avbvwlzda.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"blog","param":null,"prefetchHints":0,"slots":{"children":{"name":"slug","param":{"type":"d","key":"built-in-storage-ideas","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"yPCo1angZhmgFcxr5Wnp3"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"blog","param":null,"prefetchHints":0,"slots":{"children":{"name":"slug","param":{"type":"d","key":"built-in-storage-ideas","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"rGhqip1Esc7x4nBJYoea7"}
