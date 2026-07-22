@@ -1,34 +1,16 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { Kanit } from "next/font/google";
+import { assetPath } from "@/lib/asset-path";
 import { siteConfig, socialLinks } from "@/lib/site-config";
+import { SiteSettingsProvider } from "@/contexts/site-settings-context";
+import { FloatingContactDock } from "@/components/floating-contact-dock";
 import "./globals.css";
 
-const lineSeedSansThai = localFont({
-  src: [
-    {
-      path: "./fonts/LINESeedSansTH_W_Rg.woff2",
-      weight: "400",
-      style: "normal",
-    },
-    {
-      path: "./fonts/LINESeedSansTH_W_Rg.woff2",
-      weight: "500",
-      style: "normal",
-    },
-    {
-      path: "./fonts/LINESeedSansTH_W_Bd.woff2",
-      weight: "600",
-      style: "normal",
-    },
-    {
-      path: "./fonts/LINESeedSansTH_W_Bd.woff2",
-      weight: "700",
-      style: "normal",
-    },
-  ],
-  variable: "--font-line-seed-th",
+const kanit = Kanit({
+  subsets: ["thai", "latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-kanit",
   display: "swap",
-  fallback: ["Tahoma", "Arial", "sans-serif"],
 });
 
 export const metadata: Metadata = {
@@ -38,6 +20,11 @@ export const metadata: Metadata = {
     template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.description,
+  icons: {
+    icon: [{ url: assetPath("/brand-logo.png"), type: "image/png", sizes: "any" }],
+    shortcut: assetPath("/brand-logo.png"),
+    apple: [{ url: assetPath("/brand-logo.png"), type: "image/png" }],
+  },
   keywords: [
     "34 BM Construction",
     "34 Build Master Construction",
@@ -107,14 +94,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="th" className={`${lineSeedSansThai.variable} h-full antialiased`}>
+    <html lang="th" className={`${kanit.variable} h-full antialiased`}>
       <head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
         />
       </head>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <SiteSettingsProvider>
+          {children}
+          <FloatingContactDock />
+        </SiteSettingsProvider>
+      </body>
     </html>
   );
 }

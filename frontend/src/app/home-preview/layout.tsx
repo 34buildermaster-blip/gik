@@ -5,4 +5,6 @@ export const metadata: Metadata = {
   description: "34 Build Master Construction รับออกแบบ รีโนเวท สร้างบ้าน และบิวท์อินครบวงจรในเชียงใหม่ ดูแลตั้งแต่แนวคิดจนถึงวันส่งมอบ",
 };
 
-export { default } from "./home-preview/page";
+export default function HomePreviewLayout({ children }: { children: React.ReactNode }) {
+  return children;
+}

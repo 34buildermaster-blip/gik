@@ -43,7 +43,7 @@ export function BlogList({ initialPosts }: BlogListProps) {
 
         const payload = (await response.json()) as { data?: ApiBlogPost[] };
 
-        if (isMounted && Array.isArray(payload.data)) {
+        if (isMounted && Array.isArray(payload.data) && payload.data.length > 0) {
           setPosts(payload.data.map(normalizeApiPost));
         }
       } catch {
@@ -60,15 +60,14 @@ export function BlogList({ initialPosts }: BlogListProps) {
 
   if (!featuredPost) {
     return (
-      <section className="relative overflow-hidden bg-[#fffaf0] px-5 py-24 lg:px-8">
-        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_18%_20%,rgba(246,217,123,0.24),transparent_30%),linear-gradient(90deg,rgba(170,116,38,0.05)_1px,transparent_1px)] bg-[length:auto,88px_88px]" />
-        <div className="relative mx-auto max-w-4xl rounded-[2rem] border border-[#aa7426]/24 bg-white/84 p-8 text-center shadow-[0_30px_100px_rgba(17,36,22,0.1)] md:p-12">
+      <section className="relative overflow-hidden bg-white px-5 py-24 lg:px-8">
+        <div className="relative mx-auto max-w-4xl rounded-lg border border-[#dfe4e0] bg-white p-8 text-center shadow-[0_20px_70px_rgba(18,34,25,0.07)] md:p-12">
           <p className="section-kicker">Articles</p>
-          <h2 className="mt-4 text-4xl font-extrabold leading-tight text-[#053920] md:text-5xl">ยังไม่มีบทความเผยแพร่</h2>
-          <p className="mx-auto mt-4 max-w-2xl text-xl leading-9 text-[#4d5b50]">
+          <h2 className="mt-4 text-4xl font-semibold leading-tight text-[#17211c] md:text-5xl">ยังไม่มีบทความเผยแพร่</h2>
+          <p className="mx-auto mt-4 max-w-2xl text-xl leading-9 text-[#667169]">
             เมื่อเพิ่มบทความจากหลังบ้านและตั้งสถานะเป็นเผยแพร่ บทความจะแสดงบนหน้านี้โดยอัตโนมัติ
           </p>
-          <Link href="/contact" className="gold-button mt-8 inline-flex min-h-12 items-center justify-center px-7 font-extrabold text-[#112416]">
+          <Link href="/contact" className="gold-button mt-8 inline-flex min-h-12 items-center justify-center rounded-full px-7 font-semibold text-white">
             ปรึกษาโปรเจกต์ของคุณ
           </Link>
         </div>
@@ -78,10 +77,9 @@ export function BlogList({ initialPosts }: BlogListProps) {
 
   return (
     <>
-      <section className="relative overflow-hidden bg-[#fffaf0] px-5 py-20 lg:px-8">
-        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_15%_18%,rgba(246,217,123,0.22),transparent_28%),linear-gradient(90deg,rgba(170,116,38,0.05)_1px,transparent_1px)] bg-[length:auto,88px_88px]" />
+      <section className="relative overflow-hidden bg-white px-5 py-20 lg:px-8">
         <div className="relative mx-auto grid max-w-7xl gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-stretch">
-          <Link href={`/blog/${featuredPost.slug}`} className="group relative min-h-[430px] overflow-hidden rounded-[2rem] border border-[#aa7426]/24 bg-[#112416] shadow-[0_32px_100px_rgba(17,36,22,0.16)]">
+          <Link href={`/blog/${featuredPost.slug}`} className="group relative min-h-[430px] overflow-hidden rounded-lg bg-[#173427] shadow-[0_24px_70px_rgba(18,34,25,0.12)]">
             <Image
               src={featuredPost.image}
               alt={featuredPost.coverAlt}
@@ -89,20 +87,20 @@ export function BlogList({ initialPosts }: BlogListProps) {
               sizes="(min-width: 1024px) 50vw, 100vw"
               className="object-cover opacity-78 transition duration-700 group-hover:scale-105"
             />
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,57,32,0.08),rgba(5,57,32,0.88))]" />
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,34,23,0.03),rgba(10,34,23,0.88))]" />
             <div className="absolute inset-x-0 bottom-0 p-7 text-white md:p-9">
-              <span className="rounded-full bg-[#f6d97b] px-4 py-2 text-sm font-extrabold uppercase tracking-[0.18em] text-[#112416]">
+              <span className="rounded-full bg-white px-4 py-2 text-sm font-semibold uppercase tracking-[0.16em] text-[#0f6b45]">
                 Featured
               </span>
-              <h2 className="mt-5 text-4xl font-extrabold leading-tight md:text-5xl">{featuredPost.title}</h2>
+              <h2 className="mt-5 text-4xl font-semibold leading-tight md:text-5xl">{featuredPost.title}</h2>
               <p className="mt-4 max-w-2xl text-xl leading-8 text-white/72">{featuredPost.excerpt}</p>
             </div>
           </Link>
 
           <div className="grid gap-5">
             {otherPosts.map((post) => (
-              <Link key={post.slug} href={`/blog/${post.slug}`} className="group grid gap-5 rounded-[1.7rem] border border-[#aa7426]/24 bg-white/82 p-5 shadow-[0_24px_80px_rgba(17,36,22,0.08)] transition duration-300 hover:-translate-y-1 hover:border-[#aa7426]/55 md:grid-cols-[170px_1fr]">
-                <div className="relative min-h-[170px] overflow-hidden rounded-[1.25rem] bg-[#112416]">
+              <Link key={post.slug} href={`/blog/${post.slug}`} className="group grid gap-5 rounded-lg border border-[#dfe4e0] bg-white p-5 transition duration-300 hover:-translate-y-1 hover:border-[#0f6b45] hover:shadow-[0_18px_55px_rgba(18,34,25,0.08)] md:grid-cols-[170px_1fr]">
+                <div className="relative min-h-[170px] overflow-hidden rounded-md bg-[#e8ece9]">
                   <Image
                     src={post.image}
                     alt={post.coverAlt}
@@ -112,10 +110,10 @@ export function BlogList({ initialPosts }: BlogListProps) {
                   />
                 </div>
                 <div className="flex flex-col justify-center">
-                  <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-[#aa7426]">{post.category}</p>
-                  <h2 className="mt-3 text-3xl font-extrabold leading-tight text-[#053920]">{post.title}</h2>
-                  <p className="mt-3 text-lg leading-8 text-[#4d5b50]">{post.excerpt}</p>
-                  <p className="mt-4 text-base font-bold text-[#aa7426]">{post.date} · อ่าน {post.readTime}</p>
+                  <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#0f6b45]">{post.category}</p>
+                  <h2 className="mt-3 text-3xl font-semibold leading-tight text-[#17211c]">{post.title}</h2>
+                  <p className="mt-3 text-lg leading-8 text-[#667169]">{post.excerpt}</p>
+                  <p className="mt-4 text-base font-medium text-[#0f6b45]">{post.date} · อ่าน {post.readTime}</p>
                 </div>
               </Link>
             ))}
@@ -128,18 +126,18 @@ export function BlogList({ initialPosts }: BlogListProps) {
           <div className="mb-10 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="section-kicker">Latest Articles</p>
-              <h2 className="mt-4 text-4xl font-extrabold leading-tight text-[#053920] sm:text-6xl">บทความทั้งหมด</h2>
+              <h2 className="mt-4 text-4xl font-semibold leading-tight text-[#17211c] sm:text-6xl">บทความทั้งหมด</h2>
             </div>
-            <Link href="/contact" className="gold-button inline-flex min-h-12 items-center justify-center px-7 font-extrabold text-[#112416]">
+            <Link href="/contact" className="gold-button inline-flex min-h-12 items-center justify-center rounded-full px-7 font-semibold text-white">
               ปรึกษาโปรเจกต์ของคุณ
             </Link>
           </div>
 
           <div className="grid gap-6 md:grid-cols-3">
             {posts.map((post) => (
-              <article key={post.slug} className="luxe-card overflow-hidden p-0">
+              <article key={post.slug} className="luxe-card overflow-hidden rounded-lg p-0">
                 <Link href={`/blog/${post.slug}`} className="group block">
-                  <div className="relative min-h-[230px] overflow-hidden bg-[#112416]">
+                  <div className="relative min-h-[230px] overflow-hidden bg-[#e8ece9]">
                     <Image
                       src={post.image}
                       alt={post.coverAlt}
@@ -149,10 +147,10 @@ export function BlogList({ initialPosts }: BlogListProps) {
                     />
                   </div>
                   <div className="p-6">
-                    <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-[#aa7426]">{post.category}</p>
-                    <h3 className="mt-3 text-3xl font-extrabold leading-tight text-[#053920]">{post.title}</h3>
-                    <p className="mt-3 text-lg leading-8 text-[#4d5b50]">{post.excerpt}</p>
-                    <span className="mt-5 inline-flex font-extrabold text-[#aa7426]">อ่านบทความ</span>
+                    <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#0f6b45]">{post.category}</p>
+                    <h3 className="mt-3 text-3xl font-semibold leading-tight text-[#17211c]">{post.title}</h3>
+                    <p className="mt-3 text-lg leading-8 text-[#667169]">{post.excerpt}</p>
+                    <span className="mt-5 inline-flex font-semibold text-[#0f6b45]">อ่านบทความ</span>
                   </div>
                 </Link>
               </article>

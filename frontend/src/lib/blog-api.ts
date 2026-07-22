@@ -60,10 +60,12 @@ export async function getIntegratedBlogPosts(): Promise<IntegratedBlogPost[]> {
   const result = await fetchJson<{ data: ApiBlogPost[] }>("/api/articles");
 
   if (result === null || !result.ok || !Array.isArray(result.data?.data)) {
-    return [];
+    return blogPosts.map((post) => ({ ...post, source: "fallback" as const }));
   }
 
-  return result.data.data.map(normalizePost);
+  return result.data.data.length
+    ? result.data.data.map(normalizePost)
+    : blogPosts.map((post) => ({ ...post, source: "fallback" as const }));
 }
 
 export async function getIntegratedBlogPost(slug: string): Promise<IntegratedBlogPost | null> {

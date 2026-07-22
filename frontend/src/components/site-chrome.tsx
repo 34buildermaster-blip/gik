@@ -1,85 +1,79 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowUpRight, Mail, MapPin, Menu, Phone, Send } from "lucide-react";
+import { FaFacebookF, FaInstagram, FaLine, FaTiktok } from "react-icons/fa6";
+import { BrandLogoImage } from "@/components/brand-logo-image";
+import { useSiteSettings } from "@/contexts/site-settings-context";
 import { assetPath } from "@/lib/asset-path";
-import { primaryPages, siteConfig, socialLinks } from "@/lib/site-config";
 
-type IconName = "phone" | "mail" | "location" | "send" | "facebook" | "instagram" | "line" | "tiktok";
-
-function Icon({ name, className = "" }: { name: IconName; className?: string }) {
-  const icon = {
-    phone: (
-      <>
-        <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.7 19.7 0 0 1-8.6-3.1 19.4 19.4 0 0 1-6-6A19.7 19.7 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.7a16 16 0 0 0 6.2 6.2l1.2-1.2a2 2 0 0 1 2.1-.5c.8.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z" />
-      </>
-    ),
-    mail: (
-      <>
-        <path d="M4 6h16v12H4z" />
-        <path d="m4 7 8 6 8-6" />
-      </>
-    ),
-    location: (
-      <>
-        <path d="M12 21s7-5.1 7-11a7 7 0 0 0-14 0c0 5.9 7 11 7 11z" />
-        <path d="M12 10.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" />
-      </>
-    ),
-    send: (
-      <>
-        <path d="M22 2 11 13" />
-        <path d="m22 2-7 20-4-9-9-4z" />
-      </>
-    ),
-    facebook: (
-      <>
-        <path d="M14 8h3V4h-3a5 5 0 0 0-5 5v3H6v4h3v6h4v-6h3l1-4h-4V9a1 1 0 0 1 1-1z" />
-      </>
-    ),
-    instagram: (
-      <>
-        <rect height="16" rx="4" width="16" x="4" y="4" />
-        <path d="M16 11.4A4 4 0 1 1 12.6 8" />
-        <path d="M17.5 6.5h.01" />
-      </>
-    ),
-    line: (
-      <>
-        <path d="M5 18.5 6.2 15A7 7 0 1 1 12 18H8.5z" />
-        <path d="M8 11h.01" />
-        <path d="M12 11h.01" />
-        <path d="M16 11h.01" />
-      </>
-    ),
-    tiktok: (
-      <>
-        <path d="M14 4v10.2a3.8 3.8 0 1 1-3-3.7" />
-        <path d="M14 4c.7 2.5 2.4 4 5 4" />
-      </>
-    ),
-  }[name];
-
-  return (
-    <svg
-      aria-hidden="true"
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="1.7"
-      viewBox="0 0 24 24"
-    >
-      {icon}
-    </svg>
-  );
-}
-
-const serviceLinks = ["ออกแบบบ้าน", "รีโนเวทบ้าน", "สร้างบ้าน", "บิวท์อิน"];
 const navLinks = [
-  ...primaryPages.slice(0, 4).map((item) => ({ href: item.path, label: item.label })),
+  { href: "/", label: "หน้าหลัก" },
+  { href: "/about", label: "เกี่ยวกับเรา" },
+  { href: "/services", label: "บริการ" },
+  { href: "/house-designs", label: "แบบบ้าน" },
   { href: "/updates", label: "อัปเดตงาน" },
+  { href: "/blog", label: "บทความ" },
+  { href: "/faq", label: "FAQ" },
   { href: "/contact", label: "ติดต่อ" },
 ];
+
+const serviceLinks = ["ออกแบบบ้าน", "รีโนเวทบ้าน", "สร้างบ้าน", "บิวท์อิน"];
+
+const socialIconMap = {
+  facebook: FaFacebookF,
+  instagram: FaInstagram,
+  line: FaLine,
+  tiktok: FaTiktok,
+};
+
+function SiteLogo({ footer = false, className }: { footer?: boolean; className: string }) {
+  const settings = useSiteSettings();
+  const customLogo = (footer ? settings.branding.footer_logo_url : null) || settings.branding.logo_url;
+
+  if (customLogo) {
+    // The logo URL is managed by the Laravel media library and can use a deployment-specific host.
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img className={className} src={customLogo} alt={`โลโก้ ${settings.general.company_name_en}`} />;
+  }
+
+  return <BrandLogoImage className={className} sizes={footer ? "56px" : "44px"} priority={!footer} />;
+}
+
+function SocialLinks({ dark = false }: { dark?: boolean }) {
+  const settings = useSiteSettings();
+  const links = [
+    { label: "Facebook", href: settings.social.facebook_url, icon: "facebook" as const },
+    { label: "Instagram", href: settings.social.instagram_url, icon: "instagram" as const },
+    { label: "Line", href: settings.social.line_url, icon: "line" as const },
+    { label: "TikTok", href: settings.social.tiktok_url, icon: "tiktok" as const },
+  ].filter((social) => social.href);
+
+  return (
+    <div className="flex items-center gap-2">
+      {links.map((social) => {
+        const SocialIcon = socialIconMap[social.icon];
+        return (
+          <a
+            key={social.label}
+            href={social.href}
+            aria-label={social.label}
+            target="_blank"
+            rel="noreferrer"
+            className={`grid size-10 place-items-center rounded-full border transition duration-200 hover:-translate-y-0.5 ${
+              dark
+                ? "border-white/18 text-white/72 hover:border-white/45 hover:text-white"
+                : "border-[#d8ded9] text-[#334139] hover:border-[#0f6b45] hover:bg-[#0f6b45] hover:text-white"
+            }`}
+          >
+            <SocialIcon className="size-4" />
+          </a>
+        );
+      })}
+    </div>
+  );
+}
 
 export function PageHero({
   title,
@@ -94,118 +88,84 @@ export function PageHero({
   parentHref?: string;
   size?: "default" | "compact";
 }) {
-  const titleSize =
-    size === "compact"
-      ? "text-4xl sm:text-6xl"
-      : "text-5xl sm:text-7xl";
-
   return (
-    <section className="relative grid min-h-[320px] place-items-center overflow-hidden bg-[#053920] px-5 py-16 text-white lg:px-8">
-      <Image
-        src={assetPath("/bg-luxury-green.png")}
-        alt="พื้นหลัง 34 Build Master Construction"
-        fill
-        priority
-        sizes="100vw"
-        className="z-0 object-cover opacity-55"
-      />
-      <div className="absolute inset-0 z-10 bg-[linear-gradient(90deg,rgba(5,57,32,0.96),rgba(17,36,22,0.88)),radial-gradient(circle_at_50%_8%,rgba(246,217,123,0.2),transparent_30%)]" />
-      <div className="relative z-20 mx-auto max-w-6xl text-center">
-        <h1 className={`${titleSize} font-extrabold leading-tight drop-shadow-[0_18px_46px_rgba(0,0,0,0.35)]`}>
+    <section className="relative isolate min-h-[310px] overflow-hidden border-b border-[#dfe4e0] bg-[#f1f3f1] px-5 py-16 lg:px-8">
+      <div className="absolute inset-y-0 right-0 -z-20 w-full sm:w-[62%] lg:w-[54%]">
+        <Image
+          src={assetPath("/approach-homes/contemporary.jpg")}
+          alt="ผลงานบ้านสมัยใหม่ของ 34 Build Master Construction"
+          fill
+          priority
+          sizes="(min-width: 1024px) 54vw, 100vw"
+          className="object-cover object-center"
+        />
+      </div>
+      <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,#f1f3f1_0%,rgba(241,243,241,0.98)_42%,rgba(241,243,241,0.7)_68%,rgba(241,243,241,0.22)_100%)]" />
+      <div className="mx-auto flex min-h-[180px] max-w-7xl flex-col justify-center">
+        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#0f6b45]">34 Build Master Construction</p>
+        <h1 className={`${size === "compact" ? "max-w-4xl text-4xl sm:text-5xl" : "text-5xl sm:text-6xl"} mt-4 font-semibold leading-[1.15] text-[#17211c]`}>
           {title}
         </h1>
-        <div className="mt-5 flex flex-wrap items-center justify-center gap-3 text-lg font-bold">
-          <Link href={parentHref} className="text-white/76 transition hover:text-[#f6d97b]">
-            {parentLabel}
-          </Link>
-          <span className="text-[#f6d97b]">/</span>
-          <span className="text-[#f6d97b]">{currentLabel}</span>
+        <div className="mt-6 flex flex-wrap items-center gap-2 text-base font-medium text-[#667169]">
+          <Link href={parentHref} className="transition hover:text-[#0f6b45]">{parentLabel}</Link>
+          <span aria-hidden="true">/</span>
+          <span className="text-[#0f6b45]">{currentLabel}</span>
         </div>
       </div>
-      <span aria-hidden="true" className="absolute inset-x-0 bottom-0 z-20 h-1 bg-gradient-to-r from-transparent via-[#f6d97b] to-transparent" />
     </section>
   );
 }
 
 export function SiteHeader() {
+  const settings = useSiteSettings();
+  const visibleNavLinks = navLinks.filter((item) => {
+    if (item.href === "/house-designs") return settings.navigation.show_house_designs;
+    if (item.href === "/updates") return settings.navigation.show_updates;
+    if (item.href === "/blog") return settings.navigation.show_blog;
+    if (item.href === "/faq") return settings.navigation.show_faq;
+    return true;
+  });
+
   return (
-    <header className="sticky top-0 z-40 border-b border-[#f6d97b]/20 bg-[#053920]/95 text-white shadow-[0_18px_60px_rgba(0,0,0,0.2)] backdrop-blur">
-      <div className="mx-auto grid max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-5 py-4 md:flex md:justify-between lg:px-8">
-        <Link href="/" className="group flex min-w-0 items-center gap-3" aria-label="34 Build Master Construction">
-          <span className="relative grid size-12 shrink-0 place-items-center overflow-hidden rounded-2xl bg-[#112416] text-lg font-extrabold text-[#fdf0a3] ring-1 ring-[#f6d97b]/40">
-            <span className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#fdf0a3] to-transparent" />
-            34
-          </span>
+    <header className="sticky top-0 z-50 border-b border-black/6 bg-white/88 text-[#17211c] shadow-[0_8px_32px_rgba(18,34,25,0.05)] backdrop-blur-xl">
+      <div className="mx-auto flex min-h-[76px] max-w-7xl items-center justify-between gap-4 px-5 lg:px-8">
+        <Link href="/" className="flex min-w-0 items-center gap-3" aria-label={settings.general.company_name_en}>
+          <SiteLogo className="size-11 shrink-0 rounded-md object-cover" />
           <span className="min-w-0 leading-tight">
-            <span className="block truncate text-sm font-extrabold uppercase tracking-[0.12em] sm:text-base sm:tracking-[0.16em]">Build Master</span>
-            <span className="block truncate text-[10px] uppercase tracking-[0.18em] text-[#f6d97b] sm:text-[11px] sm:tracking-[0.22em]">Construction</span>
+            <span className="block truncate text-sm font-semibold uppercase tracking-[0.1em] sm:text-base">Build Master</span>
+            <span className="block truncate text-[10px] font-medium uppercase tracking-[0.18em] text-[#0f6b45] sm:text-[11px]">Construction</span>
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-6 text-base font-semibold text-white/78 md:flex">
-          {navLinks.map((item) => (
-            <Link key={item.href} href={item.href} className="transition hover:text-[#f6d97b]">
-              {item.label}
-            </Link>
+        <nav className="hidden items-center gap-5 text-[15px] font-medium text-[#4f5b53] lg:flex">
+          {visibleNavLinks.map((item) => (
+            <Link key={item.href} href={item.href} className="transition hover:text-[#0f6b45]">{item.label}</Link>
           ))}
         </nav>
 
-        <div className="hidden items-center gap-2 xl:flex">
-          {socialLinks.map((social) => (
-            <a
-              key={social.label}
-              href={social.href}
-              className="social-icon-link"
-              aria-label={social.label}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <Icon name={social.icon} className="size-4" />
-            </a>
-          ))}
+        <div className="hidden items-center gap-3 xl:flex">
+          <SocialLinks />
+          <a href={settings.general.phone_href} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-[#0f6b45] px-5 text-sm font-semibold text-white transition hover:bg-[#0a5335]">
+            <Phone className="size-4" />
+            {settings.cta.consultation_label}
+          </a>
         </div>
 
-        <a
-          href={siteConfig.phoneHref}
-          className="gold-button hidden min-h-11 items-center justify-center gap-2 px-4 text-base font-extrabold text-[#112416] sm:inline-flex"
-        >
-          <Icon name="phone" className="size-4" />
-          โทรปรึกษา
-        </a>
-
-        <details className="relative shrink-0 md:hidden">
-          <summary className="grid size-11 cursor-pointer list-none place-items-center rounded-full border border-[#f6d97b]/45 bg-[#112416]/72 text-[#fdf0a3] shadow-[0_18px_48px_rgba(0,0,0,0.24)] [&::-webkit-details-marker]:hidden">
+        <details className="relative lg:hidden">
+          <summary className="grid size-11 cursor-pointer list-none place-items-center rounded-full border border-[#d8ded9] bg-white text-[#17211c] outline-none focus-visible:border-[#0f6b45] focus-visible:ring-2 focus-visible:ring-[#0f6b45]/20 [&::-webkit-details-marker]:hidden">
             <span className="sr-only">เปิดเมนู</span>
-            <span className="flex w-5 flex-col gap-1.5">
-              <span className="h-0.5 rounded-full bg-current" />
-              <span className="h-0.5 rounded-full bg-current" />
-              <span className="h-0.5 rounded-full bg-current" />
-            </span>
+            <Menu className="size-5" />
           </summary>
-          <div className="absolute right-0 top-14 w-[min(82vw,320px)] overflow-hidden rounded-[1.5rem] border border-[#f6d97b]/28 bg-[#053920]/98 p-3 shadow-[0_28px_80px_rgba(0,0,0,0.34)] backdrop-blur">
-            <nav className="grid gap-1 text-base font-bold text-white/82">
-              {navLinks.map((item) => (
-                <Link key={item.href} href={item.href} className="rounded-2xl px-4 py-3 transition hover:bg-white/8 hover:text-[#f6d97b]">
-                  {item.label}
-                </Link>
+          <div className="absolute right-0 top-14 w-[min(88vw,340px)] overflow-hidden rounded-lg border border-[#dfe4e0] bg-white p-3 shadow-[0_24px_70px_rgba(18,34,25,0.16)]">
+            <nav className="grid text-base font-medium text-[#334139]">
+              {visibleNavLinks.map((item) => (
+                <Link key={item.href} href={item.href} className="rounded-md px-4 py-3 transition hover:bg-[#edf5f0] hover:text-[#0f6b45]">{item.label}</Link>
               ))}
             </nav>
-            <div className="mt-3 flex items-center justify-between gap-2 border-t border-[#f6d97b]/16 pt-3">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  className="social-icon-link"
-                  aria-label={social.label}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <Icon name={social.icon} className="size-4" />
-                </a>
-              ))}
-              <a href={siteConfig.phoneHref} className="gold-button inline-flex min-h-10 items-center justify-center gap-2 px-4 text-sm font-extrabold text-[#112416]">
-                <Icon name="phone" className="size-4" />
-                โทร
+            <div className="mt-3 flex items-center justify-between gap-3 border-t border-[#e4e8e5] pt-3">
+              <SocialLinks />
+              <a href={settings.general.phone_href} className="grid size-10 place-items-center rounded-full bg-[#0f6b45] text-white" aria-label={settings.cta.consultation_label}>
+                <Phone className="size-4" />
               </a>
             </div>
           </div>
@@ -216,39 +176,23 @@ export function SiteHeader() {
 }
 
 export function ContactForm() {
+  const settings = useSiteSettings();
   return (
-    <form
-      className="luxe-card grid gap-5 p-7 md:p-8"
-      action={`mailto:${siteConfig.email}`}
-      method="post"
-      encType="text/plain"
-    >
-      <label className="form-field">
-        <span>ชื่อผู้ติดต่อ</span>
-        <input name="name" type="text" placeholder="ชื่อของคุณ" />
-      </label>
-      <label className="form-field">
-        <span>เบอร์โทร</span>
-        <input name="phone" type="tel" placeholder="เบอร์ที่สะดวกให้ติดต่อกลับ" />
-      </label>
-      <label className="form-field">
+    <form className="grid gap-5 rounded-lg border border-[#dfe4e0] bg-white p-6 shadow-[0_20px_70px_rgba(18,34,25,0.07)] md:p-8" action={`mailto:${settings.general.email}`} method="post" encType="text/plain">
+      <div className="grid gap-5 sm:grid-cols-2">
+        <label className="modern-form-field"><span>ชื่อผู้ติดต่อ</span><input name="name" type="text" placeholder="ชื่อของคุณ" /></label>
+        <label className="modern-form-field"><span>เบอร์โทร</span><input name="phone" type="tel" placeholder="เบอร์ที่สะดวกให้ติดต่อกลับ" /></label>
+      </div>
+      <label className="modern-form-field">
         <span>ประเภทงาน</span>
         <select name="service" defaultValue="">
-          <option value="" disabled>
-            เลือกประเภทงาน
-          </option>
-          <option>ออกแบบบ้าน</option>
-          <option>รีโนเวทบ้าน</option>
-          <option>สร้างบ้าน</option>
-          <option>บิวท์อิน</option>
+          <option value="" disabled>เลือกประเภทงาน</option>
+          {serviceLinks.map((service) => <option key={service}>{service}</option>)}
         </select>
       </label>
-      <label className="form-field">
-        <span>รายละเอียดเบื้องต้น</span>
-        <textarea name="detail" placeholder="เล่าพื้นที่ งบประมาณคร่าว ๆ หรือสิ่งที่อยากทำ" />
-      </label>
-      <button className="gold-button inline-flex min-h-12 items-center justify-center gap-2 px-7 font-extrabold text-[#112416]" type="submit">
-        <Icon name="send" className="size-5" />
+      <label className="modern-form-field"><span>รายละเอียดเบื้องต้น</span><textarea name="detail" placeholder="เล่าพื้นที่ งบประมาณคร่าว ๆ หรือสิ่งที่อยากทำ" /></label>
+      <button className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#0f6b45] px-7 font-semibold text-white transition hover:bg-[#0a5335]" type="submit">
+        <Send className="size-5" />
         ส่งรายละเอียด
       </button>
     </form>
@@ -256,43 +200,23 @@ export function ContactForm() {
 }
 
 export function ContactBand() {
+  const settings = useSiteSettings();
   return (
-    <section className="section-reveal bg-luxury-section px-5 py-24 text-white lg:px-8">
-      <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-stretch">
-        <div className="relative overflow-hidden rounded-[2rem] border border-[#f6d97b]/28 bg-[#112416]/72 p-6 shadow-[0_36px_120px_rgba(0,0,0,0.28)] md:p-10">
-          <div className="luxury-rings absolute -right-56 -top-56 h-[420px] w-[420px] rounded-full opacity-60" />
-          <div className="relative">
-            <p className="section-kicker text-[#f6d97b]">Contact</p>
-            <h2 className="mt-4 text-4xl font-extrabold leading-tight sm:text-6xl">
-              เล่าไอเดียบ้านของคุณ แล้วให้ทีมช่วยประเมินขั้นแรก
-            </h2>
-            <p className="mt-5 max-w-2xl text-xl leading-9 text-white/72">
-              ส่งข้อมูลพื้นที่ งบประมาณคร่าว ๆ และความต้องการหลักไว้ก่อน ทีมงานจะใช้เป็นข้อมูลตั้งต้นสำหรับการนัดสำรวจและสรุปขอบเขตงานจริง
-            </p>
-
-            <div className="mt-10 grid gap-4">
-              <a href={siteConfig.phoneHref} className="contact-info-row group">
-                <span className="icon-medallion shrink-0">
-                  <Icon name="phone" className="size-6" />
-                </span>
-                <span>
-                  <span className="block text-sm font-extrabold uppercase tracking-[0.18em] text-[#f6d97b]">Phone</span>
-                  <span className="mt-1 block text-2xl font-extrabold">{siteConfig.phoneDisplay}</span>
-                </span>
-              </a>
-              <a href={`mailto:${siteConfig.email}`} className="contact-info-row group">
-                <span className="icon-medallion shrink-0">
-                  <Icon name="mail" className="size-6" />
-                </span>
-                <span>
-                  <span className="block text-sm font-extrabold uppercase tracking-[0.18em] text-[#f6d97b]">Email</span>
-                  <span className="mt-1 block break-all text-xl font-extrabold">{siteConfig.email}</span>
-                </span>
-              </a>
+    <section className="border-y border-[#dfe4e0] bg-[#f1f3f1] px-5 py-20 lg:px-8 lg:py-24">
+      <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.92fr_1.08fr] lg:items-stretch">
+        <div className="relative min-h-[430px] overflow-hidden rounded-lg bg-[#173427]">
+          <Image src={assetPath("/approach-homes/natural-modern.jpg")} alt="พูดคุยวางแผนโครงการกับ 34 Build Master" fill sizes="(min-width: 1024px) 46vw, 100vw" className="object-cover" />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,34,23,0.06),rgba(10,34,23,0.86))]" />
+          <div className="absolute inset-x-0 bottom-0 p-7 text-white md:p-9">
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-white/70">Contact us</p>
+            <h2 className="mt-3 max-w-xl text-4xl font-semibold leading-tight sm:text-5xl">{settings.cta.contact_heading}</h2>
+            <p className="mt-4 max-w-xl text-lg leading-8 text-white/72">{settings.cta.contact_description}</p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <a href={settings.general.phone_href} className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 font-semibold text-[#17211c]"><Phone className="size-4" />{settings.general.phone_display}</a>
+              <a href={`mailto:${settings.general.email}`} className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-black/15 px-5 py-3 font-semibold text-white backdrop-blur"><Mail className="size-4" />อีเมล</a>
             </div>
           </div>
         </div>
-
         <ContactForm />
       </div>
     </section>
@@ -300,107 +224,46 @@ export function ContactBand() {
 }
 
 export function SiteFooter() {
+  const settings = useSiteSettings();
+  const visibleNavLinks = navLinks.filter((item) => {
+    if (item.href === "/house-designs") return settings.navigation.show_house_designs;
+    if (item.href === "/updates") return settings.navigation.show_updates;
+    if (item.href === "/blog") return settings.navigation.show_blog;
+    if (item.href === "/faq") return settings.navigation.show_faq;
+    return true;
+  });
+
   return (
-    <footer className="bg-[#112416] px-5 py-14 text-white lg:px-8">
-      <div className="mx-auto grid max-w-7xl gap-10 border-t border-[#f6d97b]/20 pt-10 lg:grid-cols-[1.2fr_0.7fr_0.7fr_1fr]">
+    <footer className="border-t border-[#dfe4e0] bg-white px-5 py-16 text-[#17211c] lg:px-8">
+      <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-2 lg:grid-cols-[1.35fr_0.75fr_0.75fr_1fr]">
         <div>
-          <Link href="/" className="flex items-center gap-3" aria-label="34 Build Master Construction">
-            <span className="grid size-14 place-items-center rounded-2xl border border-[#f6d97b]/40 bg-[#053920] text-xl font-extrabold text-[#fdf0a3]">
-              34
-            </span>
-            <span className="leading-tight">
-              <span className="block text-lg font-extrabold uppercase tracking-[0.16em]">Build Master</span>
-              <span className="block text-xs uppercase tracking-[0.24em] text-[#f6d97b]">Construction</span>
-            </span>
+          <Link href="/" className="flex items-center gap-3" aria-label={settings.general.company_name_en}>
+            <SiteLogo footer className="size-14 shrink-0 rounded-md object-cover" />
+            <span className="leading-tight"><span className="block text-lg font-semibold uppercase tracking-[0.1em]">Build Master</span><span className="block text-xs font-medium uppercase tracking-[0.18em] text-[#0f6b45]">Construction</span></span>
           </Link>
-          <p className="mt-5 max-w-sm text-base leading-8 text-white/62">
-            สร้างสรรค์คุณภาพ มุ่งมั่นในทุกงานก่อสร้าง สำหรับงานออกแบบ รีโนเวท สร้างบ้าน และบิวท์อิน
-          </p>
-          <div className="mt-6 flex items-center gap-2">
-            {socialLinks.map((social) => (
-              <a
-                key={social.label}
-                href={social.href}
-                className="social-icon-link"
-                aria-label={social.label}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <Icon name={social.icon} className="size-4" />
-              </a>
-            ))}
-          </div>
+          <p className="mt-5 max-w-sm text-base leading-8 text-[#667169]">{settings.general.tagline}</p>
+          <div className="mt-6"><SocialLinks /></div>
         </div>
-
         <div>
-          <h3 className="footer-heading">บริการ</h3>
-          <ul className="mt-4 space-y-3 text-white/66">
-            {serviceLinks.map((service) => (
-              <li key={service}>
-                <Link className="footer-link" href="/services">
-                  {service}
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-[#17211c]">บริการ</h3>
+          <ul className="mt-5 grid gap-3 text-[#667169]">{serviceLinks.map((service) => <li key={service}><Link href="/services" className="transition hover:text-[#0f6b45]">{service}</Link></li>)}</ul>
         </div>
-
         <div>
-          <h3 className="footer-heading">เมนู</h3>
-          <ul className="mt-4 space-y-3 text-white/66">
-            <li>
-              <Link className="footer-link" href="/about">
-                เกี่ยวกับเรา
-              </Link>
-            </li>
-            <li>
-              <Link className="footer-link" href="/updates">
-                อัปเดตงาน
-              </Link>
-            </li>
-            <li>
-              <Link className="footer-link" href="/services">
-                บริการ
-              </Link>
-            </li>
-            <li>
-              <Link className="footer-link" href="/blog">
-                บทความ
-              </Link>
-            </li>
-            <li>
-              <Link className="footer-link" href="/contact">
-                ติดต่อเรา
-              </Link>
-            </li>
-          </ul>
+          <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-[#17211c]">เมนู</h3>
+          <ul className="mt-5 grid gap-3 text-[#667169]">{visibleNavLinks.slice(1).map((item) => <li key={item.href}><Link href={item.href} className="transition hover:text-[#0f6b45]">{item.label}</Link></li>)}</ul>
         </div>
-
         <div>
-          <h3 className="footer-heading">ติดต่อ</h3>
-          <ul className="mt-4 space-y-4 text-white/72">
-            <li className="flex gap-3">
-              <Icon name="phone" className="mt-1 size-5 shrink-0 text-[#f6d97b]" />
-              <a className="footer-link" href={siteConfig.phoneHref}>
-                {siteConfig.phoneDisplay}
-              </a>
-            </li>
-            <li className="flex gap-3">
-              <Icon name="mail" className="mt-1 size-5 shrink-0 text-[#f6d97b]" />
-              <a className="footer-link break-all" href={`mailto:${siteConfig.email}`}>
-                {siteConfig.email}
-              </a>
-            </li>
-            <li className="flex gap-3">
-              <Icon name="location" className="mt-1 size-5 shrink-0 text-[#f6d97b]" />
-              <span>{siteConfig.area}</span>
-            </li>
+          <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-[#17211c]">ติดต่อ</h3>
+          <ul className="mt-5 grid gap-4 text-[#667169]">
+            <li><a href={settings.general.phone_href} className="flex gap-3 transition hover:text-[#0f6b45]"><Phone className="mt-1 size-5 shrink-0" />{settings.general.phone_display}</a></li>
+            <li><a href={`mailto:${settings.general.email}`} className="flex gap-3 break-all transition hover:text-[#0f6b45]"><Mail className="mt-1 size-5 shrink-0" />{settings.general.email}</a></li>
+            <li className="flex gap-3"><MapPin className="mt-1 size-5 shrink-0" />{settings.general.service_area}</li>
           </ul>
+          <Link href="/contact" className="mt-6 inline-flex items-center gap-2 font-semibold text-[#0f6b45]">เริ่มปรึกษาโครงการ <ArrowUpRight className="size-4" /></Link>
         </div>
       </div>
-      <div className="mx-auto mt-10 flex max-w-7xl flex-col gap-3 border-t border-[#f6d97b]/14 pt-6 text-base text-white/46 sm:flex-row sm:items-center sm:justify-between">
-        <p>© 2026 34 Build Master Construction. All rights reserved.</p>
-        <p>Modern Luxury Premium Construction</p>
+      <div className="mx-auto mt-12 flex max-w-7xl flex-col gap-2 border-t border-[#e4e8e5] pt-6 text-sm text-[#7a847d] sm:flex-row sm:items-center sm:justify-between">
+        <p>{settings.general.copyright}</p><p>{settings.general.service_area}</p>
       </div>
     </footer>
   );

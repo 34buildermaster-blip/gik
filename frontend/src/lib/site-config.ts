@@ -23,5 +23,6 @@ export const primaryPages = [
   { path: "/about", label: "เกี่ยวกับเรา" },
   { path: "/services", label: "บริการ" },
   { path: "/blog", label: "บทความ" },
+  { path: "/faq", label: "คำถามพบบ่อย" },
   { path: "/contact", label: "ติดต่อ" },
 ];

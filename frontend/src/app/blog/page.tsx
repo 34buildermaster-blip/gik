@@ -13,7 +13,7 @@ export default async function BlogPage() {
   const posts = await getIntegratedBlogPosts();
 
   return (
-    <main className="min-h-screen bg-[#fbf7ec] text-lg text-[#112416]">
+    <main className="modern-inner-page min-h-screen bg-white text-lg text-[#17211c]">
       <SiteHeader />
       <PageHero title="บทความ" currentLabel="บทความ" />
       <BlogList initialPosts={posts} />
