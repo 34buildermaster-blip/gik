@@ -1,4 +1,13 @@
-:HL["/gik/_next/static/chunks/2td7nfk4eaege.css","style"]
-:HL["/gik/_next/static/media/LINESeedSansTH_W_Bd-s.p.38p8rx8vmjq_s.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
-:HL["/gik/_next/static/media/LINESeedSansTH_W_Rg-s.p.1zk9avbvwlzda.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"blog","param":null,"prefetchHints":0,"slots":{"children":{"name":"slug","param":{"type":"d","key":"home-renovation-planning","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"z3dk6MCEzdJBhPnQJgSM5"}
+:HL["/gik/_next/static/chunks/3ntiw-ivzsn_l.css","style"]
+:HL["/gik/_next/static/chunks/2k6vtotlwcdz0.css","style"]
+:HL["/gik/_next/static/media/118b6ed7ac256a99-s.p.3btzg3pbxiu1o.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/gik/_next/static/media/1e23e5114abf0db3-s.p.3vomj4ys718n3.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/gik/_next/static/media/34da6f6f5d0d57a5-s.p.3j785ygmx2sxp.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/gik/_next/static/media/577b8067601e9847-s.p.17uyqh1z65ij2.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/gik/_next/static/media/876b05e81fb36bf6-s.p.3-cnw-vwwbh1_.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/gik/_next/static/media/89d4f80f11029d6d-s.p.3y48j16vw3ns0.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/gik/_next/static/media/a244653d74e7372f-s.p.3zj8sbbtpwle6.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/gik/_next/static/media/c750adf2ddf22b70-s.p.1j3epi4sx1jkp.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/gik/_next/static/media/d598b2fbe51cc254-s.p.0i_3uaypf58iu.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/gik/_next/static/media/fdbfb7080a87a334-s.p.0hwi9_9hwu_ow.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"blog","param":null,"prefetchHints":0,"slots":{"children":{"name":"slug","param":{"type":"d","key":"home-renovation-planning","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"TK6Knw4JozD6c4BKMwxe7"}
