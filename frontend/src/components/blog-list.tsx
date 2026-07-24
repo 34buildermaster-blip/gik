@@ -63,8 +63,8 @@ export function BlogList({ initialPosts }: BlogListProps) {
       <section className="relative overflow-hidden bg-white px-5 py-24 lg:px-8">
         <div className="relative mx-auto max-w-4xl rounded-lg border border-[#dfe4e0] bg-white p-8 text-center shadow-[0_20px_70px_rgba(18,34,25,0.07)] md:p-12">
           <p className="section-kicker">Articles</p>
-          <h2 className="mt-4 text-4xl font-semibold leading-tight text-[#17211c] md:text-5xl">ยังไม่มีบทความเผยแพร่</h2>
-          <p className="mx-auto mt-4 max-w-2xl text-xl leading-9 text-[#667169]">
+          <h2 className="mt-3 text-3xl font-semibold leading-tight text-[#17211c] md:text-4xl">ยังไม่มีบทความเผยแพร่</h2>
+          <p className="mx-auto mt-4 max-w-2xl text-lg leading-8 text-[#667169]">
             เมื่อเพิ่มบทความจากหลังบ้านและตั้งสถานะเป็นเผยแพร่ บทความจะแสดงบนหน้านี้โดยอัตโนมัติ
           </p>
           <Link href="/contact" className="gold-button mt-8 inline-flex min-h-12 items-center justify-center rounded-full px-7 font-semibold text-white">
@@ -92,8 +92,8 @@ export function BlogList({ initialPosts }: BlogListProps) {
               <span className="rounded-full bg-white px-4 py-2 text-sm font-semibold uppercase tracking-[0.16em] text-[#0f6b45]">
                 Featured
               </span>
-              <h2 className="mt-5 text-4xl font-semibold leading-tight md:text-5xl">{featuredPost.title}</h2>
-              <p className="mt-4 max-w-2xl text-xl leading-8 text-white/72">{featuredPost.excerpt}</p>
+              <h2 className="mt-4 text-3xl font-semibold leading-tight md:text-4xl">{featuredPost.title}</h2>
+              <p className="mt-3 max-w-2xl text-lg leading-8 text-white/72">{featuredPost.excerpt}</p>
             </div>
           </Link>
 
@@ -111,8 +111,8 @@ export function BlogList({ initialPosts }: BlogListProps) {
                 </div>
                 <div className="flex flex-col justify-center">
                   <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#0f6b45]">{post.category}</p>
-                  <h2 className="mt-3 text-3xl font-semibold leading-tight text-[#17211c]">{post.title}</h2>
-                  <p className="mt-3 text-lg leading-8 text-[#667169]">{post.excerpt}</p>
+                  <h2 className="mt-3 text-2xl font-semibold leading-tight text-[#17211c]">{post.title}</h2>
+                  <p className="mt-3 text-base leading-7 text-[#667169]">{post.excerpt}</p>
                   <p className="mt-4 text-base font-medium text-[#0f6b45]">{post.date} · อ่าน {post.readTime}</p>
                 </div>
               </Link>
@@ -126,7 +126,7 @@ export function BlogList({ initialPosts }: BlogListProps) {
           <div className="mb-10 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="section-kicker">Latest Articles</p>
-              <h2 className="mt-4 text-4xl font-semibold leading-tight text-[#17211c] sm:text-6xl">บทความทั้งหมด</h2>
+              <h2 className="mt-3 text-3xl font-semibold leading-tight text-[#17211c] sm:text-4xl">บทความทั้งหมด</h2>
             </div>
             <Link href="/contact" className="gold-button inline-flex min-h-12 items-center justify-center rounded-full px-7 font-semibold text-white">
               ปรึกษาโปรเจกต์ของคุณ
@@ -148,8 +148,8 @@ export function BlogList({ initialPosts }: BlogListProps) {
                   </div>
                   <div className="p-6">
                     <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#0f6b45]">{post.category}</p>
-                    <h3 className="mt-3 text-3xl font-semibold leading-tight text-[#17211c]">{post.title}</h3>
-                    <p className="mt-3 text-lg leading-8 text-[#667169]">{post.excerpt}</p>
+                    <h3 className="mt-3 text-2xl font-semibold leading-tight text-[#17211c]">{post.title}</h3>
+                    <p className="mt-3 text-base leading-7 text-[#667169]">{post.excerpt}</p>
                     <span className="mt-5 inline-flex font-semibold text-[#0f6b45]">อ่านบทความ</span>
                   </div>
                 </Link>

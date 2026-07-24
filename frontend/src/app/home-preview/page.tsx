@@ -8,15 +8,12 @@ import {
   Building2,
   ClipboardCheck,
   Clock3,
-  ChevronRight,
-  CircleUserRound,
   Hammer,
   Handshake,
   House,
   Layers3,
   Mail,
   MapPin,
-  Menu,
   MessageCircle,
   Paintbrush,
   Phone,
@@ -26,22 +23,12 @@ import {
 import { FaFacebookF, FaInstagram, FaLine, FaTiktok } from "react-icons/fa6";
 import { assetPath, sitePath } from "@/lib/asset-path";
 import { BrandLogoImage } from "@/components/brand-logo-image";
+import { SiteHeader } from "@/components/site-chrome";
 import { useSiteSettings } from "@/contexts/site-settings-context";
 import ApproachCarousel from "./ApproachCarousel";
 import ClientExperienceCarousel from "./ClientExperienceCarousel";
 import HeroCarousel from "./HeroCarousel";
 import styles from "./page.module.css";
-
-const mainNav = [
-  { label: "หน้าหลัก", href: "/" },
-  { label: "เกี่ยวกับเรา", href: "/about" },
-  { label: "บริการ", href: "#services" },
-  { label: "แบบบ้าน", href: "/house-designs" },
-  { label: "ผลงาน", href: "#projects" },
-  { label: "อัปเดตงาน", href: "/updates" },
-  { label: "บทความ", href: "/blog" },
-  { label: "ติดต่อ", href: "#contact" },
-];
 
 const services = [
   {
@@ -142,55 +129,10 @@ function SectionHeading({ eyebrow, title, copy }: { eyebrow: string; title: stri
 
 export default function HomePreviewPage() {
   const settings = useSiteSettings();
-  const visibleMainNav = mainNav.filter((item) => {
-    if (item.href === "#services") return settings.display.show_home_services;
-    if (item.href === "#projects") return settings.display.show_home_projects;
-    if (item.href === "#contact") return settings.display.show_home_contact;
-    if (item.href === "/house-designs") return settings.navigation.show_house_designs;
-    if (item.href === "/updates") return settings.navigation.show_updates;
-    if (item.href === "/blog") return settings.navigation.show_blog;
-    return true;
-  });
 
   return (
     <main className={styles.page}>
-      <div className={styles.utilityBar}>
-        <div className={styles.utilityInner}>
-          <nav aria-label="เมนูเพิ่มเติม">
-            {settings.navigation.show_faq ? <Link href="/faq">คำถามที่พบบ่อย</Link> : null}
-            {settings.navigation.show_blog ? <Link href="/blog">บทความ</Link> : null}
-            {settings.navigation.show_updates ? <Link href="/updates">อัปเดตหน้างาน</Link> : null}
-          </nav>
-          <div className={styles.utilityContact}>
-            <a href={settings.general.phone_href}><Phone size={14} /> {settings.general.phone_display}</a>
-            {settings.social.line_url ? <a href={settings.social.line_url} target="_blank" rel="noreferrer"><MessageCircle size={14} /> LINE OA</a> : null}
-          </div>
-        </div>
-      </div>
-
-      <header className={styles.header}>
-        <div className={styles.headerInner}>
-          <Link href="/" aria-label="34 Build Master Construction">
-            <BrandMark />
-          </Link>
-          <nav className={styles.desktopNav} aria-label="เมนูหลัก">
-            {visibleMainNav.map((item, index) => (
-              <Link className={index === 0 ? styles.activeNav : undefined} href={item.href} key={item.label}>{item.label}</Link>
-            ))}
-          </nav>
-          <div className={styles.headerActions}>
-            <Link className={styles.loginLink} href="/login"><CircleUserRound size={18} /> {settings.cta.tracking_label}</Link>
-            <a className={styles.primaryButton} href={settings.general.phone_href}><Phone size={17} /> {settings.cta.consultation_label}</a>
-          </div>
-          <details className={styles.mobileMenu}>
-            <summary aria-label="เปิดเมนู"><Menu size={23} /></summary>
-            <div>
-              {visibleMainNav.map((item) => <Link href={item.href} key={item.label}>{item.label}<ChevronRight size={17} /></Link>)}
-              <Link href="/login"><CircleUserRound size={17} /> {settings.cta.tracking_label}</Link>
-            </div>
-          </details>
-        </div>
-      </header>
+      <SiteHeader overlay />
 
       <HeroCarousel />
 
@@ -250,11 +192,11 @@ export default function HomePreviewPage() {
           </div>
           <div className={styles.projectGrid}>
             <article className={`${styles.projectCard} ${styles.projectMain}`}>
-              <Image src={assetPath("/hero-construction.png")} alt="โครงการสร้างบ้านพักอาศัย" fill sizes="70vw" />
+              <Image src={assetPath("/selected-projects/tropical-japandi-exterior.webp")} alt="บ้าน Tropical Japandi Luxury ยามค่ำพร้อมสระว่ายน้ำ" fill sizes="70vw" />
               <div><span>RESIDENTIAL · CHIANG MAI</span><h3>บ้านพักอาศัยร่วมสมัย</h3><p>ออกแบบและก่อสร้าง</p></div>
             </article>
             <article className={styles.projectCard}>
-              <Image src={assetPath("/bg-material-board.png")} alt="งานเลือกวัสดุและตกแต่งภายใน" fill sizes="35vw" />
+              <Image src={assetPath("/selected-projects/tropical-japandi-living.webp")} alt="พื้นที่พักผ่อนภายในสไตล์ Tropical Japandi Luxury" fill sizes="35vw" />
               <div><span>INTERIOR · MATERIAL</span><h3>พื้นที่ภายในและบิวท์อิน</h3><p>ออกแบบรายละเอียดวัสดุ</p></div>
             </article>
             <article className={`${styles.projectCard} ${styles.projectTextCard}`}>
@@ -312,7 +254,7 @@ export default function HomePreviewPage() {
 
       {settings.display.show_home_contact ? <section className={styles.contactSection} id="contact">
         <div className={styles.contactImage}>
-          <Image src={assetPath("/approach-homes/warm-modern.jpg")} alt="บ้านสไตล์โมเดิร์นสำหรับเริ่มต้นปรึกษาโครงการกับ 34 Build Master" fill sizes="50vw" />
+          <Image src={assetPath("/contact/tropical-japandi-contact.webp")} alt="บ้าน Tropical Japandi Luxury สำหรับเริ่มต้นปรึกษาโครงการกับ 34 Build Master" fill sizes="50vw" />
           <div><span>START YOUR PROJECT</span><h2>เริ่มต้นจากการคุยกัน<br />อย่างเข้าใจ</h2></div>
         </div>
         <form className={styles.contactForm} action={sitePath("/contact")} method="get">

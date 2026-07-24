@@ -2529,3 +2529,85 @@ dt,
 @media (max-width: 767px) {
   .modern-inner-page .faq-page-title-row { margin-bottom: 28px; }
 }
+
+/* Calmer typography for internal pages. The homepage keeps its own scale. */
+.modern-inner-page .about-v2-heading h2,
+.modern-inner-page .about-v2-copy h2,
+.modern-inner-page .about-v2-trust-copy h2 {
+  font-size: clamp(2rem, 3.5vw, 3.7rem);
+}
+
+.modern-inner-page .about-v2-copy > p:not(.section-kicker),
+.modern-inner-page .about-v2-trust-copy > p:not(.section-kicker),
+.modern-inner-page .about-v2-heading.split > p,
+.modern-inner-page .about-v2-faq .about-v2-heading > p:not(.section-kicker) {
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.modern-inner-page .about-v2-steps h3,
+.modern-inner-page .about-v2-value-grid h3,
+.modern-inner-page .about-v2-team-grid h3 {
+  font-size: 1.18rem;
+}
+
+.modern-inner-page .about-v2-timeline-copy h3 {
+  font-size: 1.35rem;
+}
+
+.modern-inner-page .about-v2-steps p,
+.modern-inner-page .about-v2-timeline-copy p,
+.modern-inner-page .about-v2-team-grid p,
+.modern-inner-page .about-v2-faq-list summary,
+.modern-inner-page .about-v2-faq-list details p {
+  font-size: .95rem;
+  line-height: 1.7;
+}
+
+.modern-inner-page .about-v2-review-card blockquote {
+  font-size: 1.04rem;
+  line-height: 1.72;
+}
+
+.modern-inner-page .faq-page-title-row h2 {
+  font-size: clamp(2rem, 3.5vw, 3.5rem);
+}
+
+.modern-inner-page .faq-page-title-row p:last-child,
+.modern-inner-page .faq-page-item > button {
+  font-size: 1rem;
+}
+
+.modern-inner-page .faq-page-answer p {
+  font-size: .95rem;
+  line-height: 1.72;
+}
+
+.modern-inner-page .faq-connect-band h2 {
+  font-size: clamp(1.75rem, 2.7vw, 2.15rem);
+}
+
+.modern-inner-page .article-content {
+  font-size: 1rem;
+  line-height: 1.82;
+}
+
+.modern-inner-page .article-content h2 {
+  font-size: clamp(1.7rem, 2.4vw, 2.2rem);
+}
+
+.modern-inner-page .article-content h3 {
+  font-size: clamp(1.35rem, 2vw, 1.75rem);
+}
+
+.modern-inner-page .article-content h4 {
+  font-size: clamp(1.15rem, 1.6vw, 1.4rem);
+}
+
+@media (max-width: 760px) {
+  .modern-inner-page .about-v2-heading h2,
+  .modern-inner-page .about-v2-copy h2,
+  .modern-inner-page .about-v2-trust-copy h2 {
+    font-size: 2rem;
+  }
+}

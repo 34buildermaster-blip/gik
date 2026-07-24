@@ -28,9 +28,9 @@ export default function ServicesPage() {
           <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
             <div>
               <p className="modern-kicker">Our services</p>
-              <h2 className="mt-4 text-4xl font-semibold leading-tight sm:text-6xl">ครบตั้งแต่แนวคิด<br />จนถึงพื้นที่จริง</h2>
+              <h2 className="mt-3 text-3xl font-semibold leading-tight sm:text-4xl">ครบตั้งแต่แนวคิด<br />จนถึงพื้นที่จริง</h2>
             </div>
-            <p className="max-w-3xl text-xl leading-9 text-[#667169]">เลือกบริการที่ตรงกับโครงการของคุณ ทุกงานเริ่มจากการสำรวจโจทย์จริง วางแผนให้เห็นภาพ และควบคุมรายละเอียดตลอดกระบวนการ</p>
+            <p className="max-w-3xl text-lg leading-8 text-[#667169]">เลือกบริการที่ตรงกับโครงการของคุณ ทุกงานเริ่มจากการสำรวจโจทย์จริง วางแผนให้เห็นภาพ และควบคุมรายละเอียดตลอดกระบวนการ</p>
           </div>
 
           <div className="mt-12 grid gap-6 md:grid-cols-2">
@@ -44,7 +44,7 @@ export default function ServicesPage() {
                   </div>
                   <div className="grid gap-5 p-6 sm:grid-cols-[auto_1fr_auto] sm:items-start md:p-8">
                     <span className="text-sm font-semibold text-[#0f6b45]">{service.number}</span>
-                    <div><h3 className="text-3xl font-semibold text-[#17211c]">{service.title}</h3><p className="mt-3 text-lg leading-8 text-[#667169]">{service.detail}</p></div>
+                    <div><h3 className="text-2xl font-semibold text-[#17211c]">{service.title}</h3><p className="mt-3 text-base leading-7 text-[#667169]">{service.detail}</p></div>
                     <Link href="/contact" aria-label={`ปรึกษางาน${service.title}`} className="grid size-11 place-items-center rounded-full border border-[#cfd6d1] text-[#17211c] transition group-hover:border-[#0f6b45] group-hover:bg-[#0f6b45] group-hover:text-white"><ArrowUpRight className="size-5" /></Link>
                   </div>
                 </article>
@@ -56,7 +56,7 @@ export default function ServicesPage() {
 
       <section className="border-y border-[#dfe4e0] bg-[#f1f3f1] px-5 py-16 lg:px-8">
         <div className="mx-auto flex max-w-7xl flex-col gap-6 md:flex-row md:items-center md:justify-between">
-          <div><p className="modern-kicker">Not sure where to start?</p><h2 className="mt-3 text-3xl font-semibold sm:text-4xl">ส่งข้อมูลเบื้องต้นให้ทีมช่วยประเมินประเภทงาน</h2></div>
+          <div><p className="modern-kicker">Not sure where to start?</p><h2 className="mt-3 text-2xl font-semibold sm:text-3xl">ส่งข้อมูลเบื้องต้นให้ทีมช่วยประเมินประเภทงาน</h2></div>
           <Link href="/contact" className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-full bg-[#0f6b45] px-7 font-semibold text-white transition hover:bg-[#0a5335]">เริ่มปรึกษา <ArrowUpRight className="size-5" /></Link>
         </div>
       </section>

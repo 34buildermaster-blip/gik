@@ -24,8 +24,8 @@ export default function ContactPage() {
         <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.82fr_1.18fr]">
           <div>
             <p className="modern-kicker">Contact us</p>
-            <h2 className="mt-4 text-4xl font-semibold leading-tight sm:text-5xl">บอกโจทย์ที่คุณมี<br />แล้วค่อยวางแผนไปด้วยกัน</h2>
-            <p className="mt-5 max-w-xl text-xl leading-9 text-[#667169]">ส่งข้อมูลพื้นที่ รูปหน้างาน งบประมาณโดยประมาณ และช่วงเวลาที่ต้องการ ทีมจะติดต่อกลับเพื่อช่วยจัดลำดับขั้นแรกให้ชัดเจน</p>
+            <h2 className="mt-3 text-3xl font-semibold leading-tight sm:text-4xl">บอกโจทย์ที่คุณมี<br />แล้วค่อยวางแผนไปด้วยกัน</h2>
+            <p className="mt-4 max-w-xl text-lg leading-8 text-[#667169]">ส่งข้อมูลพื้นที่ รูปหน้างาน งบประมาณโดยประมาณ และช่วงเวลาที่ต้องการ ทีมจะติดต่อกลับเพื่อช่วยจัดลำดับขั้นแรกให้ชัดเจน</p>
 
             <div className="mt-10 grid gap-3">
               {channels.map((channel) => {
@@ -33,7 +33,7 @@ export default function ContactPage() {
                 return (
                   <a key={channel.label} href={channel.href} target={channel.href.startsWith("http") ? "_blank" : undefined} rel={channel.href.startsWith("http") ? "noreferrer" : undefined} className="group grid grid-cols-[48px_1fr] items-center gap-4 rounded-lg border border-[#dfe4e0] p-4 transition hover:border-[#0f6b45] hover:bg-[#edf5f0]">
                     <span className="grid size-12 place-items-center rounded-full bg-[#edf5f0] text-[#0f6b45] group-hover:bg-[#0f6b45] group-hover:text-white"><ChannelIcon className="size-5" /></span>
-                    <span className="min-w-0"><small className="block text-sm text-[#7a847d]">{channel.label}</small><strong className="mt-1 block break-all text-lg font-semibold text-[#17211c]">{channel.value}</strong></span>
+                    <span className="min-w-0"><small className="block text-sm text-[#7a847d]">{channel.label}</small><strong className="mt-1 block break-all text-base font-semibold text-[#17211c]">{channel.value}</strong></span>
                   </a>
                 );
               })}

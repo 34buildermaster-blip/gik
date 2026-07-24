@@ -2,26 +2,44 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { assetPath } from "@/lib/asset-path";
+import {
+  fetchHomeSlides,
+  homeSlideImage,
+  type HomeSlide,
+} from "@/lib/home-slides";
 import styles from "./page.module.css";
 
-const homes = [
-  { src: "/approach-homes/modern.jpg", style: "Modern Residence", alt: "บ้านสไตล์โมเดิร์นเส้นสายเรียบคม" },
-  { src: "/approach-homes/natural-modern.jpg", style: "Natural Modern", alt: "บ้านโมเดิร์นที่ผสมวัสดุไม้ธรรมชาติ" },
-  { src: "/approach-homes/contemporary.jpg", style: "Modern Farmhouse", alt: "บ้านสไตล์โมเดิร์นฟาร์มเฮาส์" },
-  { src: "/approach-homes/minimal.jpg", style: "Rustic Contemporary", alt: "บ้านร่วมสมัยที่ใช้หินและวัสดุธรรมชาติ" },
-  { src: "/approach-homes/natural.jpg", style: "Nordic Bungalow", alt: "บ้านชั้นเดียวสไตล์นอร์ดิกท่ามกลางสวน" },
-  { src: "/approach-homes/coastal-villa.jpg", style: "Coastal Villa", alt: "บ้านพักตากอากาศสไตล์วิลลาริมน้ำ" },
-  { src: "/approach-homes/classic.jpg", style: "Resort Villa", alt: "บ้านพักสไตล์รีสอร์ตพร้อมพื้นที่สระว่ายน้ำ" },
-  { src: "/approach-homes/villa.jpg", style: "Classic Residence", alt: "บ้านพักอาศัยสไตล์คลาสสิกร่วมสมัย" },
+const fallbackHomes: HomeSlide[] = [
+  { id: "fallback-home-1", image: "/approach-homes/modern.jpg", title: "Modern Residence", alt: "บ้านสไตล์โมเดิร์นเส้นสายเรียบคม" },
+  { id: "fallback-home-2", image: "/approach-homes/natural-modern.jpg", title: "Natural Modern", alt: "บ้านโมเดิร์นที่ผสมวัสดุไม้ธรรมชาติ" },
+  { id: "fallback-home-3", image: "/approach-homes/contemporary.jpg", title: "Modern Farmhouse", alt: "บ้านสไตล์โมเดิร์นฟาร์มเฮาส์" },
+  { id: "fallback-home-4", image: "/approach-homes/minimal.jpg", title: "Rustic Contemporary", alt: "บ้านร่วมสมัยที่ใช้หินและวัสดุธรรมชาติ" },
+  { id: "fallback-home-5", image: "/approach-homes/natural.jpg", title: "Nordic Bungalow", alt: "บ้านชั้นเดียวสไตล์นอร์ดิกท่ามกลางสวน" },
+  { id: "fallback-home-6", image: "/approach-homes/coastal-villa.jpg", title: "Coastal Villa", alt: "บ้านพักตากอากาศสไตล์วิลลาริมน้ำ" },
+  { id: "fallback-home-7", image: "/approach-homes/classic.jpg", title: "Resort Villa", alt: "บ้านพักสไตล์รีสอร์ตพร้อมพื้นที่สระว่ายน้ำ" },
+  { id: "fallback-home-8", image: "/approach-homes/villa.jpg", title: "Classic Residence", alt: "บ้านพักอาศัยสไตล์คลาสสิกร่วมสมัย" },
 ];
 
 const AUTO_SLIDE_MS = 4200;
 
 export default function ApproachCarousel() {
   const trackRef = useRef<HTMLDivElement>(null);
+  const [homes, setHomes] = useState<HomeSlide[]>(fallbackHomes);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    fetchHomeSlides(controller.signal).then((payload) => {
+      if (payload?.approach.length) {
+        setHomes(payload.approach);
+        setActiveIndex(0);
+      }
+    });
+
+    return () => controller.abort();
+  }, []);
 
   const showSlide = useCallback((index: number, behavior: ScrollBehavior = "smooth") => {
     const track = trackRef.current;
@@ -35,7 +53,7 @@ export default function ApproachCarousel() {
 
   useEffect(() => {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduceMotion || isPaused) return;
+    if (reduceMotion || isPaused || homes.length < 2) return;
 
     const timer = window.setInterval(() => {
       setActiveIndex((current) => {
@@ -52,7 +70,7 @@ export default function ApproachCarousel() {
     }, AUTO_SLIDE_MS);
 
     return () => window.clearInterval(timer);
-  }, [isPaused]);
+  }, [homes.length, isPaused]);
 
   useEffect(() => {
     const handleResize = () => showSlide(activeIndex, "auto");
@@ -71,33 +89,37 @@ export default function ApproachCarousel() {
     >
       <div className={styles.carouselTrack} ref={trackRef} aria-live="off">
         {homes.map((home, index) => (
-          <figure className={styles.approachSlide} key={home.src}>
+          <figure className={styles.approachSlide} key={home.id}>
             <Image
-              src={assetPath(home.src)}
+              src={homeSlideImage(home.image)}
               alt={home.alt}
               fill
               sizes="(max-width: 620px) 86vw, (max-width: 900px) 48vw, 32vw"
             />
             <figcaption>
-              <span>{String(index + 1).padStart(2, "0")} / {String(homes.length).padStart(2, "0")}</span>
-              <strong>{home.style}</strong>
+              <span>
+                {String(index + 1).padStart(2, "0")} / {String(homes.length).padStart(2, "0")}
+              </span>
+              <strong>{home.title}</strong>
             </figcaption>
           </figure>
         ))}
       </div>
 
-      <div className={styles.carouselDots} aria-label="เลือกภาพแบบบ้าน">
-        {homes.map((home, index) => (
-          <button
-            className={index === activeIndex ? styles.activeDot : undefined}
-            type="button"
-            key={home.src}
-            aria-label={`ดูภาพ ${home.style}`}
-            aria-current={index === activeIndex ? "true" : undefined}
-            onClick={() => showSlide(index)}
-          />
-        ))}
-      </div>
+      {homes.length > 1 && (
+        <div className={styles.carouselDots} aria-label="เลือกภาพแบบบ้าน">
+          {homes.map((home, index) => (
+            <button
+              className={index === activeIndex ? styles.activeDot : undefined}
+              type="button"
+              key={home.id}
+              aria-label={`ดูภาพ ${home.title}`}
+              aria-current={index === activeIndex ? "true" : undefined}
+              onClick={() => showSlide(index)}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
