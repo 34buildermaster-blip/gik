@@ -10,14 +10,13 @@ import {
 import styles from "./page.module.css";
 
 const fallbackHomes: HomeSlide[] = [
-  { id: "fallback-home-1", image: "/approach-homes/modern.jpg", title: "Modern Residence", alt: "บ้านสไตล์โมเดิร์นเส้นสายเรียบคม" },
-  { id: "fallback-home-2", image: "/approach-homes/natural-modern.jpg", title: "Natural Modern", alt: "บ้านโมเดิร์นที่ผสมวัสดุไม้ธรรมชาติ" },
-  { id: "fallback-home-3", image: "/approach-homes/contemporary.jpg", title: "Modern Farmhouse", alt: "บ้านสไตล์โมเดิร์นฟาร์มเฮาส์" },
-  { id: "fallback-home-4", image: "/approach-homes/minimal.jpg", title: "Rustic Contemporary", alt: "บ้านร่วมสมัยที่ใช้หินและวัสดุธรรมชาติ" },
-  { id: "fallback-home-5", image: "/approach-homes/natural.jpg", title: "Nordic Bungalow", alt: "บ้านชั้นเดียวสไตล์นอร์ดิกท่ามกลางสวน" },
-  { id: "fallback-home-6", image: "/approach-homes/coastal-villa.jpg", title: "Coastal Villa", alt: "บ้านพักตากอากาศสไตล์วิลลาริมน้ำ" },
-  { id: "fallback-home-7", image: "/approach-homes/classic.jpg", title: "Resort Villa", alt: "บ้านพักสไตล์รีสอร์ตพร้อมพื้นที่สระว่ายน้ำ" },
-  { id: "fallback-home-8", image: "/approach-homes/villa.jpg", title: "Classic Residence", alt: "บ้านพักอาศัยสไตล์คลาสสิกร่วมสมัย" },
+  { id: "fallback-home-1", image: "/managed-home-slides/approach-01.webp", title: "Modern Residence", alt: "บ้านสไตล์โมเดิร์นเส้นสายเรียบคม" },
+  { id: "fallback-home-2", image: "/managed-home-slides/approach-02.webp", title: "Natural Modern", alt: "บ้านโมเดิร์นที่ผสมวัสดุไม้ธรรมชาติ" },
+  { id: "fallback-home-3", image: "/managed-home-slides/approach-03.webp", title: "Modern Farmhouse", alt: "บ้านสไตล์โมเดิร์นฟาร์มเฮาส์" },
+  { id: "fallback-home-4", image: "/managed-home-slides/approach-04.webp", title: "Rustic Contemporary", alt: "บ้านร่วมสมัยที่ใช้หินและวัสดุธรรมชาติ" },
+  { id: "fallback-home-5", image: "/managed-home-slides/approach-05.webp", title: "Nordic Bungalow", alt: "บ้านชั้นเดียวสไตล์นอร์ดิกท่ามกลางสวน" },
+  { id: "fallback-home-6", image: "/managed-home-slides/approach-06.webp", title: "Coastal Villa", alt: "บ้านพักตากอากาศสไตล์วิลลาริมน้ำ" },
+  { id: "fallback-home-7", image: "/managed-home-slides/approach-07.webp", title: "Resort Villa", alt: "บ้านพักสไตล์รีสอร์ตพร้อมพื้นที่สระว่ายน้ำ" },
 ];
 
 const AUTO_SLIDE_MS = 4200;

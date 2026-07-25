@@ -18,6 +18,18 @@ const nextConfig: NextConfig = {
         async rewrites() {
           return [
             {
+              source: "/gik/bg-luxury-green.png",
+              destination: "/bg-luxury-green.png",
+            },
+            {
+              source: "/gik/bg-material-board.png",
+              destination: "/bg-material-board.png",
+            },
+            {
+              source: "/gik/hero-construction.png",
+              destination: "/hero-construction.png",
+            },
+            {
               source: "/backend-api/:path*",
               destination: `${backendUrl}/api/:path*`,
             },

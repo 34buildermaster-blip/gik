@@ -24,7 +24,7 @@ const fallbackSlides: HomeSlide[] = [
   },
   {
     id: "fallback-hero-2",
-    image: "/approach-homes/modern.jpg",
+    image: "/managed-home-slides/hero-02.webp",
     alt: "บ้านพักอาศัยสไตล์โมเดิร์น",
     eyebrow: "ARCHITECTURAL DESIGN",
     title: "บ้านที่สะท้อนตัวตน",
@@ -35,7 +35,7 @@ const fallbackSlides: HomeSlide[] = [
   },
   {
     id: "fallback-hero-3",
-    image: "/approach-homes/contemporary.jpg",
+    image: "/managed-home-slides/hero-03.webp",
     alt: "บ้านร่วมสมัยที่ออกแบบอย่างพิถีพิถัน",
     eyebrow: "CONSTRUCTION MANAGEMENT",
     title: "ทุกขั้นตอนชัดเจน",
@@ -46,7 +46,7 @@ const fallbackSlides: HomeSlide[] = [
   },
   {
     id: "fallback-hero-4",
-    image: "/approach-homes/natural-modern.jpg",
+    image: "/managed-home-slides/hero-04.webp",
     alt: "บ้านโมเดิร์นที่เลือกใช้วัสดุธรรมชาติ",
     eyebrow: "RENOVATION · INTERIOR",
     title: "เปลี่ยนพื้นที่เดิม",
