@@ -1,7 +1,10 @@
 <?php
 
 return [
-    'staff_2fa_required' => env('SECURITY_STAFF_2FA_REQUIRED', true),
+    'staff_2fa_required' => env(
+        'SECURITY_STAFF_2FA_REQUIRED',
+        env('APP_ENV') === 'production',
+    ),
 
     'upload_scan' => [
         'enabled' => env('SECURITY_UPLOAD_SCAN_ENABLED', false),
