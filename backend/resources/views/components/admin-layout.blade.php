@@ -638,7 +638,7 @@
             .preview-seo { position: static; }
         }
     </style>
-    <link rel="stylesheet" href="{{ asset('css/admin-modern.css') }}">
+    <link rel="stylesheet" href="{{ asset(app()->environment('production') ? 'css/admin-modern.min.css' : 'css/admin-modern.css') }}">
 </head>
 <body class="{{ $auth ? 'auth-body' : 'admin-body' }}">
     @if ($auth)
