@@ -14,6 +14,7 @@ SESSION_SECURE_COOKIE=true
 SESSION_HTTP_ONLY=true
 SESSION_SAME_SITE=lax
 SESSION_LIFETIME=60
+SECURITY_STAFF_2FA_REQUIRED=true
 SECURITY_HSTS_ENABLED=true
 ```
 
@@ -41,7 +42,9 @@ Then configure Laravel:
 
 ```dotenv
 SECURITY_UPLOAD_SCAN_ENABLED=true
+SECURITY_UPLOAD_SCAN_REQUIRED=true
 SECURITY_UPLOAD_SCAN_FAIL_CLOSED=true
+SECURITY_REQUIRE_CLEAN_FILES=true
 SECURITY_CLAMAV_BINARY=/usr/bin/clamscan
 SECURITY_CLAMAV_TIMEOUT=120
 SECURITY_QUARANTINE_DISK=local
@@ -50,6 +53,24 @@ SECURITY_QUARANTINE_PATH=quarantine
 
 Confirm that `storage/app/private/quarantine` is writable by the PHP user and is
 not served by Nginx or Apache.
+
+Before enabling customer traffic, rescan every existing managed file and require
+a successful exit code:
+
+```bash
+php artisan security:scan-stored-files
+```
+
+Files that are missing, infected, or could not be scanned remain unavailable
+while `SECURITY_REQUIRE_CLEAN_FILES=true`.
+
+## Initial staff accounts
+
+Never place staff passwords in source code. For a controlled first provision,
+set `SEED_STAFF_ACCOUNTS=true` and provide strong values for
+`SEED_ADMIN_PASSWORD` and `SEED_INSPECTOR_PASSWORD`, run the seeder once, then
+remove those values and disable staff seeding again. Both accounts are forced to
+change their temporary password and enroll in 2FA before using management routes.
 
 ## Google Drive
 
