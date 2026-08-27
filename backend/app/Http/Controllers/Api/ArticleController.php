@@ -4,14 +4,18 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Article;
+use App\Services\ArticleHtmlSanitizer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 
 class ArticleController extends Controller
 {
+    public function __construct(private readonly ArticleHtmlSanitizer $htmlSanitizer) {}
+
     public function index(): JsonResponse
     {
         $articles = Article::query()
+            ->with('coverFile')
             ->where('status', 'published')
             ->latest('published_at')
             ->latest()
@@ -24,6 +28,7 @@ class ArticleController extends Controller
     public function show(string $slug): JsonResponse
     {
         $article = Article::query()
+            ->with('coverFile')
             ->where('status', 'published')
             ->where('slug', $slug)
             ->firstOrFail();
@@ -33,7 +38,7 @@ class ArticleController extends Controller
 
     private function toPayload(Article $article): array
     {
-        $content = trim((string) $article->content);
+        $content = $this->htmlSanitizer->sanitize((string) $article->content);
         $wordCount = str_word_count(strip_tags($content));
 
         return [
@@ -43,7 +48,7 @@ class ArticleController extends Controller
             'category' => 'Article',
             'date' => $this->thaiDate($article->published_at ?? $article->updated_at),
             'readTime' => max(1, (int) ceil($wordCount / 220)).' นาที',
-            'image' => $article->cover_image ? url($article->cover_image) : null,
+            'image' => $article->coverUrl(),
             'coverAlt' => $article->title,
             'highlights' => $this->makeHighlights($article),
             'content' => $this->makeContentSections($article),
@@ -70,7 +75,7 @@ class ArticleController extends Controller
 
     private function makeContentSections(Article $article): array
     {
-        $plainContent = trim(strip_tags((string) $article->content));
+        $plainContent = trim(strip_tags($this->htmlSanitizer->sanitize((string) $article->content)));
         $blocks = preg_split('/\R{2,}/u', $plainContent, -1, PREG_SPLIT_NO_EMPTY) ?: [];
 
         if ($blocks === []) {

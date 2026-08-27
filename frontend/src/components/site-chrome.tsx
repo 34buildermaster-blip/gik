@@ -3,11 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { FormEvent, useState } from "react";
 import { ArrowUpRight, CircleUserRound, Mail, MapPin, Menu, Phone, Send } from "lucide-react";
 import { FaFacebookF, FaInstagram, FaLine, FaTiktok } from "react-icons/fa6";
 import { BrandLogoImage } from "@/components/brand-logo-image";
 import { useSiteSettings } from "@/contexts/site-settings-context";
 import { assetPath } from "@/lib/asset-path";
+import { getPublicApiBaseUrl } from "@/lib/public-api-url";
+import { CookieSettingsButton } from "@/components/cookie-consent";
 
 const navLinks = [
   { href: "/", label: "หน้าหลัก" },
@@ -17,16 +20,6 @@ const navLinks = [
   { href: "/updates", label: "อัปเดตงาน" },
   { href: "/blog", label: "บทความ" },
   { href: "/faq", label: "FAQ" },
-  { href: "/contact", label: "ติดต่อ" },
-];
-
-const headerNavLinks = [
-  { href: "/", label: "หน้าหลัก" },
-  { href: "/about", label: "เกี่ยวกับเรา" },
-  { href: "/services", label: "บริการ" },
-  { href: "/house-designs", label: "แบบบ้าน" },
-  { href: "/updates", label: "อัปเดตงาน" },
-  { href: "/blog", label: "บทความ" },
   { href: "/contact", label: "ติดต่อ" },
 ];
 
@@ -142,7 +135,8 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
   const isActiveLink = (href: string) => href === "/"
     ? normalizedPath === "/"
     : normalizedPath === href || normalizedPath.startsWith(`${href}/`);
-  const visibleNavLinks = headerNavLinks.filter((item) => {
+  const visibleNavLinks = navLinks.filter((item) => {
+    if (item.href === "/faq") return false;
     if (item.href === "/house-designs") return settings.navigation.show_house_designs;
     if (item.href === "/updates") return settings.navigation.show_updates;
     if (item.href === "/blog") return settings.navigation.show_blog;
@@ -250,24 +244,81 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
 }
 
 export function ContactForm() {
-  const settings = useSiteSettings();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
+
+  async function submitLead(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setFeedback(null);
+    setIsSubmitting(true);
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+
+    try {
+      const response = await fetch(`${getPublicApiBaseUrl()}/api/contact-leads`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.get("name"),
+          phone: formData.get("phone"),
+          email: formData.get("email") || null,
+          service_type: formData.get("service_type") || null,
+          message: formData.get("message") || null,
+          source_url: window.location.href,
+          website: formData.get("website") || null,
+        }),
+      });
+
+      const payload = (await response.json().catch(() => ({}))) as {
+        message?: string;
+        errors?: Record<string, string[]>;
+      };
+
+      if (!response.ok) {
+        const firstError = payload.errors ? Object.values(payload.errors)[0]?.[0] : null;
+        throw new Error(firstError || payload.message || "ไม่สามารถส่งข้อมูลได้ กรุณาลองใหม่อีกครั้ง");
+      }
+
+      form.reset();
+      setFeedback({ type: "success", message: payload.message || "ส่งข้อมูลเรียบร้อยแล้ว ทีมงานจะติดต่อกลับโดยเร็วที่สุด" });
+    } catch (error) {
+      setFeedback({
+        type: "error",
+        message: error instanceof Error ? error.message : "ไม่สามารถส่งข้อมูลได้ กรุณาลองใหม่อีกครั้ง",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   return (
-    <form className="grid gap-5 rounded-lg border border-[#dfe4e0] bg-white p-6 shadow-[0_20px_70px_rgba(18,34,25,0.07)] md:p-8" action={`mailto:${settings.general.email}`} method="post" encType="text/plain">
+    <form className="grid gap-5 rounded-lg border border-[#dfe4e0] bg-white p-6 shadow-[0_20px_70px_rgba(18,34,25,0.07)] md:p-8" onSubmit={submitLead}>
       <div className="grid gap-5 sm:grid-cols-2">
-        <label className="modern-form-field"><span>ชื่อผู้ติดต่อ</span><input name="name" type="text" placeholder="ชื่อของคุณ" /></label>
-        <label className="modern-form-field"><span>เบอร์โทร</span><input name="phone" type="tel" placeholder="เบอร์ที่สะดวกให้ติดต่อกลับ" /></label>
+        <label className="modern-form-field"><span>ชื่อผู้ติดต่อ</span><input name="name" type="text" placeholder="ชื่อของคุณ" minLength={2} maxLength={120} required /></label>
+        <label className="modern-form-field"><span>เบอร์โทร</span><input name="phone" type="tel" placeholder="เบอร์ที่สะดวกให้ติดต่อกลับ" minLength={8} maxLength={30} required /></label>
       </div>
+      <label className="modern-form-field"><span>อีเมล <small className="font-normal text-[#788179]">(ไม่บังคับ)</small></span><input name="email" type="email" placeholder="อีเมลสำหรับรับข้อมูลเพิ่มเติม" maxLength={255} /></label>
       <label className="modern-form-field">
         <span>ประเภทงาน</span>
-        <select name="service" defaultValue="">
+        <select name="service_type" defaultValue="">
           <option value="" disabled>เลือกประเภทงาน</option>
-          {serviceLinks.map((service) => <option key={service}>{service}</option>)}
+          {serviceLinks.map((service) => <option key={service} value={service}>{service}</option>)}
         </select>
       </label>
-      <label className="modern-form-field"><span>รายละเอียดเบื้องต้น</span><textarea name="detail" placeholder="เล่าพื้นที่ งบประมาณคร่าว ๆ หรือสิ่งที่อยากทำ" /></label>
-      <button className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#0f6b45] px-7 font-semibold text-white transition hover:bg-[#0a5335]" type="submit">
+      <label className="modern-form-field"><span>รายละเอียดเบื้องต้น</span><textarea name="message" placeholder="เล่าพื้นที่ งบประมาณคร่าว ๆ หรือสิ่งที่อยากทำ" maxLength={5000} /></label>
+      <label className="hidden" aria-hidden="true"><span>เว็บไซต์</span><input name="website" type="text" tabIndex={-1} autoComplete="off" /></label>
+      {feedback ? (
+        <p className={`rounded-md px-4 py-3 text-sm ${feedback.type === "success" ? "bg-[#e8f4ed] text-[#0f6b45]" : "bg-[#fff0ef] text-[#a23a32]"}`} role="status">
+          {feedback.message}
+        </p>
+      ) : null}
+      <button className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#0f6b45] px-7 font-semibold text-white transition hover:bg-[#0a5335] disabled:cursor-wait disabled:opacity-65" type="submit" disabled={isSubmitting}>
         <Send className="size-5" />
-        ส่งรายละเอียด
+        {isSubmitting ? "กำลังส่งข้อมูล..." : "ส่งรายละเอียด"}
       </button>
     </form>
   );
@@ -336,8 +387,14 @@ export function SiteFooter() {
           <Link href="/contact" className="mt-6 inline-flex items-center gap-2 font-semibold text-[#0f6b45]">เริ่มปรึกษาโครงการ <ArrowUpRight className="size-4" /></Link>
         </div>
       </div>
-      <div className="mx-auto mt-12 flex max-w-7xl flex-col gap-2 border-t border-[#e4e8e5] pt-6 text-sm text-[#7a847d] sm:flex-row sm:items-center sm:justify-between">
-        <p>{settings.general.copyright}</p><p>{settings.general.service_area}</p>
+      <div className="mx-auto mt-12 flex max-w-7xl flex-col gap-4 border-t border-[#e4e8e5] pt-6 text-sm text-[#7a847d] lg:flex-row lg:items-center lg:justify-between">
+        <p>{settings.general.copyright}</p>
+        <nav className="flex flex-wrap gap-x-5 gap-y-2" aria-label="ข้อมูลด้านกฎหมาย">
+          <Link href="/privacy-policy" className="transition hover:text-[#0f6b45]">นโยบายความเป็นส่วนตัว</Link>
+          <Link href="/terms-of-service" className="transition hover:text-[#0f6b45]">ข้อกำหนดการใช้งาน</Link>
+          <Link href="/cookie-policy" className="transition hover:text-[#0f6b45]">นโยบายคุกกี้</Link>
+          <CookieSettingsButton className="cursor-pointer border-0 bg-transparent p-0 text-left [font:inherit] transition hover:text-[#0f6b45]" />
+        </nav>
       </div>
     </footer>
   );

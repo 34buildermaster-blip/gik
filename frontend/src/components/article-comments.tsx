@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { MessageCircle, Send, ShieldCheck, UserRound } from "lucide-react";
+import { getPublicApiBaseUrl } from "@/lib/public-api-url";
 
 type PublicComment = {
   id: number;
@@ -31,23 +32,6 @@ const initialForm: FormState = {
   website: "",
 };
 
-function getApiBaseUrl() {
-  const configured = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "");
-
-  if (configured) {
-    return configured;
-  }
-
-  if (typeof window === "undefined") {
-    return "http://127.0.0.1:8000";
-  }
-
-  const { hostname, protocol } = window.location;
-  const isLocal = hostname === "localhost" || hostname === "127.0.0.1" || /^192\.168\./.test(hostname);
-
-  return isLocal ? `${protocol}//${hostname}:8000` : "http://127.0.0.1:8000";
-}
-
 function formatCommentDate(value: string | null) {
   if (!value) {
     return "";
@@ -71,7 +55,7 @@ export function ArticleComments({ slug, title }: ArticleCommentsProps) {
   const [isAvailable, setIsAvailable] = useState(true);
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
   const endpoint = useMemo(() => {
-    const baseUrl = getApiBaseUrl();
+    const baseUrl = getPublicApiBaseUrl();
     return `${baseUrl}/api/articles/${encodeURIComponent(slug)}/comments`;
   }, [slug]);
 

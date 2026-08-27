@@ -16,6 +16,8 @@ export type HomeSlidesPayload = {
   approach: HomeSlide[];
 };
 
+let homeSlidesRequest: Promise<HomeSlidesPayload | null> | null = null;
+
 export function homeSlideImage(path: string) {
   if (/^(https?:)?\/\//i.test(path) || path.startsWith("data:")) {
     return path;
@@ -24,7 +26,7 @@ export function homeSlideImage(path: string) {
   return assetPath(path);
 }
 
-export async function fetchHomeSlides(signal?: AbortSignal): Promise<HomeSlidesPayload | null> {
+async function loadHomeSlides(): Promise<HomeSlidesPayload | null> {
   const configuredApiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "");
   const isLocalDevelopment =
     typeof window !== "undefined" &&
@@ -41,7 +43,6 @@ export async function fetchHomeSlides(signal?: AbortSignal): Promise<HomeSlidesP
   try {
     const response = await fetch(endpoint, {
       headers: { Accept: "application/json" },
-      signal,
     });
 
     if (!response.ok) return null;
@@ -52,11 +53,24 @@ export async function fetchHomeSlides(signal?: AbortSignal): Promise<HomeSlidesP
       hero: Array.isArray(payload.data?.hero) ? payload.data.hero : [],
       approach: Array.isArray(payload.data?.approach) ? payload.data.approach : [],
     };
-  } catch (error) {
-    if (error instanceof DOMException && error.name === "AbortError") {
-      return null;
-    }
-
+  } catch {
     return null;
   }
+}
+
+export function fetchHomeSlides(signal?: AbortSignal): Promise<HomeSlidesPayload | null> {
+  homeSlidesRequest ??= loadHomeSlides();
+
+  if (!signal) return homeSlidesRequest;
+  if (signal.aborted) return Promise.resolve(null);
+
+  return new Promise((resolve) => {
+    const handleAbort = () => resolve(null);
+
+    signal.addEventListener("abort", handleAbort, { once: true });
+    homeSlidesRequest?.then((payload) => {
+      signal.removeEventListener("abort", handleAbort);
+      if (!signal.aborted) resolve(payload);
+    });
+  });
 }

@@ -19,40 +19,16 @@
 .page button, .page input, .page select, .page textarea { font: inherit; }
 .contentWidth { width: min(1180px, calc(100% - 48px)); margin: 0 auto; }
 
-.utilityBar { position: fixed; top: 0; right: 0; left: 0; z-index: 51; border-bottom: 1px solid rgba(255,255,255,.12); background: rgba(10,18,13,.82); color: rgba(255,255,255,.8); font-size: 13px; backdrop-filter: blur(14px); }
-.utilityInner { width: min(1260px, calc(100% - 48px)); min-height: 38px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
-.utilityInner nav, .utilityContact { display: flex; align-items: center; gap: 24px; }
-.utilityInner a { display: inline-flex; align-items: center; gap: 6px; transition: color .2s ease; }
-.utilityInner a:hover { color: #fff; }
-
-.header { position: fixed; top: 38px; right: 0; left: 0; z-index: 50; border-bottom: 1px solid rgba(255,255,255,.14); background: rgba(14,27,20,.82); color: #fff; box-shadow: 0 10px 32px rgba(10,22,15,.12); backdrop-filter: blur(16px); }
-.headerInner { width: min(1260px, calc(100% - 48px)); min-height: 82px; margin: 0 auto; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 34px; }
 .brand { display: inline-flex; align-items: center; gap: 12px; min-width: max-content; }
 .brandLogoImage { width: 48px; height: 48px; flex: 0 0 48px; border-radius: 8px; object-fit: cover; }
 .brand strong, .brand small { display: block; line-height: 1.05; }
 .brand strong { font-size: 15px; font-weight: 700; }
 .brand small { margin-top: 5px; color: var(--green); font-size: 10px; font-weight: 600; letter-spacing: .13em; }
-.header .brandLogoImage { border: 1px solid rgba(255,255,255,.28); box-shadow: 0 8px 24px rgba(0,0,0,.14); }
-.header .brand strong { color: #fff; }
-.header .brand small { color: rgba(255,255,255,.72); }
-.desktopNav { display: flex; justify-content: center; align-items: center; gap: 28px; font-size: 15px; font-weight: 500; }
-.desktopNav a { position: relative; padding: 31px 0 29px; color: rgba(255,255,255,.82); text-shadow: 0 1px 10px rgba(0,0,0,.28); }
-.desktopNav a::after { position: absolute; right: 0; bottom: 22px; left: 0; height: 2px; background: #fff; content: ""; transform: scaleX(0); transition: transform .2s ease; }
-.desktopNav a:hover, .desktopNav .activeNav { color: #fff; }
-.desktopNav a:hover::after, .desktopNav .activeNav::after { transform: scaleX(1); }
-.headerActions { display: flex; align-items: center; gap: 16px; }
-.loginLink { display: inline-flex; align-items: center; gap: 7px; color: #fff; font-size: 14px; font-weight: 500; }
-.primaryButton, .lightButton, .ghostButton { min-height: 46px; display: inline-flex; align-items: center; justify-content: center; gap: 9px; border: 1px solid transparent; border-radius: 8px; padding: 0 20px; font-weight: 500; cursor: pointer; transition: transform .2s ease, background .2s ease, border-color .2s ease; }
+.primaryButton, .ghostButton { min-height: 46px; display: inline-flex; align-items: center; justify-content: center; gap: 9px; border: 1px solid transparent; border-radius: 8px; padding: 0 20px; font-weight: 500; cursor: pointer; transition: transform .2s ease, background .2s ease, border-color .2s ease; }
 .primaryButton { background: var(--green); color: #fff !important; }
 .primaryButton:hover { background: var(--green-hover); transform: translateY(-2px); }
 .ghostButton { border-color: rgba(255,255,255,.58); color: #fff !important; }
 .ghostButton:hover { border-color: #fff; background: rgba(255,255,255,.08); }
-.lightButton { background: #fff; color: var(--charcoal) !important; }
-.lightButton:hover { transform: translateY(-2px); }
-.mobileMenu { display: none; position: relative; }
-.mobileMenu summary { width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.46); border-radius: 8px; color: #fff; cursor: pointer; list-style: none; background: rgba(5,57,32,.34); }
-.mobileMenu summary::-webkit-details-marker { display: none; }
-.mobileMenu summary:focus-visible { outline: 3px solid rgba(5,57,32,.18); outline-offset: 2px; border-color: var(--green); }
 
 .hero { position: relative; min-height: min(830px, 100vh); overflow: hidden; background: #202522; color: #fff; }
 .heroViewport { position: absolute; inset: 0; overflow: hidden; }
@@ -151,7 +127,8 @@
 .projectTextCard > a { margin-top: 30px; display: inline-flex; align-items: center; gap: 9px; font-weight: 500; }
 
 .processSection { padding: 112px 0; background: var(--soft); }
-.processGrid { margin-top: 70px; display: grid; grid-template-columns: repeat(4,1fr); border-top: 1px solid #cfd6d2; }
+.processGrid { position: relative; margin-top: 70px; display: grid; grid-template-columns: repeat(4,1fr); }
+.processLine { position: absolute; top: 0; right: 0; left: 0; height: 1px; display: block; background: #aebbb4; transform-origin: left center; }
 .processGrid article { min-height: 260px; padding: 34px 28px 30px 0; border-right: 1px solid #cfd6d2; }
 .processGrid article:not(:first-child) { padding-left: 28px; }
 .processGrid article:last-child { border-right: 0; }
@@ -215,6 +192,10 @@
 .contactForm input:focus, .contactForm select:focus, .contactForm textarea:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(5,57,32,.08); }
 .formRow { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .contactForm button { align-self: flex-start; margin-top: 28px; margin-left: max(0px, calc((100% - 590px) / 2)); }
+.contactForm button:disabled { cursor: wait; opacity: .65; transform: none; }
+.contactForm .formSuccess, .contactForm .formError { width: min(100%,590px); margin: 18px auto 0; border-radius: 8px; padding: 12px 14px; font-size: 14px; line-height: 1.6; }
+.contactForm .formSuccess { background: #e8f4ed; color: #0f6b45; }
+.contactForm .formError { background: #fff0ef; color: #a23a32; }
 
 .footer { border-top: 1px solid var(--line); background: #fff; color: var(--charcoal); }
 .footerMain { width: min(1320px,calc(100% - 48px)); margin: 0 auto; padding: 84px 0 72px; display: grid; grid-template-columns: 1.35fr .78fr 1.02fr .85fr 1.2fr; gap: 44px; }
@@ -236,27 +217,18 @@
 .socials a:hover { transform: translateY(-2px); }
 .footerBottom { width: min(1320px,calc(100% - 48px)); min-height: 76px; margin: 0 auto; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 28px; border-top: 1px solid var(--line); color: #7a827e; font-size: 12px; }
 .footerBottom nav { display: flex; flex-wrap: wrap; gap: 22px; }
+.footerLegalButton { border: 0; background: transparent; color: inherit; cursor: pointer; font: inherit; }
+.footerLegalButton:hover { color: var(--green); }
 .footerBottom > span { text-align: center; }
 .footerBottom .socials { justify-self: end; }
 
 @keyframes heroProgress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 
 @media (max-width: 1120px) {
-  .desktopNav { gap: 18px; }
-  .desktopNav a { font-size: 14px; }
-  .loginLink { display: none; }
   .brandGrid { grid-template-columns: repeat(2,1fr); }
 }
 
 @media (max-width: 900px) {
-  .utilityInner nav { display: none; }
-  .utilityInner { justify-content: flex-end; }
-  .desktopNav, .headerActions { display: none; }
-  .headerInner { min-height: 72px; grid-template-columns: 1fr auto; }
-  .mobileMenu { display: block; }
-  .mobileMenu[open] > div { position: absolute; top: 54px; right: 0; width: min(340px,calc(100vw - 32px)); padding: 12px; display: grid; border: 1px solid var(--line); border-radius: 10px; background: #fff; color: var(--charcoal); box-shadow: 0 24px 70px rgba(20,30,24,.16); }
-  .mobileMenu > div a { min-height: 48px; display: flex; align-items: center; justify-content: space-between; padding: 0 13px; border-bottom: 1px solid var(--line); font-weight: 500; }
-  .mobileMenu > div a:last-child { border-bottom: 0; color: var(--green); justify-content: flex-start; gap: 9px; }
   .promiseStrip { grid-template-columns: 1fr 1fr; }
   .promiseStrip span { min-height: 68px; border-bottom: 1px solid var(--line); }
   .introCopy { grid-template-columns: 1fr; gap: 24px; }
@@ -282,9 +254,6 @@
 
 @media (max-width: 620px) {
   .contentWidth, .introCopy, .approachCarousel, .footerMain, .footerBottom { width: min(100% - 32px,1320px); }
-  .utilityInner, .headerInner { width: min(100% - 32px,1260px); }
-  .utilityContact a:first-child { display: none; }
-  .headerInner { gap: 12px; }
   .brandLogoImage { width: 43px; height: 43px; flex-basis: 43px; }
   .brand strong { font-size: 13px; }
   .hero { min-height: 690px; }

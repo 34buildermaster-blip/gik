@@ -1,7 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { type FocusEvent, useEffect, useState } from "react";
+import { type FocusEvent, useEffect, useRef, useState } from "react";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
 import { ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import {
   fetchHomeSlides,
@@ -9,6 +11,8 @@ import {
   type HomeSlide,
 } from "@/lib/home-slides";
 import styles from "./page.module.css";
+
+gsap.registerPlugin(useGSAP);
 
 const fallbackSlides: HomeSlide[] = [
   {
@@ -58,9 +62,49 @@ const fallbackSlides: HomeSlide[] = [
 ];
 
 export default function HeroCarousel() {
+  const heroRef = useRef<HTMLElement>(null);
   const [slides, setSlides] = useState<HomeSlide[]>(fallbackSlides);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const slideSignature = slides.map((slide) => slide.id).join("|");
+
+  useGSAP(
+    () => {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+      const activeSlide = heroRef.current?.querySelector<HTMLElement>(`.${styles.activeHeroSlide}`);
+      if (!activeSlide) return;
+
+      const image = activeSlide.querySelector<HTMLElement>(`.${styles.heroImage}`);
+      const shade = activeSlide.querySelector<HTMLElement>(`.${styles.heroShade}`);
+      const content = activeSlide.querySelector<HTMLElement>(`.${styles.heroContent}`);
+      const meta = activeSlide.querySelector<HTMLElement>(`.${styles.heroMeta}`);
+      const copy = content ? Array.from(content.children) : [];
+      const timeline = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+      if (image) {
+        timeline.fromTo(image, { scale: 1.075 }, { scale: 1, duration: 6.2, ease: "power1.out" }, 0);
+      }
+
+      if (shade) {
+        timeline.fromTo(shade, { opacity: 0.62 }, { opacity: 1, duration: 1.15 }, 0);
+      }
+
+      if (copy.length) {
+        timeline.fromTo(
+          copy,
+          { autoAlpha: 0, y: 38, clipPath: "inset(0 0 18% 0)" },
+          { autoAlpha: 1, y: 0, clipPath: "inset(0 0 0% 0)", duration: 1, stagger: 0.11 },
+          0.14,
+        );
+      }
+
+      if (meta) {
+        timeline.fromTo(meta, { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.8 }, 0.58);
+      }
+    },
+    { scope: heroRef, dependencies: [selectedIndex, slideSignature], revertOnUpdate: true },
+  );
 
   useEffect(() => {
     const controller = new AbortController();
@@ -97,6 +141,7 @@ export default function HeroCarousel() {
 
   return (
     <section
+      ref={heroRef}
       className={styles.hero}
       aria-roledescription="carousel"
       aria-label="บริการและผลงานของ 34 Build Master Construction"

@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'excerpt',
     'content',
     'cover_image',
+    'cover_file_id',
     'status',
     'published_at',
     'seo_title',
@@ -36,5 +37,19 @@ class Article extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function coverFile(): BelongsTo
+    {
+        return $this->belongsTo(StoredFile::class, 'cover_file_id');
+    }
+
+    public function coverUrl(): ?string
+    {
+        if ($this->coverFile) {
+            return $this->coverFile->publicUrl();
+        }
+
+        return $this->cover_image ? url($this->cover_image) : null;
     }
 }

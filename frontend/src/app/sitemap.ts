@@ -5,7 +5,19 @@ import { siteConfig } from "@/lib/site-config";
 
 export const dynamic = "force-static";
 
-const staticPages = ["", "/about", "/services", "/house-designs", "/updates", "/blog", "/faq", "/contact"];
+const staticPages = [
+  "",
+  "/about",
+  "/services",
+  "/house-designs",
+  "/updates",
+  "/blog",
+  "/faq",
+  "/contact",
+  "/privacy-policy",
+  "/terms-of-service",
+  "/cookie-policy",
+];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();

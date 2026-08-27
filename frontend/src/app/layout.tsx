@@ -4,6 +4,8 @@ import { assetPath } from "@/lib/asset-path";
 import { siteConfig, socialLinks } from "@/lib/site-config";
 import { SiteSettingsProvider } from "@/contexts/site-settings-context";
 import { FloatingContactDock } from "@/components/floating-contact-dock";
+import { CookieConsent } from "@/components/cookie-consent";
+import { WelcomePopup } from "@/components/welcome-popup";
 import "./globals.css";
 
 const kanit = Kanit({
@@ -105,6 +107,8 @@ export default function RootLayout({
         <SiteSettingsProvider>
           {children}
           <FloatingContactDock />
+          <WelcomePopup />
+          <CookieConsent />
         </SiteSettingsProvider>
       </body>
     </html>

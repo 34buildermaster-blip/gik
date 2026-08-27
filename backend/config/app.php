@@ -39,7 +39,8 @@ return [
     |
     */
 
-    'debug' => (bool) env('APP_DEBUG', false),
+    // Production must never expose exception traces, even if APP_DEBUG is set incorrectly.
+    'debug' => env('APP_ENV', 'production') !== 'production' && (bool) env('APP_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -54,6 +55,8 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    'frontend_url' => env('FRONTEND_URL', 'http://127.0.0.1:3000'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone
@@ -66,6 +69,8 @@ return [
     */
 
     'timezone' => 'UTC',
+
+    'display_timezone' => env('APP_DISPLAY_TIMEZONE', 'Asia/Bangkok'),
 
     /*
     |--------------------------------------------------------------------------

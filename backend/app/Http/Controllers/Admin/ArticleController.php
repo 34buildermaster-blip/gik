@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Article;
+use App\Models\StoredFile;
+use App\Services\ArticleHtmlSanitizer;
+use App\Services\MediaStorage;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -13,6 +16,11 @@ use Illuminate\View\View;
 
 class ArticleController extends Controller
 {
+    public function __construct(
+        private readonly MediaStorage $mediaStorage,
+        private readonly ArticleHtmlSanitizer $htmlSanitizer,
+    ) {}
+
     public function index(Request $request): View
     {
         $search = $request->string('q')->trim()->toString();
@@ -20,6 +28,7 @@ class ArticleController extends Controller
 
         return view('admin.articles.index', [
             'articles' => Article::query()
+                ->with('coverFile')
                 ->when($search !== '', function ($query) use ($search): void {
                     $query->where(function ($query) use ($search): void {
                         $query
@@ -38,8 +47,11 @@ class ArticleController extends Controller
 
     public function create(): View
     {
+        $article = new Article(['status' => 'draft']);
+
         return view('admin.articles.create', [
-            'article' => new Article(['status' => 'draft']),
+            'article' => $article,
+            'editorContent' => $this->cleanContent((string) old('content', '')),
         ]);
     }
 
@@ -49,7 +61,9 @@ class ArticleController extends Controller
         $data['content'] = $this->cleanContent($data['content']);
         $data['user_id'] = $request->user()->id;
         $data['slug'] = $this->uniqueSlug($data['title']);
-        $data['cover_image'] = $this->uploadCoverImage($request);
+        $cover = $this->uploadCoverImage($request);
+        $data['cover_file_id'] = $cover?->id;
+        $data['cover_image'] = null;
         $data['published_at'] = $data['status'] === 'published' ? now() : null;
 
         Article::create($data);
@@ -63,6 +77,7 @@ class ArticleController extends Controller
     {
         return view('admin.articles.edit', [
             'article' => $article,
+            'editorContent' => $this->cleanContent((string) old('content', $article->content)),
         ]);
     }
 
@@ -74,6 +89,7 @@ class ArticleController extends Controller
         return view('admin.articles.preview', [
             'article' => $article,
             'characterCount' => $characterCount,
+            'sanitizedContent' => $this->cleanContent((string) $article->content),
         ]);
     }
 
@@ -82,10 +98,15 @@ class ArticleController extends Controller
         $data = $this->validatedData($request);
         $data['content'] = $this->cleanContent($data['content']);
         $data['slug'] = $this->uniqueSlug($data['title'], $article);
+        $oldCover = null;
+        $oldCoverPath = null;
 
         if ($request->hasFile('cover_image')) {
-            $this->deleteCoverImage($article);
-            $data['cover_image'] = $this->uploadCoverImage($request);
+            $oldCover = $article->coverFile;
+            $oldCoverPath = $article->cover_image;
+            $newCover = $this->uploadCoverImage($request);
+            $data['cover_file_id'] = $newCover?->id;
+            $data['cover_image'] = null;
         }
 
         if ($data['status'] === 'published' && $article->published_at === null) {
@@ -97,6 +118,12 @@ class ArticleController extends Controller
         }
 
         $article->update($data);
+
+        if ($oldCover) {
+            $this->mediaStorage->delete($oldCover);
+        } elseif ($oldCoverPath) {
+            File::delete(public_path($oldCoverPath));
+        }
 
         return redirect()
             ->route('admin.articles.index')
@@ -119,29 +146,25 @@ class ArticleController extends Controller
             'media' => [
                 'required',
                 'file',
-                'max:102400',
+                'max:512000',
                 'mimetypes:image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime',
             ],
         ]);
 
-        $file = $request->file('media');
-        $directory = public_path('uploads/article-media');
-        File::ensureDirectoryExists($directory);
-
-        $name = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-        $extension = $file->getClientOriginalExtension() ?: $file->guessExtension() ?: 'bin';
-        $filename = now()->format('YmdHis').'-'.Str::slug($name).'-'.Str::random(8).'.'.$extension;
-        $mimeType = $file->getMimeType() ?: '';
-        $file->move($directory, $filename);
-
-        $path = "uploads/article-media/{$filename}";
+        $uploadedFile = $request->file('media');
+        $file = $this->mediaStorage->store(
+            $uploadedFile,
+            'article-media',
+            'public',
+            $request->user(),
+        );
 
         return response()->json([
-            'url' => url($path),
-            'path' => $path,
-            'type' => Str::startsWith($mimeType, 'video/') ? 'video' : 'image',
-            'mimeType' => $mimeType,
-            'name' => $name ?: 'media',
+            'url' => $file->publicUrl(),
+            'path' => 'media:'.$file->uuid,
+            'type' => Str::startsWith($file->mime_type, 'video/') ? 'video' : 'image',
+            'mimeType' => $file->mime_type,
+            'name' => pathinfo($file->original_name, PATHINFO_FILENAME) ?: 'media',
         ]);
     }
 
@@ -185,7 +208,7 @@ class ArticleController extends Controller
             'title' => ['required', 'string', 'max:255'],
             'excerpt' => ['nullable', 'string', 'max:1000'],
             'content' => ['required', 'string'],
-            'cover_image' => ['nullable', 'image', 'max:4096'],
+            'cover_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:15360'],
             'status' => ['required', 'in:draft,published'],
             'seo_title' => ['nullable', 'string', 'max:255'],
             'seo_description' => ['nullable', 'string', 'max:500'],
@@ -213,14 +236,7 @@ class ArticleController extends Controller
 
     private function cleanContent(string $content): string
     {
-        $allowedTags = '<p><br><strong><b><em><i><u><s><span><h2><h3><h4><ul><ol><li><blockquote><a><figure><figcaption><img><video><source><table><thead><tbody><tr><th><td><hr>';
-
-        $content = strip_tags($content, $allowedTags);
-        $content = preg_replace('/\s+on\w+="[^"]*"/i', '', $content) ?? $content;
-        $content = preg_replace("/\s+on\w+='[^']*'/i", '', $content) ?? $content;
-        $content = preg_replace('/javascript:/i', '', $content) ?? $content;
-
-        return trim($content);
+        return $this->htmlSanitizer->sanitize($content);
     }
 
     private function extractMarkdownTitle(string $markdown): ?string
@@ -244,25 +260,25 @@ class ArticleController extends Controller
         return $html;
     }
 
-    private function uploadCoverImage(Request $request): ?string
+    private function uploadCoverImage(Request $request): ?StoredFile
     {
         if (! $request->hasFile('cover_image')) {
             return null;
         }
 
-        $directory = public_path('uploads/articles');
-        File::ensureDirectoryExists($directory);
-
-        $file = $request->file('cover_image');
-        $filename = now()->format('YmdHis').'-'.Str::random(8).'.'.$file->getClientOriginalExtension();
-        $file->move($directory, $filename);
-
-        return "uploads/articles/{$filename}";
+        return $this->mediaStorage->store(
+            $request->file('cover_image'),
+            'article-covers',
+            'public',
+            $request->user(),
+        );
     }
 
     private function deleteCoverImage(Article $article): void
     {
-        if ($article->cover_image) {
+        if ($article->coverFile) {
+            $this->mediaStorage->delete($article->coverFile);
+        } elseif ($article->cover_image) {
             File::delete(public_path($article->cover_image));
         }
     }

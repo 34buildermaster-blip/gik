@@ -33,14 +33,14 @@ export async function generateMetadata({ params }: HouseDesignDetailProps): Prom
   const design = await getIntegratedHouseDesign(slug);
 
   if (!design) {
-    return { title: "ไม่พบแบบบ้าน | 34 Build Master Construction" };
+    return { title: "ไม่พบแบบบ้าน" };
   }
 
   const description = design.seo?.description || design.description;
   const image = absoluteImageUrl(design.coverImage);
 
   return {
-    title: design.seo?.title || `${design.title} | 34 Build Master Construction`,
+    title: design.seo?.title || design.title,
     description,
     alternates: { canonical: `${siteConfig.siteUrl}/house-designs/${design.slug}` },
     openGraph: {

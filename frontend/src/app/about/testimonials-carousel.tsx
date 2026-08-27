@@ -1,60 +1,22 @@
 "use client";
 
 import Image from "next/image";
-import Autoplay from "embla-carousel-autoplay";
-import useEmblaCarousel from "embla-carousel-react";
-import { type CSSProperties, useCallback, useEffect, useState } from "react";
+import { type CSSProperties } from "react";
 import { assetPath } from "@/lib/asset-path";
 import { testimonials } from "@/data/testimonials";
+import { useAutoCarousel } from "@/hooks/use-auto-carousel";
 
 export function TestimonialsCarousel() {
-  const [autoplay] = useState(() => Autoplay({ delay: 5000, stopOnInteraction: false, stopOnMouseEnter: true }));
-  const [viewportRef, emblaApi] = useEmblaCarousel({ loop: true, align: "center", skipSnaps: false }, [autoplay]);
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
-
-  const onSelect = useCallback(() => {
-    if (!emblaApi) return;
-    setSelectedIndex(emblaApi.selectedScrollSnap());
-  }, [emblaApi]);
-
-  const onInit = useCallback(() => {
-    if (!emblaApi) return;
-    setScrollSnaps(emblaApi.scrollSnapList());
-    setSelectedIndex(emblaApi.selectedScrollSnap());
-  }, [emblaApi]);
-
-  useEffect(() => {
-    if (!emblaApi) return;
-
-    const frame = requestAnimationFrame(onInit);
-    emblaApi.on("select", onSelect).on("reInit", onInit);
-
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const updateMotion = () => reducedMotion.matches ? autoplay.stop() : autoplay.play();
-    updateMotion();
-    reducedMotion.addEventListener("change", updateMotion);
-
-    return () => {
-      emblaApi.off("select", onSelect).off("reInit", onInit);
-      reducedMotion.removeEventListener("change", updateMotion);
-      cancelAnimationFrame(frame);
-    };
-  }, [autoplay, emblaApi, onInit, onSelect]);
-
-  const resumeAutoplay = (event: React.FocusEvent<HTMLDivElement>) => {
-    if (!event.currentTarget.contains(event.relatedTarget) && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      autoplay.play();
-    }
-  };
+  const { emblaApi, resumeAfterFocus, scrollSnaps, selectedIndex, stop, play, viewportRef } =
+    useAutoCarousel({ delay: 5000 });
 
   return (
     <div
       className="about-v2-carousel"
-      onMouseEnter={() => autoplay.stop()}
-      onMouseLeave={() => !window.matchMedia("(prefers-reduced-motion: reduce)").matches && autoplay.play()}
-      onFocusCapture={() => autoplay.stop()}
-      onBlurCapture={resumeAutoplay}
+      onMouseEnter={stop}
+      onMouseLeave={play}
+      onFocusCapture={stop}
+      onBlurCapture={resumeAfterFocus}
       aria-label="รีวิวจากลูกค้า"
     >
       <div className="about-v2-carousel-viewport" ref={viewportRef}>

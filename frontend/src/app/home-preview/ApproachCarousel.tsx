@@ -80,6 +80,7 @@ export default function ApproachCarousel() {
   return (
     <div
       className={styles.approachCarousel}
+      data-gsap-media
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onFocusCapture={() => setIsPaused(true)}

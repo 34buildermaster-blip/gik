@@ -4,7 +4,7 @@ import { ContactForm, PageHero, SiteFooter, SiteHeader } from "@/components/site
 import { siteConfig, socialLinks } from "@/lib/site-config";
 
 export const metadata: Metadata = {
-  title: "ติดต่อเรา | 34 Build Master Construction",
+  title: "ติดต่อเรา",
   description: "ติดต่อ 34 Build Master Construction เพื่อปรึกษางานออกแบบ รีโนเวท สร้างบ้าน และบิวท์อิน",
 };
 

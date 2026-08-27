@@ -40,8 +40,8 @@
                     @forelse ($articles as $article)
                         <tr>
                             <td>
-                                @if ($article->cover_image)
-                                    <img class="thumb" src="{{ asset($article->cover_image) }}" alt="{{ $article->title }}">
+                                @if ($article->coverUrl())
+                                    <img class="thumb" src="{{ $article->coverUrl() }}" alt="{{ $article->title }}">
                                 @else
                                     <div class="thumb empty-thumb">No Image</div>
                                 @endif

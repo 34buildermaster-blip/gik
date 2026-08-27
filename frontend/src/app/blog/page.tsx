@@ -4,7 +4,7 @@ import { BlogList } from "@/components/blog-list";
 import { getIntegratedBlogPosts } from "@/lib/blog-api";
 
 export const metadata: Metadata = {
-  title: "บทความ | 34 Build Master Construction",
+  title: "บทความ",
   description:
     "บทความความรู้เรื่องออกแบบบ้าน รีโนเวท สร้างบ้าน และบิวท์อิน จาก 34 Build Master Construction",
 };

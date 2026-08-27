@@ -29,15 +29,15 @@
                     </div>
                 </div>
 
-                @if ($article->cover_image)
+                @if ($article->coverUrl())
                     <figure class="preview-cover">
-                        <img src="{{ asset($article->cover_image) }}" alt="{{ $article->title }}">
+                        <img src="{{ $article->coverUrl() }}" alt="{{ $article->title }}">
                     </figure>
                 @endif
             </div>
 
             <div class="preview-content">
-                {!! $article->content !!}
+                {!! $sanitizedContent !!}
             </div>
         </article>
 

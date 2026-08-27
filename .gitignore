@@ -1,6 +1,11 @@
 # Workspace
 work/
 outputs/
+artifacts/
+output/
+tmp/
+.deploy-gh-pages/
+.runlogs/
 
 # Dependencies
 node_modules/

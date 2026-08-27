@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { siteConfig, socialLinks } from "@/lib/site-config";
 
 export type SiteSettings = {
@@ -180,8 +180,7 @@ export function SiteSettingsProvider({ children }: { children: React.ReactNode }
     }
   }, [settings.branding.favicon_url, settings.seo.default_description, settings.seo.default_title]);
 
-  const value = useMemo(() => settings, [settings]);
-  return <SiteSettingsContext.Provider value={value}>{children}</SiteSettingsContext.Provider>;
+  return <SiteSettingsContext.Provider value={settings}>{children}</SiteSettingsContext.Provider>;
 }
 
 export function useSiteSettings() {

@@ -112,8 +112,8 @@
                 <input type="file" data-markdown-input accept=".md,.markdown,.txt,text/markdown,text/plain" hidden>
                 <input type="file" data-media-input="image" accept="image/*" hidden>
                 <input type="file" data-media-input="video" accept="video/mp4,video/webm,video/quicktime" hidden>
-                <div class="rich-canvas" contenteditable="true" data-editor-canvas>{!! old('content', $article->content) !!}</div>
-                <textarea id="content" name="content" required hidden>{{ old('content', $article->content) }}</textarea>
+                <div class="rich-canvas" contenteditable="true" data-editor-canvas>{!! $editorContent !!}</div>
+                <textarea id="content" name="content" required hidden>{{ $editorContent }}</textarea>
             </div>
             <p class="muted" style="margin: 0;">รองรับไฟล์ .md, หัวข้อ ฟอนต์ ขนาดตัวอักษร รายการ ลิงก์ ตาราง รูปภาพ วิดีโอ สีตัวอักษร และรูปแบบ HTML สำหรับบทความ SEO</p>
         </div>
@@ -124,10 +124,10 @@
             <p class="muted" style="margin: 0;">รองรับ jpg, png, webp ขนาดไม่เกิน 4MB</p>
         </div>
 
-        @if ($article->cover_image)
+        @if ($article->coverUrl())
             <div class="field">
                 <label>รูปปัจจุบัน</label>
-                <img class="thumb" style="width: 220px; height: 140px;" src="{{ asset($article->cover_image) }}" alt="{{ $article->title }}">
+                <img class="thumb" style="width: 220px; height: 140px;" src="{{ $article->coverUrl() }}" alt="{{ $article->title }}">
             </div>
         @endif
 
@@ -171,6 +171,7 @@
         const imageUploadButton = editor.querySelector('[data-upload-image]');
         const videoUploadButton = editor.querySelector('[data-upload-video]');
         let sourceMode = false;
+        let savedRange = null;
 
         const fontSizeMap = {
             1: '12px',
@@ -252,21 +253,38 @@
         const selectionIsInsideCanvas = () => {
             return getCanvasSelection() !== null;
         };
+        const saveCanvasSelection = () => {
+            const currentSelection = getCanvasSelection();
+
+            if (currentSelection) {
+                savedRange = currentSelection.range.cloneRange();
+            }
+        };
+        const restoreCanvasSelection = () => {
+            if (!savedRange || !canvas.contains(savedRange.commonAncestorContainer)) {
+                return false;
+            }
+
+            canvas.focus({ preventScroll: true });
+
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(savedRange.cloneRange());
+
+            return true;
+        };
         const applyInlineStyle = (style) => {
             if (sourceMode) {
                 window.alert('กรุณาปิดโหมด HTML ก่อนปรับรูปแบบข้อความ');
                 return;
             }
 
-            focusCanvas();
-
-            if (!selectionIsInsideCanvas()) {
+            if (!restoreCanvasSelection() || !selectionIsInsideCanvas()) {
                 window.alert('เลือกข้อความในบทความก่อนปรับฟอนต์หรือขนาดตัวอักษร');
                 return;
             }
 
-            const selection = window.getSelection();
-            const range = selection.getRangeAt(0);
+            const { selection, range } = getCanvasSelection();
             const span = document.createElement('span');
             span.setAttribute('style', style);
 
@@ -283,6 +301,7 @@
 
             selection.removeAllRanges();
             selection.addRange(range);
+            savedRange = range.cloneRange();
             sync();
         };
         const insertHtml = (html) => {
@@ -612,7 +631,21 @@
             sync();
         });
 
-        canvas.addEventListener('input', sync);
+        document.addEventListener('selectionchange', () => {
+            if (document.activeElement === canvas) {
+                saveCanvasSelection();
+            }
+        });
+        editor.querySelector('.rich-toolbar')?.addEventListener('pointerdown', saveCanvasSelection, true);
+        editor.querySelector('.rich-toolbar')?.addEventListener('mousedown', saveCanvasSelection, true);
+        canvas.addEventListener('blur', saveCanvasSelection);
+        canvas.addEventListener('mouseup', saveCanvasSelection);
+        canvas.addEventListener('keyup', saveCanvasSelection);
+        canvas.addEventListener('touchend', saveCanvasSelection);
+        canvas.addEventListener('input', () => {
+            saveCanvasSelection();
+            sync();
+        });
         canvas.addEventListener('dragover', (event) => {
             if ([...(event.dataTransfer?.items || [])].some((item) => item.kind === 'file')) {
                 event.preventDefault();

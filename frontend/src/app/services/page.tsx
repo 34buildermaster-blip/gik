@@ -6,7 +6,7 @@ import { ContactBand, PageHero, SiteFooter, SiteHeader } from "@/components/site
 import { assetPath } from "@/lib/asset-path";
 
 export const metadata: Metadata = {
-  title: "บริการ | 34 Build Master Construction",
+  title: "บริการ",
   description: "บริการออกแบบบ้าน รีโนเวท สร้างบ้าน และบิวท์อินครบวงจรโดย 34 Build Master Construction",
 };
 

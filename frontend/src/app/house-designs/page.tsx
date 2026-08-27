@@ -6,7 +6,7 @@ import { getIntegratedHouseDesigns } from "@/lib/house-design-api";
 import { HouseDesignBrowser } from "./house-design-browser";
 
 export const metadata: Metadata = {
-  title: "แบบบ้าน | 34 Build Master Construction",
+  title: "แบบบ้าน",
   description: "ค้นหาแบบบ้านโมเดิร์น มินิมอล ร่วมสมัย และคลาสสิก พร้อมข้อมูลพื้นที่ใช้สอย จำนวนห้อง และงบประมาณเบื้องต้น",
 };
 

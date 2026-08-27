@@ -84,6 +84,7 @@ export function BlogList({ initialPosts }: BlogListProps) {
               src={featuredPost.image}
               alt={featuredPost.coverAlt}
               fill
+              priority
               sizes="(min-width: 1024px) 50vw, 100vw"
               className="object-cover opacity-78 transition duration-700 group-hover:scale-105"
             />
