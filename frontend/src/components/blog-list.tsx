@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { IntegratedBlogPost } from "@/lib/blog-api";
+import { getPublicApiBaseUrl } from "@/lib/public-api-url";
 
 type BlogListProps = {
   initialPosts: IntegratedBlogPost[];
@@ -12,8 +13,6 @@ type BlogListProps = {
 type ApiBlogPost = Omit<IntegratedBlogPost, "image" | "source"> & {
   image: string | null;
 };
-
-const apiBaseUrl = (process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
 
 function normalizeApiPost(post: ApiBlogPost): IntegratedBlogPost {
   return {
@@ -33,6 +32,7 @@ export function BlogList({ initialPosts }: BlogListProps) {
 
     async function syncArticles() {
       try {
+        const apiBaseUrl = getPublicApiBaseUrl();
         const response = await fetch(`${apiBaseUrl}/api/articles`, {
           headers: { Accept: "application/json" },
         });

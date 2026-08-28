@@ -8,7 +8,11 @@ type ApiHouseDesign = Omit<HouseDesign, "coverImage" | "gallery" | "concept" | "
   gallery?: HouseDesign["gallery"];
 };
 
-const apiBaseUrl = (process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
+const apiBaseUrl = (
+  process.env.BACKEND_URL ||
+  process.env.NEXT_PUBLIC_API_URL ||
+  "http://127.0.0.1:8000"
+).replace(/\/$/, "");
 
 function mediaUrl(value: string | null | undefined) {
   if (!value) {

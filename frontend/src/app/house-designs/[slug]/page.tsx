@@ -6,6 +6,7 @@ import { ArrowLeft, Bath, BedDouble, CarFront, Check, Layers3, Maximize2 } from 
 import { ContactBand, SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { fallbackHouseDesigns } from "@/data/house-designs";
 import { getIntegratedHouseDesign, getIntegratedHouseDesigns } from "@/lib/house-design-api";
+import { stripSiteNameSuffix } from "@/lib/seo";
 import { siteConfig } from "@/lib/site-config";
 import { HouseDesignLightbox } from "./house-design-lightbox";
 
@@ -40,7 +41,7 @@ export async function generateMetadata({ params }: HouseDesignDetailProps): Prom
   const image = absoluteImageUrl(design.coverImage);
 
   return {
-    title: design.seo?.title || design.title,
+    title: stripSiteNameSuffix(design.seo?.title || design.title, siteConfig.name),
     description,
     alternates: { canonical: `${siteConfig.siteUrl}/house-designs/${design.slug}` },
     openGraph: {

@@ -9,15 +9,13 @@ export type WelcomePopupData = {
 
 export async function fetchWelcomePopup(signal?: AbortSignal): Promise<WelcomePopupData | null> {
   const configuredApiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "");
-  const isLocalDevelopment =
-    typeof window !== "undefined" &&
-    ["127.0.0.1", "localhost"].includes(window.location.hostname);
+  const isStaticPreview = Boolean(process.env.NEXT_PUBLIC_BASE_PATH);
 
-  if (!configuredApiUrl && !isLocalDevelopment) return null;
+  if (!configuredApiUrl && isStaticPreview) return null;
 
   const endpoint = configuredApiUrl
     ? `${configuredApiUrl}/api/welcome-popup`
-    : "/backend-api/welcome-popup";
+    : "/api/welcome-popup";
 
   try {
     const response = await fetch(endpoint, {
@@ -30,7 +28,7 @@ export async function fetchWelcomePopup(signal?: AbortSignal): Promise<WelcomePo
     const payload = (await response.json()) as { data?: WelcomePopupData | null };
     if (!payload.data?.desktopImage) return null;
 
-    const apiBase = configuredApiUrl ?? `${window.location.protocol}//${window.location.hostname}:8000`;
+    const apiBase = configuredApiUrl ?? window.location.origin;
     const normalizeImageUrl = (value?: string | null) => {
       if (!value) return value;
       if (value.startsWith("/")) return `${apiBase}${value}`;

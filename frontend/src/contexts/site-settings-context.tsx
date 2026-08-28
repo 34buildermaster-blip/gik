@@ -127,16 +127,16 @@ export function SiteSettingsProvider({ children }: { children: React.ReactNode }
   useEffect(() => {
     const controller = new AbortController();
     const configuredApiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "");
-    const isLocalDevelopment = ["127.0.0.1", "localhost"].includes(window.location.hostname);
+    const isStaticPreview = Boolean(process.env.NEXT_PUBLIC_BASE_PATH);
 
-    if (!configuredApiUrl && !isLocalDevelopment) {
+    if (!configuredApiUrl && isStaticPreview) {
       document.documentElement.dataset.siteSettings = "fallback";
       return () => controller.abort();
     }
 
     const settingsEndpoint = configuredApiUrl
       ? `${configuredApiUrl}/api/site-settings`
-      : "/backend-api/site-settings";
+      : "/api/site-settings";
 
     fetch(settingsEndpoint, {
       headers: { Accept: "application/json" },

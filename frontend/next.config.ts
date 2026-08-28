@@ -34,12 +34,16 @@ const nextConfig: NextConfig = {
               destination: `${backendUrl}/api/:path*`,
             },
             {
+              source: "/api/:path*",
+              destination: `${backendUrl}/api/:path*`,
+            },
+            {
               source: "/admin/:path*",
               destination: `${backendUrl}/admin/:path*`,
             },
             {
-              source: "/login",
-              destination: `${backendUrl}/login`,
+              source: "/login/:path*",
+              destination: `${backendUrl}/login/:path*`,
             },
             {
               source: "/register",
@@ -48,6 +52,46 @@ const nextConfig: NextConfig = {
             {
               source: "/logout",
               destination: `${backendUrl}/logout`,
+            },
+            {
+              source: "/change-password",
+              destination: `${backendUrl}/change-password`,
+            },
+            {
+              source: "/forgot-password",
+              destination: `${backendUrl}/forgot-password`,
+            },
+            {
+              source: "/reset-password/:path*",
+              destination: `${backendUrl}/reset-password/:path*`,
+            },
+            {
+              source: "/two-factor-challenge",
+              destination: `${backendUrl}/two-factor-challenge`,
+            },
+            {
+              source: "/my-projects/:path*",
+              destination: `${backendUrl}/my-projects/:path*`,
+            },
+            {
+              source: "/notifications/:path*",
+              destination: `${backendUrl}/notifications/:path*`,
+            },
+            {
+              source: "/media/:path*",
+              destination: `${backendUrl}/media/:path*`,
+            },
+            {
+              source: "/project-documents/:path*",
+              destination: `${backendUrl}/project-documents/:path*`,
+            },
+            {
+              source: "/project-issue-media/:path*",
+              destination: `${backendUrl}/project-issue-media/:path*`,
+            },
+            {
+              source: "/project-media/:path*",
+              destination: `${backendUrl}/project-media/:path*`,
             },
             {
               source: "/uploads/:path*",

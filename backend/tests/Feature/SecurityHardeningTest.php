@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Services\MediaStorage;
 use App\Services\TwoFactorAuthentication;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Middleware\TrustProxies;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
@@ -226,5 +227,21 @@ class SecurityHardeningTest extends TestCase
             ->assertHeader('X-Content-Type-Options', 'nosniff')
             ->assertHeader('X-Frame-Options', 'SAMEORIGIN')
             ->assertHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    }
+
+    public function test_trusted_https_proxy_enables_hsts(): void
+    {
+        config(['security.headers.hsts' => true]);
+        TrustProxies::at(['127.0.0.1']);
+
+        try {
+            $this->withServerVariables(['REMOTE_ADDR' => '127.0.0.1'])
+                ->withHeader('X-Forwarded-Proto', 'https')
+                ->get(route('login.admin'))
+                ->assertOk()
+                ->assertHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+        } finally {
+            TrustProxies::at([]);
+        }
     }
 }

@@ -16,7 +16,11 @@ export type IntegratedBlogPost = BlogPost & {
   source?: "api" | "fallback";
 };
 
-const apiBaseUrl = (process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
+const apiBaseUrl = (
+  process.env.BACKEND_URL ||
+  process.env.NEXT_PUBLIC_API_URL ||
+  "http://127.0.0.1:8000"
+).replace(/\/$/, "");
 
 function normalizePost(post: ApiBlogPost): IntegratedBlogPost {
   return {

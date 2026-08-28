@@ -28,17 +28,15 @@ export function homeSlideImage(path: string) {
 
 async function loadHomeSlides(): Promise<HomeSlidesPayload | null> {
   const configuredApiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "");
-  const isLocalDevelopment =
-    typeof window !== "undefined" &&
-    ["127.0.0.1", "localhost"].includes(window.location.hostname);
+  const isStaticPreview = Boolean(process.env.NEXT_PUBLIC_BASE_PATH);
 
-  if (!configuredApiUrl && !isLocalDevelopment) {
+  if (!configuredApiUrl && isStaticPreview) {
     return null;
   }
 
   const endpoint = configuredApiUrl
     ? `${configuredApiUrl}/api/home-slides`
-    : "/backend-api/home-slides";
+    : "/api/home-slides";
 
   try {
     const response = await fetch(endpoint, {

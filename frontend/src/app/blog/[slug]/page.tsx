@@ -6,6 +6,7 @@ import { ArticleComments } from "@/components/article-comments";
 import { ContactBand, PageHero, SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { blogPosts } from "@/data/blog";
 import { getIntegratedBlogPost, getIntegratedBlogPosts } from "@/lib/blog-api";
+import { stripSiteNameSuffix } from "@/lib/seo";
 import { siteConfig } from "@/lib/site-config";
 
 type BlogDetailProps = {
@@ -43,7 +44,7 @@ export async function generateMetadata({ params }: BlogDetailProps): Promise<Met
   const imageUrl = absoluteAssetUrl(post.image);
 
   return {
-    title: post.seo?.title || post.title,
+    title: stripSiteNameSuffix(post.seo?.title || post.title, siteConfig.name),
     description: post.seo?.description || post.excerpt,
     alternates: {
       canonical: `${siteConfig.siteUrl}/blog/${post.slug}`,
