@@ -1,22 +1,23 @@
 # 34 BM Construction Website
 
-Company website for 34 BM Construction, built with Next.js for the public SEO-focused frontend and Laravel for the backend/API.
+Company website and customer project portal for 34 BM Construction. The active application uses Laravel Blade for the public website, admin, API, and customer portal on one host.
 
 ## Structure
 
-- `frontend/` - Next.js website
-- `backend/` - Laravel backend
+- `backend/` - active Laravel application, including the Blade public website
+- `frontend/` - preserved Next.js baseline for reference and rollback only
 
 ## Local URLs
 
-- Integrated preview: http://127.0.0.1:3000
-- Admin via gateway: http://127.0.0.1:3000/admin
-- Laravel backend direct: http://127.0.0.1:8000
+- Public website: http://127.0.0.1:8000
+- Admin: http://127.0.0.1:8000/admin
+- Customer portal: http://127.0.0.1:8000/my-projects
 
-## Run Integrated Dev
+## Run Locally
 
-```powershell
-.\scripts\dev-integrated.ps1
+```bash
+cd backend
+php artisan serve --host=127.0.0.1 --port=8000
 ```
 
-The script runs Laravel on port `8000` and Next.js on port `3000`. Use port `3000` in the browser to check frontend and backend together.
+No Node.js process is required for the active website. The Next.js version remains available in Git tag `nextjs-baseline-2026-09`.

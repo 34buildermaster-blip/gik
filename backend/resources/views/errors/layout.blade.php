@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
     <title>@yield('status') | 34 Build Master</title>
-    <link rel="icon" href="{{ asset('brand-logo.png') }}" type="image/png">
+    <link rel="icon" href="{{ asset('brand-logo.webp') }}" type="image/webp">
     <style>
         * { box-sizing: border-box; }
         html { background: #f4f6f4; }
@@ -107,7 +107,7 @@
 <body>
     <main>
         <a class="brand" href="{{ url('/') }}" aria-label="34 Build Master">
-            <img src="{{ asset('brand-logo.png') }}" alt="">
+            <img src="{{ asset('brand-logo.webp') }}" alt="">
             <span><strong>Build Master</strong><small>Construction</small></span>
         </a>
         <p class="status">ERROR @yield('status')</p>

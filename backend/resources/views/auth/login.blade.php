@@ -4,7 +4,7 @@
         <section class="auth-portal-visual">
             <a class="auth-visual-brand" href="{{ config('app.frontend_url') }}">
                 <span class="auth-visual-logo">
-                    <img src="{{ asset('brand-logo.png') }}" alt="" aria-hidden="true">
+                    <img src="{{ asset('brand-logo.webp') }}" alt="" aria-hidden="true">
                 </span>
                 <strong>Build Master<small>Construction</small></strong>
             </a>

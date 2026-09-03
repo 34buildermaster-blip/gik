@@ -1,0 +1,7 @@
+@extends('site.layout')
+@section('title', 'ติดต่อเรา | 34 Build Master')
+@section('description', 'ติดต่อ 34 Build Master เพื่อปรึกษางานออกแบบ สร้างบ้าน รีโนเวท และบิวท์อิน')
+@section('content')
+@include('site.partials.page-hero', ['title' => 'เริ่มคุยเรื่องบ้านของคุณ', 'current' => 'ติดต่อเรา', 'image' => url('/site-contact/tropical-japandi-contact.webp')])
+<section class="contact-page section shell"><div class="contact-info reveal"><p class="eyebrow">CONTACT US</p><h2>บอกโจทย์ที่คุณมี<br>แล้วค่อยวางแผนไปด้วยกัน</h2><p>ส่งข้อมูลพื้นที่ รูปหน้างาน งบประมาณโดยประมาณ และช่วงเวลาที่ต้องการ ทีมจะติดต่อกลับเพื่อช่วยจัดลำดับขั้นแรกให้ชัดเจน</p><div class="contact-channels"><a href="{{ $siteSettings['general']['phone_href'] }}"><span>☎</span><div><small>โทรปรึกษา</small><strong>{{ $siteSettings['general']['phone_display'] }}</strong></div></a><a href="mailto:{{ $siteSettings['general']['email'] }}"><span>✉</span><div><small>อีเมล</small><strong>{{ $siteSettings['general']['email'] }}</strong></div></a><a href="{{ $siteSettings['social']['line_url'] }}" target="_blank" rel="noreferrer"><span>LINE</span><div><small>LINE OA</small><strong>ส่งข้อความถึงทีม</strong></div></a></div><div class="address"><strong>พื้นที่ให้บริการ</strong><p>{{ $siteSettings['general']['service_area'] }}</p><strong>ที่อยู่</strong><p>{{ $siteSettings['general']['address'] }}</p><strong>เวลาทำการ</strong><p>{{ $siteSettings['general']['business_hours'] }}</p></div></div><div>@include('site.partials.contact')</div></section>
+@endsection

@@ -25,22 +25,30 @@ use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProjectIssueMediaController;
 use App\Http\Controllers\ProjectMediaController;
+use App\Http\Controllers\PublicSiteController;
 use App\Http\Controllers\RequiredPasswordChangeController;
 use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\StoredFileController;
 use App\Http\Controllers\TwoFactorChallengeController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    if (! auth()->check()) {
-        return redirect()->route('login');
-    }
-
-    return redirect()->route(auth()->user()->isStaff() ? 'admin.dashboard' : 'client.projects.index');
+Route::controller(PublicSiteController::class)->group(function (): void {
+    Route::get('/', 'home')->name('site.home');
+    Route::get('/about', 'about')->name('site.about');
+    Route::get('/services', 'services')->name('site.services');
+    Route::get('/house-designs', 'houseDesigns')->name('site.house-designs.index');
+    Route::get('/house-designs/{slug}', 'houseDesign')->name('site.house-designs.show');
+    Route::get('/updates', 'updates')->name('site.updates');
+    Route::get('/blog', 'blog')->name('site.blog.index');
+    Route::get('/blog/{slug}', 'article')->name('site.blog.show');
+    Route::get('/faq', 'faq')->name('site.faq');
+    Route::get('/contact', 'contact')->name('site.contact');
+    Route::get('/sitemap.xml', 'sitemap')->name('site.sitemap');
 });
 
-Route::view('/terms-of-service', 'legal.terms')->name('legal.terms');
-Route::view('/privacy-policy', 'legal.privacy')->name('legal.privacy');
+Route::view('/terms-of-service', 'site.legal.terms')->name('legal.terms');
+Route::view('/privacy-policy', 'site.legal.privacy')->name('legal.privacy');
+Route::view('/cookie-policy', 'site.legal.cookies')->name('legal.cookies');
 
 Route::middleware('guest')->group(function (): void {
     Route::get('/login', [AuthController::class, 'showLogin'])->defaults('portal', 'customer')->name('login');

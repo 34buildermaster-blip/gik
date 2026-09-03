@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title }}</title>
-    <link rel="icon" href="{{ asset('brand-logo.png') }}" type="image/png">
+    <link rel="icon" href="{{ asset('brand-logo.webp') }}" type="image/webp">
     <style>
         :root {
             --green: #053920;
@@ -700,7 +700,7 @@
                 <div class="sidebar-head">
                     <a class="brand" href="{{ $homeRoute }}" title="34 Build Master Admin">
                         <span class="brand-mark">
-                            <img src="{{ asset('brand-logo.png') }}" alt="" aria-hidden="true">
+                            <img src="{{ asset('brand-logo.webp') }}" alt="" aria-hidden="true">
                         </span>
                         <span class="brand-copy">
                             <span class="brand-title">Build Master</span>

@@ -5,7 +5,7 @@
         <article class="legal-document">
             <header class="legal-header">
                 <a class="legal-brand" href="{{ route('register') }}">
-                    <img src="{{ asset('brand-logo.png') }}" alt="34 Build Master">
+                    <img src="{{ asset('brand-logo.webp') }}" alt="34 Build Master">
                     <span><strong>34 Build Master</strong><small>Customer portal</small></span>
                 </a>
                 <p class="eyebrow">Terms of Service</p>

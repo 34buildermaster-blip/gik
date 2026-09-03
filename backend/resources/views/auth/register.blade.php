@@ -5,7 +5,7 @@
             @csrf
             <a class="auth-brand" href="{{ route('login') }}">
                 <span class="auth-brand-mark">
-                    <img src="{{ asset('brand-logo.png') }}" alt="" aria-hidden="true">
+                    <img src="{{ asset('brand-logo.webp') }}" alt="" aria-hidden="true">
                 </span>
                 <span><strong>34 Build Master</strong><span>Customer portal</span></span>
             </a>
