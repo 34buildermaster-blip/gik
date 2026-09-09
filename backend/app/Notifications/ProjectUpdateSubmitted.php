@@ -17,6 +17,11 @@ class ProjectUpdateSubmitted extends Notification
         $this->projectUpdate->loadMissing('project:id,code,name', 'creator:id,name');
     }
 
+    public function notificationEvent(): string
+    {
+        return 'project_update_submitted';
+    }
+
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)

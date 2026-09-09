@@ -33,7 +33,19 @@
                 <div><dt>อีเมล</dt><dd><a href="mailto:{{ $customer->email }}">{{ $customer->email }}</a></dd></div>
                 <div><dt>โทรศัพท์</dt><dd>{{ $customer->phone ?: '-' }}</dd></div>
                 <div><dt>ช่องทางที่สะดวก</dt><dd>{{ $contactChannelLabels[$customer->preferred_contact_channel] ?? '-' }}</dd></div>
-                <div><dt>LINE Recipient ID</dt><dd>{{ $customer->line_recipient_id ?: '-' }}</dd></div>
+                <div>
+                    <dt>การแจ้งเตือนผ่าน LINE</dt>
+                    <dd class="customer-line-management">
+                        <span class="customer-line-state {{ $customer->line_recipient_id ? 'is-connected' : '' }}">{{ $customer->line_recipient_id ? 'เชื่อมต่อแล้ว' : 'ยังไม่เชื่อมต่อ' }}</span>
+                        @if ($customer->line_recipient_id)
+                            <form method="POST" action="{{ route('admin.customers.line.disconnect', $customer) }}" onsubmit="return confirm('ยืนยันยกเลิกการเชื่อมต่อ LINE ของลูกค้ารายนี้?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit">ยกเลิก</button>
+                            </form>
+                        @endif
+                    </dd>
+                </div>
                 <div class="full"><dt>ที่อยู่</dt><dd>{{ $customer->address ?: '-' }}</dd></div>
             </dl>
         </article>

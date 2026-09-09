@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
+use App\Models\LineAccountLink;
 use App\Models\Project;
 use App\Models\ProjectDocument;
 use App\Models\ProjectUpdate;
@@ -98,7 +99,6 @@ class CustomerController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($customer->id)],
             'phone' => ['nullable', 'string', 'max:30'],
-            'line_recipient_id' => ['nullable', 'string', 'max:255'],
             'address' => ['nullable', 'string', 'max:2000'],
             'billing_name' => ['nullable', 'string', 'max:255'],
             'tax_id' => ['nullable', 'string', 'max:50'],
@@ -128,6 +128,24 @@ class CustomerController extends Controller
         return redirect()
             ->route('admin.customers.show', $customer)
             ->with('success', 'บันทึกข้อมูลลูกค้าเรียบร้อยแล้ว');
+    }
+
+    public function disconnectLine(Request $request, User $customer): RedirectResponse
+    {
+        $this->ensureCustomer($customer);
+
+        if (filled($customer->line_recipient_id)) {
+            $customer->update(['line_recipient_id' => null]);
+            LineAccountLink::query()->where('user_id', $customer->id)->delete();
+            AuditLog::record(
+                $request->user(),
+                'line.account_disconnected_by_admin',
+                $customer,
+                "ยกเลิกการเชื่อมต่อ LINE ของลูกค้า {$customer->name}",
+            );
+        }
+
+        return back()->with('success', 'ยกเลิกการเชื่อมต่อ LINE ของลูกค้าเรียบร้อยแล้ว');
     }
 
     private function ensureCustomer(User $customer): void

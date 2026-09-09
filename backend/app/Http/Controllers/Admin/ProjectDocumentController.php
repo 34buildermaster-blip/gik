@@ -22,7 +22,7 @@ class ProjectDocumentController extends Controller
             'version' => ['required', 'string', 'max:40'],
             'visibility' => ['required', Rule::in(array_keys(ProjectDocument::VISIBILITY_LABELS))],
             'notes' => ['nullable', 'string', 'max:2000'],
-            'file' => ['required', 'file', 'max:20480', 'mimes:pdf,doc,docx,xls,xlsx,csv,jpg,jpeg,png,webp'],
+            'file' => ['required', 'file', 'max:20480', 'mimes:pdf,docx,xlsx,csv,jpg,jpeg,png,webp'],
         ]);
 
         $storedFile = $storage->store($data['file'], "project-documents/{$project->id}", 'private', $request->user());

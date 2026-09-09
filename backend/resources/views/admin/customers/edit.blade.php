@@ -19,7 +19,7 @@
                 <div class="field"><label for="email">อีเมล</label><input id="email" name="email" type="email" value="{{ old('email', $customer->email) }}" required></div>
                 <div class="field"><label for="phone">เบอร์โทรศัพท์</label><input id="phone" name="phone" value="{{ old('phone', $customer->phone) }}" inputmode="tel"></div>
                 <div class="field"><label for="preferred_contact_channel">ช่องทางที่สะดวก</label><select id="preferred_contact_channel" name="preferred_contact_channel" required>@foreach($contactChannelLabels as $value => $label)<option value="{{ $value }}" @selected(old('preferred_contact_channel', $customer->preferred_contact_channel) === $value)>{{ $label }}</option>@endforeach</select></div>
-                <div class="field full"><label for="line_recipient_id">LINE Recipient ID</label><input id="line_recipient_id" name="line_recipient_id" value="{{ old('line_recipient_id', $customer->line_recipient_id) }}"><small>ใช้สำหรับแจ้งเตือนผ่าน LINE Messaging API ไม่ใช่ชื่อ LINE</small></div>
+                <div class="field full"><label>การแจ้งเตือนผ่าน LINE</label><div class="customer-line-state {{ $customer->line_recipient_id ? 'is-connected' : '' }}">{{ $customer->line_recipient_id ? 'เชื่อมต่อแล้ว' : 'ยังไม่เชื่อมต่อ' }}</div><small>ลูกค้าเชื่อมบัญชีด้วยตนเองจากหน้าโปรไฟล์ ระบบไม่ใช้ LINE ID ที่กรอกด้วยมือ</small></div>
                 <div class="field full"><label for="address">ที่อยู่</label><textarea id="address" name="address" rows="3">{{ old('address', $customer->address) }}</textarea></div>
             </div>
         </section>

@@ -180,6 +180,102 @@ class SecurityHardeningTest extends TestCase
         Storage::disk('local')->assertDirectoryEmpty('quarantine');
     }
 
+    public function test_builtin_upload_inspection_validates_a_safe_pdf(): void
+    {
+        Storage::fake('local');
+        config([
+            'media.driver' => 'local',
+            'media.images.optimize' => false,
+            'security.upload_scan.enabled' => true,
+            'security.upload_scan.driver' => 'builtin',
+            'security.upload_scan.required' => true,
+            'security.upload_scan.fail_closed' => true,
+        ]);
+
+        $file = app(MediaStorage::class)->store(
+            UploadedFile::fake()->createWithContent(
+                'contract.pdf',
+                "%PDF-1.4\n1 0 obj<</Type/Catalog>>endobj\n%%EOF",
+            ),
+            'project-documents/1',
+            'private',
+        );
+
+        $this->assertSame('validated', $file->scan_status);
+        $this->assertTrue($file->passedSecurityInspection());
+        $this->assertNotNull($file->scanned_at);
+        Storage::disk('local')->assertDirectoryEmpty('quarantine');
+    }
+
+    public function test_builtin_upload_inspection_blocks_php_payload(): void
+    {
+        Storage::fake('local');
+        config([
+            'security.upload_scan.enabled' => true,
+            'security.upload_scan.driver' => 'builtin',
+        ]);
+
+        $this->expectException(ValidationException::class);
+
+        app(MediaStorage::class)->store(
+            UploadedFile::fake()->createWithContent(
+                'unsafe.csv',
+                '<?php echo "unsafe"; ?>',
+            ),
+            'project-documents/1',
+            'private',
+        );
+    }
+
+    public function test_builtin_upload_inspection_blocks_active_pdf_content(): void
+    {
+        Storage::fake('local');
+        config([
+            'security.upload_scan.enabled' => true,
+            'security.upload_scan.driver' => 'builtin',
+        ]);
+
+        $this->expectException(ValidationException::class);
+
+        app(MediaStorage::class)->store(
+            UploadedFile::fake()->createWithContent(
+                'unsafe.pdf',
+                "%PDF-1.4\n1 0 obj<</JavaScript 2 0 R>>endobj\n%%EOF",
+            ),
+            'project-documents/1',
+            'private',
+        );
+    }
+
+    public function test_builtin_upload_inspection_blocks_office_macros(): void
+    {
+        Storage::fake('local');
+        config([
+            'security.upload_scan.enabled' => true,
+            'security.upload_scan.driver' => 'builtin',
+        ]);
+
+        $path = tempnam(sys_get_temp_dir(), 'unsafe-office-');
+        $archive = new \ZipArchive;
+        $archive->open($path, \ZipArchive::OVERWRITE);
+        $archive->addFromString('[Content_Types].xml', '<Types></Types>');
+        $archive->addFromString('word/vbaProject.bin', 'macro');
+        $archive->close();
+
+        try {
+            app(MediaStorage::class)->store(
+                new UploadedFile($path, 'unsafe.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', null, true),
+                'project-documents/1',
+                'private',
+            );
+            $this->fail('A macro-enabled Office archive should be rejected.');
+        } catch (ValidationException $exception) {
+            $this->assertArrayHasKey('file', $exception->errors());
+        } finally {
+            @unlink($path);
+        }
+    }
+
     public function test_required_upload_scanning_fails_closed_when_scanner_is_disabled(): void
     {
         Storage::fake('local');

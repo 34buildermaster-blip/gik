@@ -6,7 +6,7 @@ customer portal, and APIs use one domain and one PHP application. The preserved
 
 ## Host requirements
 
-- PHP 8.3 or newer with PDO MySQL, cURL, GD, fileinfo, mbstring, OpenSSL, and XML
+- PHP 8.3 or newer with PDO MySQL, cURL, GD, fileinfo, mbstring, OpenSSL, XML, and ZIP
 - MySQL 8 or MariaDB 10.6 or newer
 - Composer 2
 - Apache with `mod_rewrite` or Nginx
@@ -53,6 +53,7 @@ GOOGLE_DRIVE_REFRESH_TOKEN=replace-with-refresh-token
 
 SECURITY_STAFF_2FA_REQUIRED=true
 SECURITY_UPLOAD_SCAN_ENABLED=true
+SECURITY_UPLOAD_SCAN_DRIVER=clamav
 SECURITY_UPLOAD_SCAN_REQUIRED=true
 SECURITY_UPLOAD_SCAN_FAIL_CLOSED=true
 SECURITY_REQUIRE_CLEAN_FILES=true
@@ -69,8 +70,14 @@ MAIL_FROM_NAME="34 Build Master"
 ```
 
 If the selected shared host cannot install or run ClamAV, keep upload scanning
-disabled only for staging and use the VPS plan before accepting sensitive
-customer documents.
+enabled with `SECURITY_UPLOAD_SCAN_DRIVER=builtin`. This mode rejects executable
+signatures, EICAR, active PDF content, malformed Office archives, macros, and
+embedded Office files. Also enable the hosting provider's WAF and malware
+scanner. The built-in inspection is a shared-hosting safeguard, not a full
+antivirus replacement; use the `clamav` driver when a VPS becomes available.
+
+Legacy `.doc` and `.xls` uploads are intentionally rejected. Convert them to
+`.docx`, `.xlsx`, or PDF before uploading.
 
 ## Upload limits
 

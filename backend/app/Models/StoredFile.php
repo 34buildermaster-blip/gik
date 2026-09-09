@@ -47,6 +47,11 @@ class StoredFile extends Model
         return $this->visibility === 'public';
     }
 
+    public function passedSecurityInspection(): bool
+    {
+        return in_array($this->scan_status, ['clean', 'validated'], true);
+    }
+
     public function publicUrl(): string
     {
         return route('stored-files.show', $this);

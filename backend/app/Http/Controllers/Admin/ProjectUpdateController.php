@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Notifications\ProjectUpdateChangesRequested;
 use App\Notifications\ProjectUpdatePublished;
 use App\Notifications\ProjectUpdateSubmitted;
+use App\Services\AdminNotificationRecipients;
 use App\Services\MediaStorage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -23,7 +24,10 @@ use Illuminate\View\View;
 
 class ProjectUpdateController extends Controller
 {
-    public function __construct(private readonly MediaStorage $mediaStorage) {}
+    public function __construct(
+        private readonly MediaStorage $mediaStorage,
+        private readonly AdminNotificationRecipients $adminRecipients,
+    ) {}
 
     public function create(Request $request, Project $project): View
     {
@@ -327,10 +331,10 @@ class ProjectUpdateController extends Controller
 
     private function notifyAdmins(ProjectUpdate $update): void
     {
-        $admins = User::query()
-            ->where('role', 'admin')
-            ->when($update->creator?->isAdmin(), fn ($query) => $query->whereKeyNot($update->created_by))
-            ->get();
+        $admins = $this->adminRecipients->forProject(
+            $update->project,
+            $update->creator?->isAdmin() ? $update->creator : null,
+        );
         Notification::send($admins, new ProjectUpdateSubmitted($update));
     }
 

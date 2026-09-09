@@ -23,7 +23,8 @@
         <article class="card project-facts">
             <div><span>วันที่เริ่มงาน</span><strong>{{ $project->start_date?->format('d/m/Y') ?: '-' }}</strong></div>
             <div><span>กำหนดส่ง</span><strong>{{ $project->estimated_end_date?->format('d/m/Y') ?: '-' }}</strong></div>
-            <div><span>ผู้ดูแล</span><strong>{{ $project->manager?->name ?: '-' }}</strong></div>
+            <div><span>ผู้ดูแลหน้างาน</span><strong>{{ $project->manager?->name ?: '-' }}</strong></div>
+            <div><span>Admin ผู้ตรวจอนุมัติ</span><strong>{{ $project->reviewer?->name ?: 'Admin ทุกคน' }}</strong></div>
             <div><span>จำนวนอัปเดต</span><strong>{{ $project->updates->count() }}</strong></div>
         </article>
     </section>

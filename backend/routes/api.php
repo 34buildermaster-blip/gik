@@ -5,9 +5,14 @@ use App\Http\Controllers\Api\ArticleController;
 use App\Http\Controllers\Api\ContactLeadController;
 use App\Http\Controllers\Api\HomeSlideController;
 use App\Http\Controllers\Api\HouseDesignController;
+use App\Http\Controllers\Api\LineWebhookController;
 use App\Http\Controllers\Api\SiteSettingController;
 use App\Http\Controllers\Api\WelcomePopupController;
 use Illuminate\Support\Facades\Route;
+
+Route::post('/line/webhook', LineWebhookController::class)
+    ->middleware('throttle:120,1')
+    ->name('line.webhook');
 
 Route::get('/articles', [ArticleController::class, 'index'])->name('articles.index');
 Route::post('/contact-leads', [ContactLeadController::class, 'store'])

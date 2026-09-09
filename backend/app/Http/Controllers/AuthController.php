@@ -106,7 +106,9 @@ class AuthController extends Controller
 
         AuditLog::record($user, 'auth.login.succeeded', $user, 'เข้าสู่ระบบสำเร็จ');
 
-        return redirect()->route($user->isStaff() ? 'admin.dashboard' : 'client.projects.index');
+        return redirect()->intended(
+            route($user->isStaff() ? 'admin.dashboard' : 'client.projects.index'),
+        );
     }
 
     public function showRegister(): View

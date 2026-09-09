@@ -42,6 +42,7 @@ Then configure Laravel:
 
 ```dotenv
 SECURITY_UPLOAD_SCAN_ENABLED=true
+SECURITY_UPLOAD_SCAN_DRIVER=clamav
 SECURITY_UPLOAD_SCAN_REQUIRED=true
 SECURITY_UPLOAD_SCAN_FAIL_CLOSED=true
 SECURITY_REQUIRE_CLEAN_FILES=true
@@ -53,6 +54,24 @@ SECURITY_QUARANTINE_PATH=quarantine
 
 Confirm that `storage/app/private/quarantine` is writable by the PHP user and is
 not served by Nginx or Apache.
+
+### Shared-hosting profile
+
+When `clamscan` is unavailable, use the application inspection driver and the
+hosting provider's WAF/malware protection together:
+
+```dotenv
+SECURITY_UPLOAD_SCAN_ENABLED=true
+SECURITY_UPLOAD_SCAN_DRIVER=builtin
+SECURITY_UPLOAD_SCAN_REQUIRED=true
+SECURITY_UPLOAD_SCAN_FAIL_CLOSED=true
+SECURITY_REQUIRE_CLEAN_FILES=true
+```
+
+This profile records accepted files as `validated`, while ClamAV records them as
+`clean`. Both can be served. Built-in inspection blocks executable signatures,
+EICAR, active PDF features, invalid Office archives, macros, and embedded Office
+files. It does not claim to replace a full antivirus engine.
 
 Before enabling customer traffic, rescan every existing managed file and require
 a successful exit code:

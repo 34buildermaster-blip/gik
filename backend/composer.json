@@ -8,6 +8,7 @@
     "require": {
         "php": "^8.3",
         "ext-gd": "*",
+        "ext-zip": "*",
         "google/apiclient": "^2.18",
         "laravel/framework": "^13.8",
         "laravel/tinker": "^3.0",

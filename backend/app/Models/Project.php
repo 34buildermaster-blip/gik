@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['manager_id', 'code', 'name', 'type', 'address', 'start_date', 'estimated_end_date', 'status', 'progress_percent', 'summary'])]
+#[Fillable(['manager_id', 'reviewer_id', 'code', 'name', 'type', 'address', 'start_date', 'estimated_end_date', 'status', 'progress_percent', 'summary'])]
 class Project extends Model
 {
     use SoftDeletes;
@@ -42,6 +42,11 @@ class Project extends Model
     public function manager(): BelongsTo
     {
         return $this->belongsTo(User::class, 'manager_id');
+    }
+
+    public function reviewer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'reviewer_id');
     }
 
     public function canBeManagedBy(User $user): bool

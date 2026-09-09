@@ -83,7 +83,7 @@ class MediaStorage
         string $disposition = 'inline',
     ): StreamedResponse {
         if (config('security.upload_scan.require_clean_for_serving')) {
-            abort_unless($file->scan_status === 'clean', 404);
+            abort_unless($file->passedSecurityInspection(), 404);
         }
 
         if ($file->disk !== 'google') {
@@ -220,7 +220,7 @@ class MediaStorage
             : Storage::disk((string) config('media.local.disk', 'local'))->path($file->path);
 
         try {
-            $security = $this->securityScanner->inspectPath($path);
+            $security = $this->securityScanner->inspectPath($path, $file->original_name);
             $file->forceFill($security)->save();
 
             return $file->refresh();

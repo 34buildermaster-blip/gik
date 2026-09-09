@@ -8,9 +8,9 @@ use Illuminate\Console\Command;
 
 class ScanStoredFiles extends Command
 {
-    protected $signature = 'security:scan-stored-files {--all : Scan clean files again}';
+    protected $signature = 'security:scan-stored-files {--all : Inspect accepted files again}';
 
-    protected $description = 'Scan existing managed files with the configured malware scanner';
+    protected $description = 'Inspect existing managed files with the configured security scanner';
 
     public function handle(MediaStorage $storage): int
     {
@@ -22,7 +22,7 @@ class ScanStoredFiles extends Command
 
         $query = StoredFile::query()->orderBy('id');
         if (! $this->option('all')) {
-            $query->where('scan_status', '!=', 'clean');
+            $query->whereNotIn('scan_status', ['clean', 'validated']);
         }
 
         $total = (clone $query)->count();
@@ -56,12 +56,12 @@ class ScanStoredFiles extends Command
         $this->newLine(2);
 
         if ($failed > 0) {
-            $this->error("{$failed} file(s) were not cleared. They remain blocked when clean-file serving is required.");
+            $this->error("{$failed} file(s) were not cleared. They remain blocked when inspected-file serving is required.");
 
             return self::FAILURE;
         }
 
-        $this->info("{$total} file(s) passed malware scanning.");
+        $this->info("{$total} file(s) passed the configured security inspection.");
 
         return self::SUCCESS;
     }

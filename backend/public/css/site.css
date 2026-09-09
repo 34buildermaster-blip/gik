@@ -27,3 +27,8 @@
 html,body{overflow-x:hidden}
 @media(max-width:1050px){.site-header{backdrop-filter:none}.nav-links{height:calc(100vh - 76px)}}
 .review-avatar{background-image:url('/testimonial-avatars.webp')}
+.gallery-grid button{height:clamp(240px,28vw,340px);aspect-ratio:auto}
+.gallery-grid button:nth-child(5n){grid-column:span 4}
+.gallery-grid button:nth-child(5n+1){grid-column:span 8}
+@media(max-width:1050px){.gallery-grid button,.gallery-grid button:nth-child(5n),.gallery-grid button:nth-child(5n+1){grid-column:span 6;height:auto;aspect-ratio:4/3}}
+@media(max-width:720px){.gallery-grid button,.gallery-grid button:nth-child(5n),.gallery-grid button:nth-child(5n+1){grid-column:span 12}}

@@ -9,7 +9,8 @@
             <div class="field"><label for="name">ชื่อโครงการ</label><input id="name" name="name" value="{{ old('name', $project->name) }}" required></div>
             <div class="field"><label for="type">ประเภทงาน</label><select id="type" name="type" required>@foreach ($typeLabels as $value => $label)<option value="{{ $value }}" @selected(old('type', $project->type) === $value)>{{ $label }}</option>@endforeach</select></div>
             <div class="field"><label for="manager_id">ผู้ดูแลโครงการ</label><select id="manager_id" name="manager_id"><option value="">ยังไม่กำหนด</option>@foreach ($managers as $manager)<option value="{{ $manager->id }}" @selected((string) old('manager_id', $project->manager_id) === (string) $manager->id)>{{ $manager->name }}{{ $manager->role === 'inspector' ? ' · ผู้ตรวจหน้างาน' : ' · Admin' }}</option>@endforeach</select></div>
-            <div class="field full"><label for="address">ที่อยู่หน้างาน</label><textarea id="address" name="address" rows="3">{{ old('address', $project->address) }}</textarea></div>
+            <div class="field"><label for="reviewer_id">Admin ผู้ตรวจอนุมัติ</label><select id="reviewer_id" name="reviewer_id"><option value="">แจ้ง Admin ทุกคน</option>@foreach ($reviewers as $reviewer)<option value="{{ $reviewer->id }}" @selected((string) old('reviewer_id', $project->reviewer_id) === (string) $reviewer->id)>{{ $reviewer->name }}</option>@endforeach</select><small>ผู้ดูแลภาพรวมที่เปิดรับทุกโครงการจะได้รับแจ้งเตือนร่วมด้วย</small></div>
+            <div class="field"><label for="address">ที่อยู่หน้างาน</label><textarea id="address" name="address" rows="3">{{ old('address', $project->address) }}</textarea></div>
             <div class="field full"><label for="summary">คำอธิบายโครงการ</label><textarea id="summary" name="summary" rows="4">{{ old('summary', $project->summary) }}</textarea></div>
         </div>
     </div>

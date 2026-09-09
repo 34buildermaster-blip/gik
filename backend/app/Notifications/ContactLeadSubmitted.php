@@ -14,6 +14,11 @@ class ContactLeadSubmitted extends Notification
 
     public function __construct(public ContactLead $contactLead) {}
 
+    public function notificationEvent(): string
+    {
+        return 'contact_lead_submitted';
+    }
+
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)

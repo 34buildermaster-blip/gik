@@ -2052,6 +2052,126 @@ textarea {
 .profile-form-actions { display: flex; justify-content: flex-end; margin-top: 20px; }
 .field-error { color: var(--danger); font-size: 11px; }
 
+.line-account-card .profile-card-heading { margin-bottom: 18px; }
+.line-heading-icon { background: #e8f8ec; color: #06a84f; }
+.line-account-status {
+    margin-left: auto;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #eef0ef;
+    color: var(--muted);
+    white-space: nowrap;
+    font-size: 10px;
+    font-weight: 700;
+}
+.line-account-status.is-connected { background: #e8f8ec; color: #087a3d; }
+.line-account-content {
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 16px;
+    border: 1px solid #dfe8e2;
+    border-radius: 14px;
+    background: #f8faf9;
+    padding: 16px;
+}
+.line-account-content.is-connected { border-color: #06a84f40; background: #f3fcf6; }
+.line-account-content.is-disabled { opacity: .75; }
+.line-account-mark {
+    width: 52px;
+    height: 52px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: #06c755;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+}
+.line-account-content strong { display: block; margin-bottom: 3px; font-size: 14px; }
+.line-account-content p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.65; }
+.line-connect-button { background: #06a84f; }
+.line-connect-button:hover { background: #058c43; }
+.line-account-content button:disabled { cursor: not-allowed; opacity: .65; }
+
+.notification-preferences-card .profile-card-heading { margin-bottom: 18px; }
+.notification-preference-section {
+    display: grid;
+    gap: 10px;
+    border-top: 1px solid var(--line);
+    padding: 18px 0;
+}
+.notification-preference-section:first-of-type { border-top: 0; padding-top: 0; }
+.notification-preference-section > strong { color: var(--deep); font-size: 12px; }
+.notification-choice-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+}
+.notification-event-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.notification-choice {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    min-width: 0;
+    border: 1px solid var(--line);
+    border-radius: 13px;
+    background: #f8faf9;
+    padding: 13px;
+    cursor: pointer;
+    transition: border-color .18s ease, background .18s ease, box-shadow .18s ease;
+}
+.notification-choice:hover { border-color: rgba(18, 107, 73, .3); background: #fff; }
+.notification-choice:has(input:checked) {
+    border-color: rgba(18, 107, 73, .35);
+    background: var(--green-soft);
+    box-shadow: inset 0 0 0 1px rgba(18, 107, 73, .04);
+}
+.notification-choice input {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 16px;
+    margin: 2px 0 0;
+    accent-color: var(--green);
+}
+.notification-choice span { display: grid; min-width: 0; gap: 2px; }
+.notification-choice b { color: var(--deep); font-size: 12px; }
+.notification-choice small { color: var(--muted); font-size: 9px; line-height: 1.55; }
+.notification-choice.is-compact { align-items: center; }
+.notification-oversight-choice { max-width: 620px; }
+
+.customer-line-state {
+    display: inline-flex;
+    width: fit-content;
+    border-radius: 999px;
+    background: #eef0ef;
+    color: var(--muted);
+    padding: 6px 10px;
+    font-size: 11px;
+    font-weight: 700;
+}
+.customer-line-state.is-connected { background: #e8f8ec; color: #087a3d; }
+.customer-line-management { display: flex; align-items: center; gap: 8px; }
+.customer-line-management form { margin: 0; }
+.customer-line-management button {
+    border: 0;
+    background: transparent;
+    color: var(--danger);
+    cursor: pointer;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+@media (max-width: 720px) {
+    .line-account-card .profile-card-heading { align-items: flex-start; flex-wrap: wrap; }
+    .line-account-status { margin-left: 55px; }
+    .line-account-content { grid-template-columns: 44px minmax(0, 1fr); }
+    .line-account-mark { width: 44px; height: 44px; }
+    .line-account-content > :last-child { grid-column: 1 / -1; width: 100%; }
+    .notification-choice-grid,
+    .notification-event-list { grid-template-columns: 1fr; }
+}
+
 .access-denied {
     min-height: 520px;
     display: grid;

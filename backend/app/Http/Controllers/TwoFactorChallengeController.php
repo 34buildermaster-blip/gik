@@ -59,6 +59,8 @@ class TwoFactorChallengeController extends Controller
         $request->session()->regenerate();
         AuditLog::record($user, 'auth.login.succeeded', $user, 'เข้าสู่ระบบด้วยการยืนยันตัวตนสองชั้น');
 
-        return redirect()->route($user->isStaff() ? 'admin.dashboard' : 'client.projects.index');
+        return redirect()->intended(
+            route($user->isStaff() ? 'admin.dashboard' : 'client.projects.index'),
+        );
     }
 }

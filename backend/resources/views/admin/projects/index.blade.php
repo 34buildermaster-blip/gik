@@ -48,7 +48,7 @@
                     <div class="project-list-progress">
                         <div><span>{{ $statusLabels[$project->status] ?? $project->status }}</span><strong>{{ $project->progress_percent }}%</strong></div>
                         <div class="progress-track"><i style="width: {{ $project->progress_percent }}%"></i></div>
-                        <small>{{ $project->updates_count }} อัปเดต · {{ $view === 'archived' ? 'เก็บเมื่อ '.$project->deleted_at?->format('d/m/Y H:i') : 'ผู้ดูแล '.($project->manager?->name ?: 'ยังไม่กำหนด') }}</small>
+                        <small>{{ $project->updates_count }} อัปเดต · {{ $view === 'archived' ? 'เก็บเมื่อ '.$project->deleted_at?->format('d/m/Y H:i') : 'ผู้ดูแล '.($project->manager?->name ?: 'ยังไม่กำหนด').' · ผู้อนุมัติ '.($project->reviewer?->name ?: 'Admin ทุกคน') }}</small>
                     </div>
                     @if($view === 'archived')
                         <form class="project-restore-action" method="POST" action="{{ route('admin.projects.restore', $project->id) }}">

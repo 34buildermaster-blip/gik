@@ -77,12 +77,6 @@
                             <input id="email" name="email" type="email" value="{{ old('email', $user->email) }}" autocomplete="email" required>
                             @error('email') <small class="field-error">{{ $message }}</small> @enderror
                         </div>
-                        <div class="field full">
-                            <label for="line_recipient_id">LINE User ID สำหรับรับการแจ้งเตือน</label>
-                            <input id="line_recipient_id" name="line_recipient_id" type="text" value="{{ old('line_recipient_id', $user->line_recipient_id) }}" placeholder="เช่น Uxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
-                            <small>เว้นว่างได้ ระบบจะส่ง LINE เมื่อเปิดใช้งาน Messaging API และบัญชีนี้มี User ID เท่านั้น</small>
-                            @error('line_recipient_id') <small class="field-error">{{ $message }}</small> @enderror
-                        </div>
                     </div>
 
                     <div class="profile-form-actions"><button class="button" type="submit">บันทึกข้อมูล</button></div>
@@ -95,6 +89,100 @@
                         <button type="submit">ลบรูปโปรไฟล์ปัจจุบัน</button>
                     </form>
                 @endif
+            </section>
+
+            <section class="card profile-form-card line-account-card">
+                <div class="profile-card-heading">
+                    <span class="profile-heading-icon line-heading-icon">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.5 10.4 10.4 0 0 1-3.8-.7L3 21l1.6-4.3A8.1 8.1 0 0 1 3 11.5 8.4 8.4 0 0 1 12 3a8.4 8.4 0 0 1 9 8.5Z"></path></svg>
+                    </span>
+                    <div><h2>แจ้งเตือนผ่าน LINE</h2><p>รับเหตุการณ์สำคัญตามหน้าที่และโครงการที่เกี่ยวข้อง</p></div>
+                    <span class="line-account-status {{ $user->line_recipient_id ? 'is-connected' : '' }}">
+                        {{ $user->line_recipient_id ? 'เชื่อมต่อแล้ว' : 'ยังไม่เชื่อมต่อ' }}
+                    </span>
+                </div>
+
+                @if ($user->line_recipient_id)
+                    <div class="line-account-content is-connected">
+                        <span class="line-account-mark" aria-hidden="true">LINE</span>
+                        <div>
+                            <strong>บัญชีนี้พร้อมรับการแจ้งเตือน</strong>
+                            <p>ระบบจะส่งข้อความตามประเภทเหตุการณ์และช่องทางที่คุณเลือกไว้ด้านล่าง</p>
+                        </div>
+                        <form method="POST" action="{{ route('line.account.disconnect') }}" onsubmit="return confirm('ยืนยันยกเลิกการเชื่อมต่อ LINE?')">
+                            @csrf
+                            @method('DELETE')
+                            <button class="button secondary" type="submit">ยกเลิกการเชื่อมต่อ</button>
+                        </form>
+                    </div>
+                @elseif ($lineAccountLinkConfigured)
+                    <div class="line-account-content">
+                        <span class="line-account-mark" aria-hidden="true">LINE</span>
+                        <div>
+                            <strong>เชื่อมต่อเพียงครั้งเดียว</strong>
+                            <p>กดเปิด LINE เพิ่มเพื่อน Official Account แล้วส่งคำว่า “เชื่อมบัญชี” จากนั้นเปิดลิงก์ที่ได้รับและเข้าสู่ระบบบัญชีนี้</p>
+                        </div>
+                        <a class="button line-connect-button" href="{{ $lineAddFriendUrl }}" target="_blank" rel="noopener noreferrer">เปิด LINE เพื่อเชื่อมต่อ</a>
+                    </div>
+                @else
+                    <div class="line-account-content is-disabled">
+                        <span class="line-account-mark" aria-hidden="true">LINE</span>
+                        <div>
+                            <strong>รอเปิดใช้งาน LINE Official Account</strong>
+                            <p>ผู้ดูแลระบบต้องเพิ่ม Channel Access Token, Channel Secret และลิงก์เพิ่มเพื่อนบนเซิร์ฟเวอร์ก่อน</p>
+                        </div>
+                        <button class="button secondary" type="button" disabled>ยังไม่พร้อมเชื่อมต่อ</button>
+                    </div>
+                @endif
+            </section>
+
+            <section class="card profile-form-card notification-preferences-card">
+                <div class="profile-card-heading">
+                    <span class="profile-heading-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path><path d="M10 21h4"></path></svg></span>
+                    <div><h2>ตั้งค่าการแจ้งเตือน</h2><p>เลือกเหตุการณ์และช่องทางที่เหมาะกับหน้าที่ของคุณ</p></div>
+                </div>
+
+                <form method="POST" action="{{ route('admin.profile.notifications') }}">
+                    @csrf
+                    @method('PUT')
+                    <div class="notification-preference-section">
+                        <strong>ช่องทางรับแจ้งเตือน</strong>
+                        <div class="notification-choice-grid">
+                            @foreach ($notificationChannelLabels as $value => $label)
+                                <label class="notification-choice">
+                                    <input type="checkbox" name="channels[]" value="{{ $value }}" @checked(in_array($value, old('channels', $notificationSettings['channels']), true))>
+                                    <span><b>{{ $label }}</b><small>{{ $value === 'database' ? 'แสดงในศูนย์แจ้งเตือน' : ($value === 'line' ? ($user->line_recipient_id ? 'เชื่อมต่อพร้อมใช้งาน' : 'ต้องเชื่อมบัญชี LINE ก่อน') : 'ต้องตั้งค่า SMTP บนเซิร์ฟเวอร์') }}</small></span>
+                                </label>
+                            @endforeach
+                        </div>
+                        @error('channels', 'notifications') <small class="field-error">{{ $message }}</small> @enderror
+                    </div>
+
+                    <div class="notification-preference-section">
+                        <strong>ประเภทเหตุการณ์</strong>
+                        <div class="notification-event-list">
+                            @foreach ($user->availableNotificationEvents() as $event)
+                                <label class="notification-choice is-compact">
+                                    <input type="checkbox" name="events[]" value="{{ $event }}" @checked(in_array($event, old('events', $notificationSettings['events']), true))>
+                                    <span><b>{{ $notificationEventLabels[$event] }}</b></span>
+                                </label>
+                            @endforeach
+                        </div>
+                        @error('events', 'notifications') <small class="field-error">{{ $message }}</small> @enderror
+                    </div>
+
+                    @if ($user->isAdmin())
+                        <div class="notification-preference-section">
+                            <label class="notification-choice notification-oversight-choice">
+                                <input type="hidden" name="all_projects" value="0">
+                                <input type="checkbox" name="all_projects" value="1" @checked(old('all_projects', $notificationSettings['all_projects']))>
+                                <span><b>รับแจ้งเตือนจากทุกโครงการ</b><small>เหมาะสำหรับ Super Admin หรือผู้ดูแลภาพรวม แม้โครงการจะมี Admin ผู้ตรวจอนุมัติแล้ว</small></span>
+                            </label>
+                        </div>
+                    @endif
+
+                    <div class="profile-form-actions"><button class="button" type="submit">บันทึกการแจ้งเตือน</button></div>
+                </form>
             </section>
 
             <section class="card profile-form-card">

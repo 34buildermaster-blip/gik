@@ -22,6 +22,7 @@ use App\Http\Controllers\Admin\WelcomePopupController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClientProjectController;
 use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\LineAccountLinkController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProjectIssueMediaController;
 use App\Http\Controllers\ProjectMediaController;
@@ -94,6 +95,11 @@ Route::middleware('auth')->group(function (): void {
         ->middleware('throttle:30,1')
         ->name('project-documents.show');
     Route::get('/project-issue-media/{media}', [ProjectIssueMediaController::class, 'show'])->name('project-issue-media.show');
+    Route::get('/line/connect', [LineAccountLinkController::class, 'connect'])
+        ->middleware('throttle:10,1')
+        ->name('line.account.connect');
+    Route::delete('/line/disconnect', [LineAccountLinkController::class, 'disconnect'])
+        ->name('line.account.disconnect');
 });
 
 Route::middleware(['auth', 'role:user'])->group(function (): void {
@@ -107,6 +113,7 @@ Route::middleware('auth')
     ->group(function (): void {
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::put('/profile/notifications', [ProfileController::class, 'updateNotifications'])->name('profile.notifications');
         Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
         Route::delete('/profile/avatar', [ProfileController::class, 'destroyAvatar'])->name('profile.avatar.destroy');
         Route::get('/profile/avatar', [ProfileController::class, 'avatar'])->name('profile.avatar');
@@ -133,6 +140,7 @@ Route::middleware('auth')
             Route::get('/customers/{customer}', [CustomerController::class, 'show'])->whereNumber('customer')->name('customers.show');
             Route::get('/customers/{customer}/edit', [CustomerController::class, 'edit'])->whereNumber('customer')->name('customers.edit');
             Route::put('/customers/{customer}', [CustomerController::class, 'update'])->whereNumber('customer')->name('customers.update');
+            Route::delete('/customers/{customer}/line', [CustomerController::class, 'disconnectLine'])->whereNumber('customer')->name('customers.line.disconnect');
             Route::get('/users', [UserController::class, 'index'])->name('users.index');
             Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
             Route::post('/users', [UserController::class, 'store'])->name('users.store');

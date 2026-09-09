@@ -146,7 +146,7 @@ class ArticleController extends Controller
             'media' => [
                 'required',
                 'file',
-                'max:512000',
+                'max:102400',
                 'mimetypes:image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime',
             ],
         ]);

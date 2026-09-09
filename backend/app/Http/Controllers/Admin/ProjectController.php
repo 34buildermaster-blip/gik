@@ -31,7 +31,7 @@ class ProjectController extends Controller
 
         return view('admin.projects.index', [
             'projects' => (clone $projectsQuery)
-                ->with(['customers:id,name,email', 'manager:id,name'])
+                ->with(['customers:id,name,email', 'manager:id,name', 'reviewer:id,name'])
                 ->withCount('updates')
                 ->when($search !== '', function ($query) use ($search): void {
                     $query->where(function ($query) use ($search): void {
@@ -83,6 +83,7 @@ class ProjectController extends Controller
         $project->load([
             'customers:id,name,email,username',
             'manager:id,name',
+            'reviewer:id,name',
             'updates.media',
             'updates.creator:id,name',
             'updates.projectStep:id,name',
@@ -170,6 +171,7 @@ class ProjectController extends Controller
             'project' => $project,
             'customers' => User::where('role', 'user')->orderBy('name')->get(['id', 'name', 'email']),
             'managers' => User::whereIn('role', ['admin', 'inspector'])->orderBy('name')->get(['id', 'name', 'role']),
+            'reviewers' => User::where('role', 'admin')->orderBy('name')->get(['id', 'name']),
             'selectedCustomers' => $selectedCustomers,
             'statusLabels' => Project::STATUS_LABELS,
             'typeLabels' => Project::TYPE_LABELS,
@@ -189,6 +191,7 @@ class ProjectController extends Controller
             'progress_percent' => ['required', 'integer', 'between:0,100'],
             'summary' => ['nullable', 'string', 'max:2000'],
             'manager_id' => ['nullable', Rule::exists('users', 'id')->where(fn ($query) => $query->whereIn('role', ['admin', 'inspector']))],
+            'reviewer_id' => ['nullable', Rule::exists('users', 'id')->where('role', 'admin')],
             'customer_ids' => ['required', 'array', 'min:1'],
             'customer_ids.*' => ['integer', 'distinct', Rule::exists('users', 'id')->where('role', 'user')],
         ]);

@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'username', 'email', 'phone', 'address', 'billing_name', 'tax_id', 'preferred_contact_channel', 'emergency_contact_name', 'emergency_contact_phone', 'customer_status', 'internal_notes', 'line_recipient_id', 'password', 'avatar_path', 'avatar_file_id', 'role', 'failed_login_attempts', 'login_locked_until', 'password_must_change', 'password_changed_at', 'terms_accepted_at', 'privacy_accepted_at', 'marketing_consent_at', 'policy_version', 'consent_ip_hash'])]
+#[Fillable(['name', 'username', 'email', 'phone', 'address', 'billing_name', 'tax_id', 'preferred_contact_channel', 'emergency_contact_name', 'emergency_contact_phone', 'customer_status', 'internal_notes', 'line_recipient_id', 'notification_preferences', 'password', 'avatar_path', 'avatar_file_id', 'role', 'failed_login_attempts', 'login_locked_until', 'password_must_change', 'password_changed_at', 'terms_accepted_at', 'privacy_accepted_at', 'marketing_consent_at', 'policy_version', 'consent_ip_hash'])]
 #[Hidden(['password', 'remember_token', 'two_factor_secret', 'two_factor_recovery_codes', 'tax_id', 'internal_notes'])]
 class User extends Authenticatable
 {
@@ -34,6 +34,19 @@ class User extends Authenticatable
         'phone' => 'โทรศัพท์',
         'line' => 'LINE',
         'email' => 'อีเมล',
+    ];
+
+    public const NOTIFICATION_CHANNEL_LABELS = [
+        'database' => 'ในเว็บไซต์',
+        'line' => 'LINE',
+        'email' => 'อีเมล',
+    ];
+
+    public const NOTIFICATION_EVENT_LABELS = [
+        'project_update_submitted' => 'งานใหม่รอ Admin ตรวจสอบ',
+        'project_update_changes_requested' => 'งานถูกส่งกลับให้แก้ไข',
+        'project_update_approved' => 'อัปเดตโครงการผ่านการอนุมัติ',
+        'contact_lead_submitted' => 'ผู้ติดต่อใหม่จากเว็บไซต์',
     ];
 
     /** @use HasFactory<UserFactory> */
@@ -68,6 +81,52 @@ class User extends Authenticatable
     public function routeNotificationForLine(): ?string
     {
         return $this->line_recipient_id;
+    }
+
+    public function lineAccountLinks(): HasMany
+    {
+        return $this->hasMany(LineAccountLink::class);
+    }
+
+    public function notificationSettings(): array
+    {
+        $stored = is_array($this->notification_preferences) ? $this->notification_preferences : [];
+
+        return [
+            'channels' => array_values(array_intersect(
+                $stored['channels'] ?? array_keys(self::NOTIFICATION_CHANNEL_LABELS),
+                array_keys(self::NOTIFICATION_CHANNEL_LABELS),
+            )),
+            'events' => array_values(array_intersect(
+                $stored['events'] ?? $this->availableNotificationEvents(),
+                $this->availableNotificationEvents(),
+            )),
+            'all_projects' => $this->isAdmin() && (bool) ($stored['all_projects'] ?? false),
+        ];
+    }
+
+    public function availableNotificationEvents(): array
+    {
+        return match ($this->role) {
+            'admin' => ['project_update_submitted', 'contact_lead_submitted'],
+            'inspector' => ['project_update_changes_requested'],
+            default => ['project_update_approved'],
+        };
+    }
+
+    public function wantsNotificationEvent(string $event): bool
+    {
+        return in_array($event, $this->notificationSettings()['events'], true);
+    }
+
+    public function wantsNotificationChannel(string $channel): bool
+    {
+        return in_array($channel, $this->notificationSettings()['channels'], true);
+    }
+
+    public function monitorsAllProjects(): bool
+    {
+        return $this->notificationSettings()['all_projects'];
     }
 
     public function sendPasswordResetNotification($token): void
@@ -132,6 +191,7 @@ class User extends Authenticatable
             'two_factor_recovery_codes' => 'array',
             'two_factor_confirmed_at' => 'datetime',
             'tax_id' => 'encrypted',
+            'notification_preferences' => 'array',
         ];
     }
 }

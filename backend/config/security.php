@@ -8,6 +8,7 @@ return [
 
     'upload_scan' => [
         'enabled' => env('SECURITY_UPLOAD_SCAN_ENABLED', false),
+        'driver' => env('SECURITY_UPLOAD_SCAN_DRIVER', 'clamav'),
         'required' => env('SECURITY_UPLOAD_SCAN_REQUIRED', env('APP_ENV') === 'production'),
         'fail_closed' => env('SECURITY_UPLOAD_SCAN_FAIL_CLOSED', true),
         'require_clean_for_serving' => env('SECURITY_REQUIRE_CLEAN_FILES', env('APP_ENV') === 'production'),
