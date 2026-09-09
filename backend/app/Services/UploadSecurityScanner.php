@@ -136,15 +136,20 @@ class UploadSecurityScanner
             $this->rejectUnsafeFile('ชนิดไฟล์นี้ไม่ได้รับอนุญาตเพื่อความปลอดภัย');
         }
 
+        $extension = strtolower(pathinfo((string) $originalName, PATHINFO_EXTENSION));
+
         if ($this->fileContainsAny($path, [
             'X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*',
             '<?php',
-            '<?=',
         ], true)) {
             $this->rejectUnsafeFile('ตรวจพบเนื้อหาที่อาจเป็นอันตราย');
         }
 
-        $extension = strtolower(pathinfo((string) $originalName, PATHINFO_EXTENSION));
+        if ($this->isTextLike($mimeType, $extension)
+            && $this->fileContainsAny($path, ['<?='], true)) {
+            $this->rejectUnsafeFile('ตรวจพบเนื้อหาที่อาจเป็นอันตราย');
+        }
+
         if ($extension === 'pdf' || $mimeType === 'application/pdf') {
             if (! str_starts_with(ltrim($head), '%PDF-')) {
                 $this->rejectUnsafeFile('โครงสร้างไฟล์ PDF ไม่ถูกต้อง');
@@ -170,6 +175,13 @@ class UploadSecurityScanner
         }
 
         return ['sha256' => $sha256, 'scan_status' => 'validated', 'scanned_at' => now()];
+    }
+
+    private function isTextLike(string $mimeType, string $extension): bool
+    {
+        return str_starts_with($mimeType, 'text/')
+            || in_array($mimeType, ['application/json', 'application/xml', 'image/svg+xml'], true)
+            || in_array($extension, ['csv', 'htm', 'html', 'json', 'svg', 'txt', 'xml'], true);
     }
 
     private function inspectOfficeArchive(string $path): void

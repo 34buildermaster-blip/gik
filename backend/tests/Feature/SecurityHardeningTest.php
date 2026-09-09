@@ -227,6 +227,32 @@ class SecurityHardeningTest extends TestCase
         );
     }
 
+    public function test_builtin_upload_inspection_does_not_treat_short_echo_bytes_in_an_image_as_php(): void
+    {
+        Storage::fake('local');
+        config([
+            'media.driver' => 'local',
+            'media.images.optimize' => false,
+            'security.upload_scan.enabled' => true,
+            'security.upload_scan.driver' => 'builtin',
+        ]);
+
+        $png = base64_decode(
+            'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=',
+            true,
+        );
+        $this->assertNotFalse($png);
+
+        $file = app(MediaStorage::class)->store(
+            UploadedFile::fake()->createWithContent('safe.png', $png.'<?=binary-noise'),
+            'project-images/1',
+            'private',
+        );
+
+        $this->assertSame('validated', $file->scan_status);
+        $this->assertTrue($file->passedSecurityInspection());
+    }
+
     public function test_builtin_upload_inspection_blocks_active_pdf_content(): void
     {
         Storage::fake('local');
