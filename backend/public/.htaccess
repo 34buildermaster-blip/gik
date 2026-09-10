@@ -5,6 +5,10 @@
 
     RewriteEngine On
 
+    # Keep production traffic on the canonical host.
+    RewriteCond %{HTTP_HOST} ^www\.34buildermaster\.com$ [NC]
+    RewriteRule ^ https://34buildermaster.com%{REQUEST_URI} [R=301,L]
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
