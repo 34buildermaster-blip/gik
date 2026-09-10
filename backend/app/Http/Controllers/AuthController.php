@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AuditLog;
 use App\Models\User;
 use App\Services\LoginSecurity;
+use App\Services\SocialLogin;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,7 +16,7 @@ use Illuminate\View\View;
 
 class AuthController extends Controller
 {
-    public function showLogin(string $portal): View
+    public function showLogin(string $portal, SocialLogin $socialLogin): View
     {
         $portals = $this->loginPortals();
         abort_unless(array_key_exists($portal, $portals), 404);
@@ -24,6 +25,7 @@ class AuthController extends Controller
             'portal' => $portal,
             'portalData' => $portals[$portal],
             'portals' => $portals,
+            'socialProviders' => $portal === 'customer' ? $socialLogin->configuredProviders() : [],
         ]);
     }
 

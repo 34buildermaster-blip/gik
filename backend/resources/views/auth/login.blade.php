@@ -56,6 +56,18 @@
                     </div>
                 @endif
 
+                @if($socialProviders !== [])
+                    <div class="auth-social-options" aria-label="เข้าสู่ระบบด้วยบัญชีอื่น">
+                        @foreach($socialProviders as $socialProvider => $socialLabel)
+                            <a class="auth-social-button auth-social-button--{{ $socialProvider }}" href="{{ route('social.redirect', $socialProvider) }}">
+                                <span class="auth-social-mark" aria-hidden="true">{{ $socialProvider === 'google' ? 'G' : 'LINE' }}</span>
+                                <span>เข้าสู่ระบบด้วย {{ $socialLabel }}</span>
+                            </a>
+                        @endforeach
+                    </div>
+                    <div class="auth-divider"><span>หรือใช้รหัสผ่าน</span></div>
+                @endif
+
                 <div class="field">
                     <label for="login">ชื่อผู้ใช้หรืออีเมล</label>
                     <input id="login" name="login" type="text" value="{{ old('login') }}" autocomplete="username" required autofocus @class(['is-invalid' => $errors->has('login')]) @if($errors->has('login')) aria-invalid="true" aria-describedby="login-error" @endif>

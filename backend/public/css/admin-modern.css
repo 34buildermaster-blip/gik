@@ -2551,6 +2551,23 @@ textarea {
 .auth-register-note,.auth-access-note { margin: 2px 0 0; color: var(--muted); font-size: 10px; text-align: center; }
 .auth-register-note a { color: var(--portal-accent); font-weight: 700; }
 
+.auth-social-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+.auth-social-button { min-height: 48px; display: flex; align-items: center; justify-content: center; gap: 9px; border: 1px solid #d9e1dc; border-radius: 7px; background: #fff; color: #26382e; font-size: 11px; font-weight: 600; transition: border-color .18s ease, background .18s ease, transform .18s ease; }
+.auth-social-button:hover { border-color: #91ad9d; background: #f7faf8; transform: translateY(-1px); }
+.auth-social-button--line { border-color: #b8e7c7; color: #075d2c; }
+.auth-social-mark { width: 27px; height: 27px; display: grid; place-items: center; flex: 0 0 auto; border-radius: 5px; background: #fff; color: #4285f4; font-family: Arial, sans-serif; font-size: 16px; font-weight: 700; }
+.auth-social-button--line .auth-social-mark { width: 31px; background: #06c755; color: #fff; font-size: 7px; }
+.auth-divider { display: flex; align-items: center; gap: 10px; color: #89938d; font-size: 9px; text-align: center; }
+.auth-divider::before,.auth-divider::after { content: ""; height: 1px; flex: 1; background: #e0e6e2; }
+.auth-divider span { flex: 0 0 auto; }
+.auth-social-complete { width: min(100%, 660px) !important; }
+.auth-social-complete .field > small:not(.field-error) { color: #75817a; font-size: 9px; }
+.auth-social-privacy { margin: 0; color: #748078; font-size: 9px; line-height: 1.65; text-align: center; }
+
+@media (max-width: 460px) {
+    .auth-social-options { grid-template-columns: 1fr; }
+}
+
 .auth-brand {
     display: flex;
     align-items: center;

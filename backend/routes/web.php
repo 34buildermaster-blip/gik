@@ -29,6 +29,7 @@ use App\Http\Controllers\ProjectMediaController;
 use App\Http\Controllers\PublicSiteController;
 use App\Http\Controllers\RequiredPasswordChangeController;
 use App\Http\Controllers\ResetPasswordController;
+use App\Http\Controllers\SocialLoginController;
 use App\Http\Controllers\StoredFileController;
 use App\Http\Controllers\TwoFactorChallengeController;
 use Illuminate\Support\Facades\Route;
@@ -57,6 +58,18 @@ Route::middleware('guest')->group(function (): void {
     Route::get('/login/inspector', [AuthController::class, 'showLogin'])->defaults('portal', 'inspector')->name('login.inspector');
     Route::get('/login/admin', [AuthController::class, 'showLogin'])->defaults('portal', 'admin')->name('login.admin');
     Route::post('/login', [AuthController::class, 'login'])->name('login.store');
+    Route::get('/auth/social/complete', [SocialLoginController::class, 'showComplete'])->name('social.complete');
+    Route::post('/auth/social/complete', [SocialLoginController::class, 'complete'])
+        ->middleware('throttle:10,1')
+        ->name('social.complete.store');
+    Route::get('/auth/{provider}/redirect', [SocialLoginController::class, 'redirect'])
+        ->whereIn('provider', ['google', 'line'])
+        ->middleware('throttle:20,1')
+        ->name('social.redirect');
+    Route::get('/auth/{provider}/callback', [SocialLoginController::class, 'callback'])
+        ->whereIn('provider', ['google', 'line'])
+        ->middleware('throttle:20,1')
+        ->name('social.callback');
     Route::get('/two-factor-challenge', [TwoFactorChallengeController::class, 'show'])->name('two-factor.challenge');
     Route::post('/two-factor-challenge', [TwoFactorChallengeController::class, 'store'])->name('two-factor.challenge.store');
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
