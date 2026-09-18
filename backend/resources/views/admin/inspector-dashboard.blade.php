@@ -36,7 +36,7 @@
                         <div class="progress-track"><i style="width:{{ $project->progress_percent }}%"></i></div>
                         <small>{{ $project->updates_count }} อัปเดต</small>
                     </div>
-                    <span class="project-open-icon">&rsaquo;</span>
+                    <span class="project-open-icon"><x-ui-icon name="chevron-right" /></span>
                 </a>
             @empty
                 <div class="project-empty"><h2>ยังไม่มีโครงการที่ได้รับมอบหมาย</h2><p>ติดต่อ Admin เพื่อกำหนดให้คุณเป็นผู้ดูแลโครงการ</p></div>

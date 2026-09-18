@@ -3,6 +3,9 @@
 namespace App\Services;
 
 use App\Models\User;
+use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\SvgWriter;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use PragmaRX\Google2FA\Google2FA;
@@ -31,6 +34,16 @@ class TwoFactorAuthentication
             $user->email,
             $secret,
         );
+    }
+
+    public function qrCodeDataUri(User $user, string $secret): string
+    {
+        $qrCode = QrCode::create($this->provisioningUri($user, $secret))
+            ->setErrorCorrectionLevel(ErrorCorrectionLevel::Medium)
+            ->setSize(280)
+            ->setMargin(12);
+
+        return (new SvgWriter)->write($qrCode)->getDataUri();
     }
 
     /** @return array<int, string> */

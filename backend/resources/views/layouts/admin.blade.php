@@ -206,11 +206,11 @@
                     </span>
                 </a>
                 <nav class="nav">
-                    <a href="{{ route('admin.dashboard') }}">แดชบอร์ด <span>›</span></a>
-                    <a href="{{ route('admin.articles.index') }}">บทความ <span>›</span></a>
+                    <a href="{{ route('admin.dashboard') }}">แดชบอร์ด <span><x-ui-icon name="chevron-right" /></span></a>
+                    <a href="{{ route('admin.articles.index') }}">บทความ <span><x-ui-icon name="chevron-right" /></span></a>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button class="logout-button" type="submit">ออกจากระบบ <span>›</span></button>
+                        <button class="logout-button" type="submit">ออกจากระบบ <span><x-ui-icon name="chevron-right" /></span></button>
                     </form>
                 </nav>
             </aside>

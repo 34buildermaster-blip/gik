@@ -1,4 +1,5 @@
 @php($auth = true)
+@php($lineConnectIntent = str_starts_with((string) session('url.intended'), url('/line/connect')))
 <x-admin-layout :auth="$auth" title="{{ $portalData['form_title'] }} | 34 Build Master">
     <div class="auth-page auth-portal auth-portal--{{ $portal }}">
         <section class="auth-portal-visual">
@@ -15,7 +16,7 @@
                 <span>{{ $portalData['description'] }}</span>
                 <ul>
                     @foreach($portalData['features'] as $feature)
-                        <li><i aria-hidden="true">&#10003;</i>{{ $feature }}</li>
+                        <li><i aria-hidden="true"><x-ui-icon name="check" /></i>{{ $feature }}</li>
                     @endforeach
                 </ul>
             </div>
@@ -39,6 +40,16 @@
                     <p>{{ $portalData['form_description'] }}</p>
                 </div>
 
+                @if($lineConnectIntent && $portal === 'customer')
+                    <div class="auth-line-intent" role="status">
+                        <span class="auth-line-intent-icon" aria-hidden="true"><x-ui-icon name="line" /></span>
+                        <div>
+                            <strong>เหลืออีกขั้นเดียวเพื่อเชื่อม LINE</strong>
+                            <p>เข้าสู่ระบบบัญชีลูกค้าด้านล่าง แล้วระบบจะกลับไปเชื่อม LINE ให้อัตโนมัติ</p>
+                        </div>
+                    </div>
+                @endif
+
                 @if(session('success'))
                     <div class="auth-success-message" role="status">{{ session('success') }}</div>
                 @endif
@@ -60,7 +71,7 @@
                     <div class="auth-social-options" aria-label="เข้าสู่ระบบด้วยบัญชีอื่น">
                         @foreach($socialProviders as $socialProvider => $socialLabel)
                             <a class="auth-social-button auth-social-button--{{ $socialProvider }}" href="{{ route('social.redirect', $socialProvider) }}">
-                                <span class="auth-social-mark" aria-hidden="true">{{ $socialProvider === 'google' ? 'G' : 'LINE' }}</span>
+                                <span class="auth-social-mark" aria-hidden="true"><x-ui-icon :name="$socialProvider === 'google' ? 'google' : 'line'" /></span>
                                 <span>เข้าสู่ระบบด้วย {{ $socialLabel }}</span>
                             </a>
                         @endforeach
@@ -81,7 +92,7 @@
                     จดจำการเข้าสู่ระบบบนอุปกรณ์นี้
                 </label>
                 <a class="auth-forgot-link" href="{{ route('password.request') }}">ลืมรหัสผ่าน?</a>
-                <button class="button auth-submit" type="submit">เข้าสู่ระบบ{{ $portalData['label'] }}</button>
+                <button class="button auth-submit" type="submit">{{ $lineConnectIntent && $portal === 'customer' ? 'เข้าสู่ระบบและเชื่อม LINE' : 'เข้าสู่ระบบ'.$portalData['label'] }}</button>
 
                 @if($portal === 'customer')
                     <p class="auth-register-note">ยังไม่มีบัญชี? <a href="{{ route('register') }}">สมัครสมาชิกสำหรับลูกค้า</a></p>

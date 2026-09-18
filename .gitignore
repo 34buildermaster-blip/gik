@@ -6,6 +6,8 @@ output/
 tmp/
 .deploy-gh-pages/
 .runlogs/
+/line-and-portal-production-fix.zip
+/line-connect-production-fix.zip
 
 # Dependencies
 node_modules/

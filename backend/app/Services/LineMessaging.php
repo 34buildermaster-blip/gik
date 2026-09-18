@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\URL;
 use RuntimeException;
 
 class LineMessaging
@@ -50,10 +51,14 @@ class LineMessaging
             throw new RuntimeException('LINE did not return an account link token.');
         }
 
-        $url = route('line.account.connect', ['linkToken' => $linkToken]);
+        $url = URL::temporarySignedRoute(
+            'line.account.connect',
+            now()->addMinutes(10),
+            ['linkToken' => $linkToken],
+        );
         $this->replyText(
             $replyToken,
-            "เชื่อมบัญชี LINE กับ 34 Build Master\nเปิดลิงก์และเข้าสู่ระบบด้วยบัญชีลูกค้าของคุณภายใน 10 นาที\n{$url}",
+            "เชื่อมบัญชี LINE กับ 34 Build Master\nลิงก์นี้ใช้ได้ครั้งเดียว กรุณากดลิงก์ล่าสุดภายใน 10 นาทีและไม่กดซ้ำ\n{$url}",
         );
     }
 
@@ -86,4 +91,5 @@ class LineMessaging
 
         return $token;
     }
+
 }

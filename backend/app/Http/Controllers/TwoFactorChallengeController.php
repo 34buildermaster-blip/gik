@@ -33,10 +33,14 @@ class TwoFactorChallengeController extends Controller
             'code' => ['required', 'string', 'max:32'],
         ]);
         $user = User::find($pending['user_id']);
-        if (! $user || ! $user->hasTwoFactorAuthenticationEnabled()) {
+        if (! $user || $user->isDisabled() || ! $user->hasTwoFactorAuthenticationEnabled()) {
             $request->session()->forget('auth.two_factor');
 
-            return redirect()->route('login');
+            return redirect()->route('login')->withErrors([
+                'login' => $user?->isDisabled()
+                    ? 'บัญชีนี้ถูกระงับการใช้งาน กรุณาติดต่อผู้ดูแลระบบ'
+                    : 'กรุณาเข้าสู่ระบบใหม่อีกครั้ง',
+            ]);
         }
 
         $key = 'two-factor:'.$user->id.'|'.$request->ip();

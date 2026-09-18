@@ -1,13 +1,18 @@
 <x-admin-layout title="โปรไฟล์ผู้ใช้งาน | 34 Build Master Admin">
+    @php
+        $requiresStaffTwoFactor = config('security.staff_2fa_required', true)
+            && $user->isStaff()
+            && ! $user->hasTwoFactorAuthenticationEnabled();
+    @endphp
     <div class="topbar profile-heading">
         <div>
             <p class="eyebrow">ACCOUNT SETTINGS</p>
             <h1>โปรไฟล์ผู้ใช้งาน</h1>
             <p class="muted">จัดการข้อมูลบัญชี รูปโปรไฟล์ และความปลอดภัยของคุณ</p>
         </div>
-        <a class="button secondary" href="{{ $user->isAdmin() ? route('admin.dashboard') : url('/') }}">
+        <a class="button secondary" href="{{ $requiresStaffTwoFactor ? '#two-factor-security' : ($user->isAdmin() ? route('admin.dashboard') : url('/')) }}">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>
-            {{ $user->isAdmin() ? 'กลับไปแดชบอร์ด' : 'กลับหน้าหลัก' }}
+            {{ $requiresStaffTwoFactor ? 'ตั้งค่า 2FA ให้เสร็จ' : ($user->isAdmin() ? 'กลับไปแดชบอร์ด' : 'กลับหน้าหลัก') }}
         </a>
     </div>
 
@@ -33,6 +38,10 @@
         </aside>
 
         <div class="profile-forms">
+            @if ($requiresStaffTwoFactor)
+                @include('admin.profile._two-factor')
+            @endif
+
             <section class="card profile-form-card">
                 <div class="profile-card-heading">
                     <span class="profile-heading-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21a8 8 0 0 0-16 0"></path><circle cx="12" cy="7" r="4"></circle></svg></span>
@@ -91,7 +100,7 @@
                 @endif
             </section>
 
-            <section class="card profile-form-card line-account-card">
+            <section class="card profile-form-card line-account-card" id="line-account">
                 <div class="profile-card-heading">
                     <span class="profile-heading-icon line-heading-icon">
                         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.5 10.4 10.4 0 0 1-3.8-.7L3 21l1.6-4.3A8.1 8.1 0 0 1 3 11.5 8.4 8.4 0 0 1 12 3a8.4 8.4 0 0 1 9 8.5Z"></path></svg>
@@ -104,7 +113,7 @@
 
                 @if ($user->line_recipient_id)
                     <div class="line-account-content is-connected">
-                        <span class="line-account-mark" aria-hidden="true">LINE</span>
+                        <span class="line-account-mark" aria-hidden="true"><x-ui-icon name="line" /></span>
                         <div>
                             <strong>บัญชีนี้พร้อมรับการแจ้งเตือน</strong>
                             <p>ระบบจะส่งข้อความตามประเภทเหตุการณ์และช่องทางที่คุณเลือกไว้ด้านล่าง</p>
@@ -117,16 +126,19 @@
                     </div>
                 @elseif ($lineAccountLinkConfigured)
                     <div class="line-account-content">
-                        <span class="line-account-mark" aria-hidden="true">LINE</span>
+                        <span class="line-account-mark" aria-hidden="true"><x-ui-icon name="line" /></span>
                         <div>
                             <strong>เชื่อมต่อเพียงครั้งเดียว</strong>
-                            <p>กดเปิด LINE เพิ่มเพื่อน Official Account แล้วส่งคำว่า “เชื่อมบัญชี” จากนั้นเปิดลิงก์ที่ได้รับและเข้าสู่ระบบบัญชีนี้</p>
+                            <p>เพิ่มเพื่อนหรือเปิด LINE Official Account แล้วส่งคำว่า <b>“เชื่อมบัญชี”</b> บอตจะส่งลิงก์ยืนยันแบบใช้ครั้งเดียวให้คุณ</p>
                         </div>
-                        <a class="button line-connect-button" href="{{ $lineAddFriendUrl }}" target="_blank" rel="noopener noreferrer">เปิด LINE เพื่อเชื่อมต่อ</a>
+                        <div class="line-account-actions">
+                            <button class="button secondary" type="button" data-copy-line-command="เชื่อมบัญชี">คัดลอกคำสั่ง</button>
+                            <a class="button line-connect-button" href="{{ $lineAddFriendUrl }}" target="_blank" rel="noopener noreferrer">เปิด LINE OA</a>
+                        </div>
                     </div>
                 @else
                     <div class="line-account-content is-disabled">
-                        <span class="line-account-mark" aria-hidden="true">LINE</span>
+                        <span class="line-account-mark" aria-hidden="true"><x-ui-icon name="line" /></span>
                         <div>
                             <strong>รอเปิดใช้งาน LINE Official Account</strong>
                             <p>ผู้ดูแลระบบต้องเพิ่ม Channel Access Token, Channel Secret และลิงก์เพิ่มเพื่อนบนเซิร์ฟเวอร์ก่อน</p>
@@ -214,7 +226,9 @@
                 </form>
             </section>
 
-            @include('admin.profile._two-factor')
+            @unless ($requiresStaffTwoFactor)
+                @include('admin.profile._two-factor')
+            @endunless
         </div>
     </div>
 
@@ -230,6 +244,22 @@
                 image.alt = 'ตัวอย่างรูปโปรไฟล์ใหม่';
                 image.addEventListener('load', () => URL.revokeObjectURL(image.src), { once: true });
                 preview.replaceChildren(image);
+            });
+
+            document.querySelectorAll('[data-copy-line-command]').forEach((button) => {
+                button.addEventListener('click', async () => {
+                    const command = button.dataset.copyLineCommand;
+                    if (!command) return;
+
+                    try {
+                        await navigator.clipboard.writeText(command);
+                        const original = button.textContent;
+                        button.textContent = 'คัดลอกแล้ว';
+                        window.setTimeout(() => { button.textContent = original; }, 1800);
+                    } catch {
+                        window.prompt('คัดลอกคำสั่งนี้ แล้วส่งในแชต LINE', command);
+                    }
+                });
             });
         })();
     </script>

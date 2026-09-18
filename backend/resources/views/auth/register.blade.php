@@ -14,32 +14,34 @@
                 <p class="eyebrow">Create Account</p>
                 <h1>สมัครสมาชิก</h1>
                 <p class="muted">สร้างบัญชีลูกค้าเพื่อติดตามข้อมูลและความคืบหน้าของโครงการ</p>
+                <p class="auth-required-note"><span aria-hidden="true">*</span> กรุณากรอกช่องที่จำเป็นให้ครบ</p>
             </div>
 
             <div class="auth-register-grid">
                 <div class="field">
-                    <label for="name">ชื่อที่แสดง</label>
+                    <label for="name">ชื่อที่แสดง <span class="required-mark" aria-hidden="true">*</span><span class="sr-only">จำเป็น</span></label>
                     <input id="name" name="name" type="text" value="{{ old('name') }}" autocomplete="name" required autofocus>
                     @error('name') <small class="field-error">{{ $message }}</small> @enderror
                 </div>
                 <div class="field">
-                    <label for="username">ชื่อผู้ใช้</label>
+                    <label for="username">ชื่อผู้ใช้ <span class="required-mark" aria-hidden="true">*</span><span class="sr-only">จำเป็น</span></label>
                     <input id="username" name="username" type="text" value="{{ old('username') }}" autocomplete="username" required>
                     @error('username') <small class="field-error">{{ $message }}</small> @enderror
                 </div>
                 <div class="field auth-register-full">
-                    <label for="email">อีเมล</label>
+                    <label for="email">อีเมล <span class="required-mark" aria-hidden="true">*</span><span class="sr-only">จำเป็น</span></label>
                     <input id="email" name="email" type="email" value="{{ old('email') }}" autocomplete="email" required>
                     @error('email') <small class="field-error">{{ $message }}</small> @enderror
                 </div>
                 <div class="field">
-                    <label for="password">รหัสผ่าน</label>
-                    <input id="password" name="password" type="password" autocomplete="new-password" required>
+                    <label for="password">รหัสผ่าน <span class="required-mark" aria-hidden="true">*</span><span class="sr-only">จำเป็น</span></label>
+                    <input id="password" name="password" type="password" autocomplete="new-password" minlength="8" required aria-describedby="password-help">
+                    <small id="password-help" class="field-help">อย่างน้อย 8 ตัวอักษร</small>
                     @error('password') <small class="field-error">{{ $message }}</small> @enderror
                 </div>
                 <div class="field">
-                    <label for="password_confirmation">ยืนยันรหัสผ่าน</label>
-                    <input id="password_confirmation" name="password_confirmation" type="password" autocomplete="new-password" required>
+                    <label for="password_confirmation">ยืนยันรหัสผ่าน <span class="required-mark" aria-hidden="true">*</span><span class="sr-only">จำเป็น</span></label>
+                    <input id="password_confirmation" name="password_confirmation" type="password" autocomplete="new-password" minlength="8" required>
                 </div>
             </div>
 

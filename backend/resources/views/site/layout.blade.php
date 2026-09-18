@@ -12,6 +12,12 @@
         $logoUrl = $branding['logo_url'] ?: url('/brand-logo.webp');
         $footerLogoUrl = $branding['footer_logo_url'] ?: $logoUrl;
         $ogImage = trim($__env->yieldContent('og_image')) ?: ($seo['og_image_url'] ?: $logoUrl);
+        $portalUrl = auth()->check()
+            ? route(auth()->user()->isStaff() ? 'admin.dashboard' : 'client.projects.index')
+            : route('login.customer');
+        $portalLabel = auth()->check()
+            ? (auth()->user()->isStaff() ? 'เข้าสู่หลังบ้าน' : 'งานของฉัน')
+            : 'ติดตามความคืบหน้า';
     @endphp
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -62,7 +68,7 @@
                     @if($navigation['show_blog'])<a class="{{ request()->routeIs('site.blog.*') ? 'active' : '' }}" href="{{ route('site.blog.index') }}">บทความ</a>@endif
                     @if($navigation['show_faq'])<a class="{{ request()->routeIs('site.faq') ? 'active' : '' }}" href="{{ route('site.faq') }}">FAQ</a>@endif
                     <a class="{{ request()->routeIs('site.contact') ? 'active' : '' }}" href="{{ route('site.contact') }}">ติดต่อ</a>
-                    <a class="nav-login" href="{{ route('login.customer') }}">ติดตามความคืบหน้า</a>
+                    <a class="nav-login" href="{{ $portalUrl }}">{{ $portalLabel }}</a>
                     <a class="button button-small" href="{{ route('site.contact') }}">{{ $siteSettings['cta']['consultation_label'] }}</a>
                 </nav>
             </div>
@@ -76,18 +82,18 @@
             <div class="footer-brand"><a class="brand brand-light" href="{{ route('site.home') }}"><img src="{{ $footerLogoUrl }}" alt=""><span><strong>BUILD MASTER</strong><small>CONSTRUCTION</small></span></a><p>{{ $general['tagline'] }}</p></div>
             <div><h2>เมนู</h2><a href="{{ route('site.about') }}">เกี่ยวกับเรา</a><a href="{{ route('site.services') }}">บริการ</a><a href="{{ route('site.house-designs.index') }}">แบบบ้าน</a><a href="{{ route('site.blog.index') }}">บทความ</a></div>
             <div><h2>ติดต่อ</h2><a href="{{ $general['phone_href'] }}">{{ $general['phone_display'] }}</a><a href="mailto:{{ $general['email'] }}">{{ $general['email'] }}</a><p>{{ $general['address'] }}</p></div>
-            <div><h2>ติดตามเรา</h2><div class="social-row"><a href="{{ $social['facebook_url'] }}" target="_blank" rel="noreferrer" aria-label="Facebook">f</a><a href="{{ $social['instagram_url'] }}" target="_blank" rel="noreferrer" aria-label="Instagram">ig</a><a href="{{ $social['line_url'] }}" target="_blank" rel="noreferrer" aria-label="LINE">LINE</a><a href="{{ $social['tiktok_url'] }}" target="_blank" rel="noreferrer" aria-label="TikTok">tt</a></div><button class="cookie-settings-link" type="button" data-cookie-settings>ตั้งค่าคุกกี้</button></div>
+            <div><h2>ติดตามเรา</h2><div class="social-row"><a href="{{ $social['facebook_url'] }}" target="_blank" rel="noreferrer" aria-label="Facebook"><x-ui-icon name="facebook" /></a><a href="{{ $social['instagram_url'] }}" target="_blank" rel="noreferrer" aria-label="Instagram"><x-ui-icon name="instagram" /></a><a href="{{ $social['line_url'] }}" target="_blank" rel="noreferrer" aria-label="LINE"><x-ui-icon name="line" /></a><a href="{{ $social['tiktok_url'] }}" target="_blank" rel="noreferrer" aria-label="TikTok"><x-ui-icon name="tiktok" /></a></div><button class="cookie-settings-link" type="button" data-cookie-settings>ตั้งค่าคุกกี้</button></div>
         </div>
         <div class="footer-bottom shell"><span>{{ $general['copyright'] }}</span><span><a href="{{ route('legal.privacy') }}">นโยบายความเป็นส่วนตัว</a><a href="{{ route('legal.terms') }}">ข้อกำหนดการใช้งาน</a></span></div>
     </footer>
 
-    <aside class="contact-dock" aria-label="ช่องทางติดต่อด่วน"><a href="{{ $general['phone_href'] }}" aria-label="โทรศัพท์">☎</a><a href="{{ $social['line_url'] }}" target="_blank" rel="noreferrer" aria-label="LINE">LINE</a><a href="{{ $social['facebook_url'] }}" target="_blank" rel="noreferrer" aria-label="Facebook">f</a></aside>
+    <aside class="contact-dock" aria-label="ช่องทางติดต่อด่วน"><a href="{{ $general['phone_href'] }}" aria-label="โทรศัพท์"><x-ui-icon name="phone" /></a><a href="{{ $social['line_url'] }}" target="_blank" rel="noreferrer" aria-label="LINE"><x-ui-icon name="line" /></a><a href="{{ $social['facebook_url'] }}" target="_blank" rel="noreferrer" aria-label="Facebook"><x-ui-icon name="facebook" /></a></aside>
 
     <section class="cookie-banner" data-cookie-banner hidden aria-label="การตั้งค่าคุกกี้"><div><strong>เว็บไซต์นี้ใช้คุกกี้</strong><p>เราใช้คุกกี้ที่จำเป็นเพื่อให้เว็บไซต์ทำงาน และคุกกี้วิเคราะห์เมื่อคุณอนุญาต</p></div><div><button class="button button-ghost" type="button" data-cookie-reject>เฉพาะที่จำเป็น</button><button class="button" type="button" data-cookie-accept>ยอมรับทั้งหมด</button></div></section>
 
     @if($sitePopup && $sitePopup['desktop_image'])
         <div class="welcome-popup" data-welcome-popup data-popup-key="welcome-{{ $sitePopup['id'] }}-{{ $sitePopup['updated_at'] }}" hidden>
-            <button type="button" aria-label="ปิดป๊อปอัป" data-popup-close>×</button>
+            <button type="button" aria-label="ปิดป๊อปอัป" data-popup-close><x-ui-icon name="x" /></button>
             @if($sitePopup['link_url'])<a href="{{ $sitePopup['link_url'] }}">@endif
                 <picture>@if($sitePopup['mobile_image'])<source media="(max-width: 640px)" srcset="{{ $sitePopup['mobile_image'] }}">@endif<img src="{{ $sitePopup['desktop_image'] }}" alt="{{ $sitePopup['alt'] ?: 'ข่าวสารจาก 34 Build Master' }}"></picture>
             @if($sitePopup['link_url'])</a>@endif

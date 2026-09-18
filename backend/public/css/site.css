@@ -32,3 +32,25 @@ html,body{overflow-x:hidden}
 .gallery-grid button:nth-child(5n+1){grid-column:span 8}
 @media(max-width:1050px){.gallery-grid button,.gallery-grid button:nth-child(5n),.gallery-grid button:nth-child(5n+1){grid-column:span 6;height:auto;aspect-ratio:4/3}}
 @media(max-width:720px){.gallery-grid button,.gallery-grid button:nth-child(5n),.gallery-grid button:nth-child(5n+1){grid-column:span 12}}
+
+/* Font-independent interface icons */
+.ui-icon{display:block;flex:0 0 auto;overflow:visible;shape-rendering:geometricPrecision}
+.button .ui-icon,.text-link .ui-icon,.service-card strong .ui-icon,.project-copy strong .ui-icon{width:16px;height:16px;transition:transform .2s ease}
+.text-link:hover .ui-icon,.service-card:hover strong .ui-icon,.project-copy:hover strong .ui-icon{transform:translateX(3px)}
+.service-card strong,.project-copy strong{display:flex;align-items:center;gap:8px}
+.service-arrow{display:grid;place-items:center;line-height:0}
+.service-arrow .ui-icon{width:20px;height:20px}
+.hero-controls>button,.welcome-popup>button,.lightbox button{display:grid;place-items:center;padding:0;line-height:0}
+.hero-controls .ui-icon{width:20px;height:20px}
+.promise-strip span{display:flex;align-items:center;justify-content:center;gap:10px}
+.promise-strip .ui-icon{width:18px;height:18px;color:var(--green)}
+.social-row .ui-icon{width:16px;height:16px}
+.contact-dock .ui-icon{width:19px;height:19px}
+.contact-dock .ui-icon-brand{width:18px;height:18px}
+.welcome-popup>button .ui-icon,.lightbox button .ui-icon{width:22px;height:22px}
+.contact-channels a>span .ui-icon{width:21px;height:21px}
+.feature-list li{display:flex;align-items:flex-start;gap:10px}
+.feature-list li::before{content:none}
+.feature-list li>.ui-icon{width:17px;height:17px;margin-top:3px;color:var(--green)}
+.gallery-grid button span{display:flex;align-items:center;gap:6px}
+.gallery-grid button span .ui-icon{width:14px;height:14px}

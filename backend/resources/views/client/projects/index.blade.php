@@ -3,6 +3,23 @@
         <div><p class="eyebrow">MY PROJECTS</p><h1>งานของฉัน</h1><p class="muted">ติดตามสถานะ ความคืบหน้า และรูปอัปเดตล่าสุดจากทีมงาน</p></div>
     </div>
 
+    @if(blank(auth()->user()->line_recipient_id))
+        <section class="card client-line-onboarding" aria-labelledby="client-line-title">
+            <span class="client-line-onboarding-icon" aria-hidden="true"><x-ui-icon name="line" /></span>
+            <div class="client-line-onboarding-copy">
+                <p class="eyebrow">LINE NOTIFICATION</p>
+                <h2 id="client-line-title">รับแจ้งเตือนความคืบหน้าผ่าน LINE</h2>
+                <p>เชื่อมเพียงครั้งเดียว แล้วระบบจะแจ้งเมื่อ Admin ตรวจและอนุมัติอัปเดตงานของคุณ</p>
+                <ol aria-label="ขั้นตอนเชื่อม LINE">
+                    <li>เปิด LINE OA</li>
+                    <li>ส่งคำว่า “เชื่อมบัญชี”</li>
+                    <li>กดลิงก์ที่ได้รับในแชต</li>
+                </ol>
+            </div>
+            <a class="button client-line-onboarding-action" href="{{ route('admin.profile.edit') }}#line-account">เริ่มเชื่อม LINE</a>
+        </section>
+    @endif
+
     @if($projects->isEmpty())
         <section class="card client-empty-state"><span class="access-denied-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18"></path><path d="M5 21V7l7-4 7 4v14"></path><path d="M9 21v-6h6v6"></path></svg></span><h2>ยังไม่มีโครงการในบัญชีนี้</h2><p>เมื่อทีมงานมอบหมายโครงการให้คุณ รายละเอียดและการอัปเดตจะปรากฏที่นี่</p></section>
     @else

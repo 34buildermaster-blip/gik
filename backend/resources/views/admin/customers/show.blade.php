@@ -84,7 +84,7 @@
                         <strong>{{ $latestUpdate?->title ?: 'ยังไม่มีอัปเดตที่เผยแพร่' }}</strong>
                         <span>{{ $latestUpdate?->work_performed_at?->format('d/m/Y H:i') ?: '-' }} · {{ $project->documents_count }} เอกสาร</span>
                     </span>
-                    <span class="customer-open-icon" aria-hidden="true">›</span>
+                    <span class="customer-open-icon" aria-hidden="true"><x-ui-icon name="chevron-right" /></span>
                 </a>
             @empty
                 <div class="customer-empty-state"><h2>ยังไม่มีโครงการ</h2><p>สร้างโครงการใหม่แล้วเลือกบัญชีลูกค้านี้เพื่อเปิดพื้นที่ติดตามงาน</p><a class="button" href="{{ route('admin.projects.create') }}">สร้างโครงการ</a></div>

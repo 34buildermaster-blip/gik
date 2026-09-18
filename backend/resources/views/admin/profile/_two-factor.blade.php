@@ -1,4 +1,4 @@
-<section class="card profile-form-card two-factor-card">
+<section class="card profile-form-card two-factor-card" id="two-factor-security">
         <div class="profile-card-heading">
             <span class="profile-heading-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 6v5c0 5 3.4 8.4 8 10 4.6-1.6 8-5 8-10V6l-8-3Z"></path><path d="m9 12 2 2 4-4"></path></svg></span>
             <div>
@@ -38,22 +38,36 @@
             </form>
         @elseif($twoFactorSetupSecret)
             <div class="two-factor-setup">
-                <ol>
-                    <li>เปิดแอป Google Authenticator, Microsoft Authenticator หรือ 1Password</li>
-                    <li>เลือกเพิ่มบัญชีด้วย Setup key แล้วกรอกกุญแจด้านล่าง</li>
-                    <li>กรอกรหัส 6 หลักเพื่อยืนยันการเปิดใช้งาน</li>
-                </ol>
-                <div class="two-factor-secret"><span>Setup key</span><code>{{ $twoFactorSetupSecret }}</code></div>
-                <details><summary>แสดง Provisioning URI สำหรับแอปที่รองรับ</summary><code>{{ $twoFactorProvisioningUri }}</code></details>
-                <form class="two-factor-confirm" method="POST" action="{{ route('admin.profile.two-factor.confirm') }}">
-                    @csrf
-                    <div class="field">
-                        <label for="two_factor_code">รหัส 6 หลัก</label>
-                        <input id="two_factor_code" name="code" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required>
-                        @error('code', 'twoFactor') <small class="field-error">{{ $message }}</small> @enderror
+                <div class="two-factor-setup-grid">
+                    <div class="two-factor-qr">
+                        <img src="{{ $twoFactorQrCodeDataUri }}" alt="QR Code สำหรับเชื่อมต่อแอป Authenticator" width="280" height="280">
+                        <strong>สแกน QR Code</strong>
+                        <span>ใช้ Google Authenticator, Microsoft Authenticator หรือ 1Password</span>
                     </div>
-                    <button class="button" type="submit">ยืนยันและเปิดใช้งาน</button>
-                </form>
+
+                    <div class="two-factor-setup-instructions">
+                        <ol>
+                            <li>เปิดแอป Authenticator บนโทรศัพท์</li>
+                            <li>เลือกเพิ่มบัญชี แล้วเลือกสแกน QR Code</li>
+                            <li>นำรหัส 6 หลักจากแอปมากรอกด้านล่าง</li>
+                        </ol>
+                        <form class="two-factor-confirm" method="POST" action="{{ route('admin.profile.two-factor.confirm') }}">
+                            @csrf
+                            <div class="field">
+                                <label for="two_factor_code">รหัส 6 หลัก</label>
+                                <input id="two_factor_code" name="code" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required>
+                                @error('code', 'twoFactor') <small class="field-error">{{ $message }}</small> @enderror
+                            </div>
+                            <button class="button" type="submit">ยืนยันและเปิดใช้งาน</button>
+                        </form>
+                    </div>
+                </div>
+
+                <details class="two-factor-manual">
+                    <summary>สแกนไม่ได้? ตั้งค่าด้วย Setup key แทน</summary>
+                    <div class="two-factor-secret"><span>Setup key</span><code>{{ $twoFactorSetupSecret }}</code></div>
+                    <details><summary>แสดง Provisioning URI สำหรับแอปที่รองรับ</summary><code>{{ $twoFactorProvisioningUri }}</code></details>
+                </details>
             </div>
         @else
             <form class="two-factor-start" method="POST" action="{{ route('admin.profile.two-factor.start') }}">

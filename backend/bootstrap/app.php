@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\EnsurePasswordIsChanged;
+use App\Http\Middleware\EnsureAccountIsActive;
 use App\Http\Middleware\EnsureStaffHasTwoFactorAuthentication;
 use App\Http\Middleware\EnsureUserHasRole;
 use App\Http\Middleware\SecurityHeaders;
@@ -27,7 +28,10 @@ return Application::configure(basePath: dirname(__DIR__))
             $middleware->trustProxies(at: $trustedProxies);
         }
 
-        $middleware->web(append: [EnsurePasswordIsChanged::class]);
+        $middleware->redirectUsersTo(fn (Request $request): string => $request->user()->isStaff()
+            ? route('admin.dashboard')
+            : route('client.projects.index'));
+        $middleware->web(append: [EnsureAccountIsActive::class, EnsurePasswordIsChanged::class]);
         $middleware->append(SecurityHeaders::class);
         $middleware->alias([
             'role' => EnsureUserHasRole::class,

@@ -638,7 +638,11 @@
             .preview-seo { position: static; }
         }
     </style>
-    <link rel="stylesheet" href="{{ asset(app()->environment('production') ? 'css/admin-modern.min.css' : 'css/admin-modern.css') }}">
+    @php
+        $adminStylesheet = app()->environment('production') ? 'css/admin-modern.min.css' : 'css/admin-modern.css';
+        $adminStylesheetVersion = @filemtime(public_path($adminStylesheet)) ?: '1';
+    @endphp
+    <link rel="stylesheet" href="{{ asset($adminStylesheet) }}?v={{ $adminStylesheetVersion }}">
 </head>
 <body class="{{ $auth ? 'auth-body' : 'admin-body' }}">
     @if ($auth)
@@ -648,6 +652,9 @@
             $isAdmin = auth()->user()->isAdmin();
             $isInspector = auth()->user()->isInspector();
             $isStaff = auth()->user()->isStaff();
+            $staffTwoFactorRequired = config('security.staff_2fa_required', true)
+                && $isStaff
+                && ! auth()->user()->hasTwoFactorAuthenticationEnabled();
             $homeRoute = $isStaff ? route('admin.dashboard') : route('client.projects.index');
             $isUsersPage = request()->routeIs('admin.users.*');
             $isCustomersPage = request()->routeIs('admin.customers.*');
@@ -692,7 +699,9 @@
                 ? \App\Models\ArticleComment::query()->where('status', \App\Models\ArticleComment::STATUS_PENDING)->count()
                 : 0;
             $newContactLeadCount = $isAdmin
-                ? \App\Models\ContactLead::query()->where('status', \App\Models\ContactLead::STATUS_NEW)->count()
+                ? auth()->user()->unreadNotifications()
+                    ->where('data->type', 'contact_lead_submitted')
+                    ->count()
                 : 0;
         @endphp
         <div class="shell" data-admin-shell>
@@ -717,28 +726,28 @@
                         <a class="{{ request()->routeIs('admin.dashboard') ? 'is-active' : '' }}" href="{{ route('admin.dashboard') }}" title="แดชบอร์ด">
                         <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13h8V3H3v10z"></path><path d="M13 21h8V11h-8v10z"></path><path d="M13 3v6h8V3h-8z"></path><path d="M3 21h8v-6H3v6z"></path></svg>
                         <span class="nav-label">แดชบอร์ด</span>
-                        <span class="nav-arrow">&rsaquo;</span>
+                        <span class="nav-arrow"><x-ui-icon name="chevron-right" /></span>
                         </a>
                         <a class="{{ request()->routeIs('admin.projects.*') ? 'is-active' : '' }}" href="{{ route('admin.projects.index') }}" title="โครงการลูกค้า">
                             <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18"></path><path d="M5 21V7l7-4 7 4v14"></path><path d="M9 21v-6h6v6"></path><path d="M9 9h.01"></path><path d="M15 9h.01"></path></svg>
                             <span class="nav-label">โครงการลูกค้า</span>
-                            <span class="nav-arrow">&rsaquo;</span>
+                            <span class="nav-arrow"><x-ui-icon name="chevron-right" /></span>
                         </a>
                         @if ($isAdmin)
                         <a class="{{ $isCustomersPage ? 'is-active' : '' }}" href="{{ route('admin.customers.index') }}" title="ข้อมูลลูกค้า">
                             <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M18 8h4"></path><path d="M20 6v4"></path></svg>
                             <span class="nav-label">ข้อมูลลูกค้า</span>
-                            <span class="nav-arrow">&rsaquo;</span>
+                            <span class="nav-arrow"><x-ui-icon name="chevron-right" /></span>
                         </a>
                         <a class="{{ request()->routeIs('admin.users.*') ? 'is-active' : '' }}" href="{{ route('admin.users.index') }}" title="จัดการผู้ใช้งาน">
                             <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                             <span class="nav-label">จัดการผู้ใช้งาน</span>
-                            <span class="nav-arrow">&rsaquo;</span>
+                            <span class="nav-arrow"><x-ui-icon name="chevron-right" /></span>
                         </a>
                         <a class="{{ request()->routeIs('admin.articles.*') ? 'is-active' : '' }}" href="{{ route('admin.articles.index') }}" title="บทความ">
                         <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h11a3 3 0 0 1 3 3v15H6a2 2 0 0 1-2-1.5z"></path><path d="M8 7h8"></path><path d="M8 11h8"></path><path d="M8 15h5"></path></svg>
                         <span class="nav-label">บทความ</span>
-                        <span class="nav-arrow">&rsaquo;</span>
+                        <span class="nav-arrow"><x-ui-icon name="chevron-right" /></span>
                         </a>
                         <a class="{{ $isCommentsPage ? 'is-active' : '' }}" href="{{ route('admin.comments.index') }}" title="ความคิดเห็นบทความ">
                             <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"></path><path d="M8 9h8"></path><path d="M8 13h5"></path></svg>
@@ -746,40 +755,40 @@
                             @if ($pendingCommentCount > 0)
                                 <span class="nav-notification-count">{{ $pendingCommentCount > 99 ? '99+' : $pendingCommentCount }}</span>
                             @endif
-                            <span class="nav-arrow">&rsaquo;</span>
+                            <span class="nav-arrow"><x-ui-icon name="chevron-right" /></span>
                         </a>
                         <a class="{{ $isContactLeadsPage ? 'is-active' : '' }}" href="{{ route('admin.contact-leads.index') }}" title="ผู้ติดต่อจากเว็บไซต์">
                             <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.62 2.63a2 2 0 0 1-.45 2.11L8 9.73a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.85.29 1.73.5 2.63.62A2 2 0 0 1 22 16.92z"></path></svg>
                             <span class="nav-label">ผู้ติดต่อจากเว็บไซต์</span>
                             @if ($newContactLeadCount > 0)
-                                <span class="nav-notification-count">{{ $newContactLeadCount > 99 ? '99+' : $newContactLeadCount }}</span>
+                                <span class="nav-notification-count" data-contact-lead-unread-count="{{ $newContactLeadCount }}">{{ $newContactLeadCount > 99 ? '99+' : $newContactLeadCount }}</span>
                             @endif
-                            <span class="nav-arrow">&rsaquo;</span>
+                            <span class="nav-arrow"><x-ui-icon name="chevron-right" /></span>
                         </a>
                         <a class="{{ $isHomeSlidesPage ? 'is-active' : '' }}" href="{{ route('admin.home-slides.index') }}" title="สไลด์หน้าแรก">
                             <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="8.5" cy="9" r="1.5"></circle><path d="m5 17 4-4 3 3 2-2 5 3"></path></svg>
                             <span class="nav-label">สไลด์หน้าแรก</span>
-                            <span class="nav-arrow">&rsaquo;</span>
+                            <span class="nav-arrow"><x-ui-icon name="chevron-right" /></span>
                         </a>
                         <a class="{{ $isWelcomePopupsPage ? 'is-active' : '' }}" href="{{ route('admin.welcome-popups.index') }}" title="Welcome Popup">
                             <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M7 9h10"></path><path d="M7 13h6"></path><path d="m16 15 2 2 3-4"></path></svg>
                             <span class="nav-label">Welcome Popup</span>
-                            <span class="nav-arrow">&rsaquo;</span>
+                            <span class="nav-arrow"><x-ui-icon name="chevron-right" /></span>
                         </a>
                         <a class="{{ $isHouseDesignsPage ? 'is-active' : '' }}" href="{{ route('admin.house-designs.index') }}" title="แบบบ้าน">
                             <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18"></path><path d="M5 21V9l7-6 7 6v12"></path><path d="M9 21v-6h6v6"></path><path d="M8 11h.01"></path><path d="M16 11h.01"></path></svg>
                             <span class="nav-label">แบบบ้าน</span>
-                            <span class="nav-arrow">&rsaquo;</span>
+                            <span class="nav-arrow"><x-ui-icon name="chevron-right" /></span>
                         </a>
                         <a class="{{ $isSettingsPage ? 'is-active' : '' }}" href="{{ route('admin.settings.edit') }}" title="ตั้งค่าเว็บไซต์">
                             <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21h-4v-.09A1.7 1.7 0 0 0 8.6 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H3v-4h.09A1.7 1.7 0 0 0 4.6 8.6a1.7 1.7 0 0 0-.34-1.88l-.06-.06 2.83-2.83.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V3h4v.09A1.7 1.7 0 0 0 15.4 4.6a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.83 2.83-.06.06A1.7 1.7 0 0 0 19.4 9c.35.27.56.66.6 1.1V10h1v4h-.09a1.7 1.7 0 0 0-1.51 1z"></path></svg>
                             <span class="nav-label">ตั้งค่าเว็บไซต์</span>
-                            <span class="nav-arrow">&rsaquo;</span>
+                            <span class="nav-arrow"><x-ui-icon name="chevron-right" /></span>
                         </a>
                         <a class="{{ $isAuditLogsPage ? 'is-active' : '' }}" href="{{ route('admin.audit-logs.index') }}" title="ประวัติกิจกรรม">
                             <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
                             <span class="nav-label">ประวัติกิจกรรม</span>
-                            <span class="nav-arrow">&rsaquo;</span>
+                            <span class="nav-arrow"><x-ui-icon name="chevron-right" /></span>
                         </a>
                         @endif
                     @endif
@@ -788,31 +797,31 @@
                         <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path><path d="M10 21h4"></path></svg>
                         <span class="nav-label">การแจ้งเตือน</span>
                         @if($unreadNotificationCount>0)<span class="nav-notification-count">{{ $unreadNotificationCount>99?'99+':$unreadNotificationCount }}</span>@endif
-                        <span class="nav-arrow">&rsaquo;</span>
+                        <span class="nav-arrow"><x-ui-icon name="chevron-right" /></span>
                     </a>
                     @if(! $isStaff)
                         <a class="{{ request()->routeIs('client.projects.*') ? 'is-active' : '' }}" href="{{ route('client.projects.index') }}" title="งานของฉัน">
                             <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18"></path><path d="M5 21V7l7-4 7 4v14"></path><path d="M9 21v-6h6v6"></path></svg>
                             <span class="nav-label">งานของฉัน</span>
-                            <span class="nav-arrow">&rsaquo;</span>
+                            <span class="nav-arrow"><x-ui-icon name="chevron-right" /></span>
                         </a>
                     @endif
                     <a class="{{ request()->routeIs('admin.profile.*') ? 'is-active' : '' }}" href="{{ route('admin.profile.edit') }}" title="โปรไฟล์ผู้ใช้งาน">
                         <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21a8 8 0 0 0-16 0"></path><circle cx="12" cy="7" r="4"></circle></svg>
                         <span class="nav-label">โปรไฟล์ผู้ใช้งาน</span>
-                        <span class="nav-arrow">&rsaquo;</span>
+                        <span class="nav-arrow"><x-ui-icon name="chevron-right" /></span>
                     </a>
                     <a href="{{ config('app.frontend_url') }}" target="_blank" rel="noreferrer" title="ดูหน้าเว็บ">
                         <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z"></path><path d="M3.6 9h16.8"></path><path d="M3.6 15h16.8"></path><path d="M12 3a14 14 0 0 1 0 18"></path><path d="M12 3a14 14 0 0 0 0 18"></path></svg>
                         <span class="nav-label">ดูหน้าเว็บ</span>
-                        <span class="nav-arrow">&rsaquo;</span>
+                        <span class="nav-arrow"><x-ui-icon name="chevron-right" /></span>
                     </a>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button class="logout-button" type="submit" title="ออกจากระบบ">
                             <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5"></path><path d="M21 12H9"></path></svg>
                             <span class="nav-label">ออกจากระบบ</span>
-                            <span class="nav-arrow">&rsaquo;</span>
+                            <span class="nav-arrow"><x-ui-icon name="chevron-right" /></span>
                         </button>
                     </form>
                 </nav>
@@ -866,6 +875,20 @@
                 </header>
                 @if (session('success'))
                     <div class="alert">{{ session('success') }}</div>
+                @endif
+
+                @if (session('warning'))
+                    <div class="alert warning" role="alert">{{ session('warning') }}</div>
+                @endif
+
+                @if ($staffTwoFactorRequired && request()->routeIs('admin.profile.*'))
+                    <div class="security-gate-alert" role="alert">
+                        <div>
+                            <strong>ต้องเปิดการยืนยันตัวตนสองชั้นก่อน</strong>
+                            <span>เมนูส่วนจัดการจะพร้อมใช้งานทันทีหลังตั้งค่า 2FA สำเร็จ</span>
+                        </div>
+                        <a href="#two-factor-security">ไปที่การตั้งค่า 2FA</a>
+                    </div>
                 @endif
 
                 @if ($errors->any())

@@ -12,7 +12,7 @@
                     <span class="notification-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18"></path><path d="M5 21V7l7-4 7 4v14"></path><path d="M9 21v-6h6v6"></path></svg></span>
                     <span class="notification-copy"><span class="notification-meta"><em>{{ isset($notification->data['contact_lead_id']) ? 'CONTACT' : ($notification->data['project_code'] ?? 'PROJECT') }}</em><time>{{ $notification->created_at->locale('th')->diffForHumans() }}</time></span><strong>{{ $notification->data['title'] ?? 'อัปเดตหน้างานใหม่' }}</strong><small>{{ $notification->data['message'] ?? (($notification->data['project_name'] ?? '').' · ความคืบหน้า '.($notification->data['progress_percent'] ?? 0).'%') }}</small></span>
                     @unless($notification->read_at)<i>ใหม่</i>@endunless
-                    <span class="notification-arrow">&rsaquo;</span>
+                    <span class="notification-arrow"><x-ui-icon name="chevron-right" /></span>
                 </a>
             @empty
                 <div class="client-empty-state compact"><span class="access-denied-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path><path d="M10 21h4"></path></svg></span><h2>ยังไม่มีการแจ้งเตือน</h2><p>เมื่อทีมงานเผยแพร่อัปเดตโครงการ รายการใหม่จะปรากฏที่นี่</p></div>

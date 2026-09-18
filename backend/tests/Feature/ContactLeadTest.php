@@ -4,7 +4,10 @@ namespace Tests\Feature;
 
 use App\Models\ContactLead;
 use App\Models\User;
+use App\Notifications\ContactLeadSubmitted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class ContactLeadTest extends TestCase
@@ -88,6 +91,54 @@ class ContactLeadTest extends TestCase
             'id' => $lead->id,
             'status' => ContactLead::STATUS_CONTACTED,
             'assigned_to' => $admin->id,
+        ]);
+    }
+
+    public function test_opening_contact_leads_clears_only_that_admins_badge_without_changing_lead_status(): void
+    {
+        $firstAdmin = User::factory()->admin()->create();
+        $secondAdmin = User::factory()->admin()->create();
+        $lead = ContactLead::create([
+            'name' => 'ลูกค้าใหม่',
+            'phone' => '0812345678',
+            'status' => ContactLead::STATUS_NEW,
+        ]);
+
+        $firstNotification = $this->createContactLeadNotification($firstAdmin, $lead);
+        $secondNotification = $this->createContactLeadNotification($secondAdmin, $lead);
+
+        $this->actingAs($firstAdmin)
+            ->get(route('admin.dashboard'))
+            ->assertOk()
+            ->assertSee('data-contact-lead-unread-count="1"', false);
+
+        $this->actingAs($firstAdmin)
+            ->get(route('admin.contact-leads.index'))
+            ->assertOk()
+            ->assertDontSee('data-contact-lead-unread-count=', false);
+
+        $this->assertNotNull($firstNotification->fresh()->read_at);
+        $this->assertNull($secondNotification->fresh()->read_at);
+        $this->assertSame(ContactLead::STATUS_NEW, $lead->fresh()->status);
+
+        $this->actingAs($secondAdmin)
+            ->get(route('admin.dashboard'))
+            ->assertOk()
+            ->assertSee('data-contact-lead-unread-count="1"', false);
+    }
+
+    private function createContactLeadNotification(User $admin, ContactLead $lead): DatabaseNotification
+    {
+        return $admin->notifications()->create([
+            'id' => (string) Str::uuid(),
+            'type' => ContactLeadSubmitted::class,
+            'data' => [
+                'type' => 'contact_lead_submitted',
+                'contact_lead_id' => $lead->id,
+                'title' => 'ผู้ติดต่อใหม่: '.$lead->name,
+                'message' => $lead->phone,
+            ],
+            'read_at' => null,
         ]);
     }
 }

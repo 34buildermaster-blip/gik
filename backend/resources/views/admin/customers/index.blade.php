@@ -48,7 +48,7 @@
                         <strong>{{ $customer->projects_count }}</strong>
                         <span>{{ $latestProject ? $latestProject->name.' · '.$latestProject->progress_percent.'%' : 'ยังไม่มีโครงการ' }}</span>
                     </span>
-                    <span class="customer-open-icon" aria-hidden="true">›</span>
+                    <span class="customer-open-icon" aria-hidden="true"><x-ui-icon name="chevron-right" /></span>
                 </a>
             @empty
                 <div class="customer-empty-state"><h2>ไม่พบข้อมูลลูกค้า</h2><p>ลองเปลี่ยนคำค้นหาหรือตัวกรองสถานะ</p></div>

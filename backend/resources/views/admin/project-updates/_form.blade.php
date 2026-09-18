@@ -51,7 +51,7 @@
             @if($update->exists && $update->media->isNotEmpty())
                 <div class="existing-media-grid">
                     @foreach($update->media as $media)
-                        <div><img src="{{ route('project-media.show',$media) }}" alt="{{ $media->original_name }}">@if(auth()->user()->isAdmin())<button form="delete-media-{{ $media->id }}" type="submit" title="ลบรูป" aria-label="ลบรูป {{ $media->original_name }}">×</button>@endif</div>
+                        <div><img src="{{ route('project-media.show',$media) }}" alt="{{ $media->original_name }}">@if(auth()->user()->isAdmin())<button form="delete-media-{{ $media->id }}" type="submit" title="ลบรูป" aria-label="ลบรูป {{ $media->original_name }}"><x-ui-icon name="x" /></button>@endif</div>
                     @endforeach
                 </div>
             @endif

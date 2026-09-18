@@ -128,7 +128,7 @@
             <div class="launch-list">
                 @forelse($project->documents as $document)
                     <a class="launch-list-row" href="{{ route('project-documents.show', $document) }}" target="_blank">
-                        <div><strong>{{ $document->title }}</strong><small>{{ $documentCategoryLabels[$document->category] }} · v{{ $document->version }}</small></div><span>เปิดไฟล์ →</span>
+                        <div><strong>{{ $document->title }}</strong><small>{{ $documentCategoryLabels[$document->category] }} · v{{ $document->version }}</small></div><span>เปิดไฟล์ <x-ui-icon name="arrow-right" /></span>
                     </a>
                 @empty
                     <div class="client-empty-state compact"><h2>ยังไม่มีเอกสาร</h2><p>เอกสารที่พร้อมเผยแพร่จะปรากฏในส่วนนี้</p></div>

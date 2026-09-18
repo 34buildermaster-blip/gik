@@ -44,6 +44,18 @@ class AuthController extends Controller
         ];
         $loginUser = User::where($loginField, $data['login'])->first();
 
+        if ($loginUser?->isDisabled()) {
+            AuditLog::record(null, 'auth.login.disabled', $loginUser, 'ปฏิเสธการเข้าสู่ระบบของบัญชีที่ถูกระงับ', [
+                'portal' => $data['portal'],
+            ]);
+            $message = 'บัญชีนี้ถูกระงับการใช้งาน กรุณาติดต่อผู้ดูแลระบบ';
+
+            return back()
+                ->withErrors(['login' => $message])
+                ->with('auth_error', $message)
+                ->onlyInput('login');
+        }
+
         if ($loginUser?->isLoginLocked() || $loginSecurity->isThrottled($data['login'])) {
             AuditLog::record(null, 'auth.login.throttled', null, 'ระงับการเข้าสู่ระบบชั่วคราว', [
                 'login_hash' => hash('sha256', Str::lower($data['login'])),

@@ -10,6 +10,7 @@ export type WelcomePopupData = {
 export async function fetchWelcomePopup(signal?: AbortSignal): Promise<WelcomePopupData | null> {
   const configuredApiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "");
   const isStaticPreview = Boolean(process.env.NEXT_PUBLIC_BASE_PATH);
+  const isLocalDevelopment = process.env.NODE_ENV === "development";
 
   if (!configuredApiUrl && isStaticPreview) return null;
 

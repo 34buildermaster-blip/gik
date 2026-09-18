@@ -16,6 +16,7 @@
                         ? 'อีเมลนี้มีบัญชีลูกค้าอยู่แล้ว กรุณายืนยันรหัสผ่านเดิมเพียงครั้งเดียว'
                         : 'กรอกข้อมูลครั้งแรกให้ครบ หลังจากนี้คุณจะกดเข้าสู่ระบบผ่าน '.$providerLabel.' ได้ทันที' }}
                 </p>
+                <p class="auth-required-note"><span aria-hidden="true">*</span> กรุณากรอกช่องที่จำเป็นให้ครบ</p>
             </div>
 
             @if($errors->any())
@@ -28,33 +29,34 @@
             <div class="auth-register-grid">
                 @unless($existingCustomer)
                     <div class="field">
-                        <label for="name">ชื่อที่แสดง</label>
+                        <label for="name">ชื่อที่แสดง <span class="required-mark" aria-hidden="true">*</span><span class="sr-only">จำเป็น</span></label>
                         <input id="name" name="name" type="text" value="{{ old('name', $pending['name']) }}" autocomplete="name" required autofocus>
                         @error('name') <small class="field-error">{{ $message }}</small> @enderror
                     </div>
                     <div class="field">
-                        <label for="username">ชื่อผู้ใช้สำรอง</label>
+                        <label for="username">ชื่อผู้ใช้สำรอง <span class="required-mark" aria-hidden="true">*</span><span class="sr-only">จำเป็น</span></label>
                         <input id="username" name="username" type="text" value="{{ old('username', $suggestedUsername) }}" autocomplete="username" required>
                         @error('username') <small class="field-error">{{ $message }}</small> @enderror
                     </div>
                 @endunless
 
                 <div class="field auth-register-full">
-                    <label for="email">อีเมลบัญชีลูกค้า</label>
+                    <label for="email">อีเมลบัญชีลูกค้า <span class="required-mark" aria-hidden="true">*</span><span class="sr-only">จำเป็น</span></label>
                     <input id="email" name="email" type="email" value="{{ old('email', $pending['email']) }}" autocomplete="email" required @readonly(filled($pending['email']))>
                     @if(filled($pending['email']))<small>ยืนยันโดย {{ $providerLabel }}</small>@endif
                     @error('email') <small class="field-error">{{ $message }}</small> @enderror
                 </div>
 
                 <div class="field {{ $existingCustomer ? 'auth-register-full' : '' }}">
-                    <label for="password">{{ $existingCustomer ? 'รหัสผ่านบัญชีลูกค้าเดิม' : 'ตั้งรหัสผ่านสำรอง' }}</label>
-                    <input id="password" name="password" type="password" autocomplete="{{ $existingCustomer ? 'current-password' : 'new-password' }}" required>
+                    <label for="password">{{ $existingCustomer ? 'รหัสผ่านบัญชีลูกค้าเดิม' : 'ตั้งรหัสผ่านสำรอง' }} <span class="required-mark" aria-hidden="true">*</span><span class="sr-only">จำเป็น</span></label>
+                    <input id="password" name="password" type="password" autocomplete="{{ $existingCustomer ? 'current-password' : 'new-password' }}" @unless($existingCustomer) minlength="8" aria-describedby="password-help" @endunless required>
+                    @unless($existingCustomer)<small id="password-help" class="field-help">อย่างน้อย 8 ตัวอักษร ใช้สำหรับเข้าสู่ระบบสำรองและเปลี่ยนรหัสผ่านภายหลัง</small>@endunless
                     @error('password') <small class="field-error">{{ $message }}</small> @enderror
                 </div>
                 @unless($existingCustomer)
                     <div class="field">
-                        <label for="password_confirmation">ยืนยันรหัสผ่านสำรอง</label>
-                        <input id="password_confirmation" name="password_confirmation" type="password" autocomplete="new-password" required>
+                        <label for="password_confirmation">ยืนยันรหัสผ่านสำรอง <span class="required-mark" aria-hidden="true">*</span><span class="sr-only">จำเป็น</span></label>
+                        <input id="password_confirmation" name="password_confirmation" type="password" autocomplete="new-password" minlength="8" required>
                     </div>
                 @endunless
             </div>

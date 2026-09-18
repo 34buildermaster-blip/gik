@@ -11,13 +11,20 @@ class AdminNotificationRecipients
     /** @return Collection<int, User> */
     public function forProject(Project $project, ?User $exclude = null): Collection
     {
-        $admins = User::query()->where('role', 'admin')->get();
+        $allAdmins = User::query()
+            ->where('role', 'admin')
+            ->whereNull('disabled_at')
+            ->get();
+        $admins = $allAdmins;
 
         if ($project->reviewer_id) {
-            $admins = $admins->filter(
+            $routedAdmins = $admins->filter(
                 fn (User $admin): bool => $admin->id === $project->reviewer_id
                     || $admin->monitorsAllProjects(),
             );
+
+            // A reviewer may have been deleted or demoted after project assignment.
+            $admins = $routedAdmins->isNotEmpty() ? $routedAdmins : $allAdmins;
         }
 
         if ($exclude) {

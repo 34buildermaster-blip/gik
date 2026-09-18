@@ -9,6 +9,10 @@ trait UsesConfiguredProjectChannels
 {
     public function via(object $notifiable): array
     {
+        if (method_exists($notifiable, 'isDisabled') && $notifiable->isDisabled()) {
+            return [];
+        }
+
         $event = method_exists($this, 'notificationEvent')
             ? $this->notificationEvent()
             : null;
@@ -43,6 +47,7 @@ trait UsesConfiguredProjectChannels
             $channels[] = LineNotificationChannel::class;
         }
 
-        return $channels;
+        // Never lose a critical event because a selected external channel is unavailable.
+        return $channels ?: ['database'];
     }
 }

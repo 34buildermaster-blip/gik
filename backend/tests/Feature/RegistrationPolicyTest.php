@@ -10,6 +10,16 @@ class RegistrationPolicyTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_registration_form_shows_required_fields_and_password_length_up_front(): void
+    {
+        $this->get(route('register'))
+            ->assertOk()
+            ->assertSee('กรุณากรอกช่องที่จำเป็นให้ครบ')
+            ->assertSee('อย่างน้อย 8 ตัวอักษร')
+            ->assertSee('minlength="8"', false)
+            ->assertSee('class="required-mark"', false);
+    }
+
     public function test_policy_acceptance_is_required_for_registration(): void
     {
         $response = $this->post(route('register.store'), $this->registrationData());

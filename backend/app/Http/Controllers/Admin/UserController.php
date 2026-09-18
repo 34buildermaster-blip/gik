@@ -17,6 +17,7 @@ class UserController extends Controller
     {
         $search = $request->string('q')->trim()->toString();
         $role = $request->string('role')->toString();
+        $status = $request->string('status')->toString();
 
         return view('admin.users.index', [
             'users' => User::query()
@@ -29,16 +30,20 @@ class UserController extends Controller
                     });
                 })
                 ->when(array_key_exists($role, User::ROLE_LABELS), fn ($query) => $query->where('role', $role))
+                ->when($status === 'active', fn ($query) => $query->whereNull('disabled_at'))
+                ->when($status === 'suspended', fn ($query) => $query->whereNotNull('disabled_at'))
                 ->orderByRaw("CASE role WHEN 'admin' THEN 0 WHEN 'inspector' THEN 1 ELSE 2 END")
                 ->latest('created_at')
                 ->paginate(12)
                 ->withQueryString(),
             'search' => $search,
             'role' => $role,
+            'status' => $status,
             'totalUsers' => User::count(),
-            'adminCount' => User::where('role', 'admin')->count(),
-            'inspectorCount' => User::where('role', 'inspector')->count(),
-            'memberCount' => User::where('role', 'user')->count(),
+            'adminCount' => User::where('role', 'admin')->whereNull('disabled_at')->count(),
+            'inspectorCount' => User::where('role', 'inspector')->whereNull('disabled_at')->count(),
+            'memberCount' => User::where('role', 'user')->whereNull('disabled_at')->count(),
+            'suspendedCount' => User::whereNotNull('disabled_at')->count(),
             'roleLabels' => User::ROLE_LABELS,
         ]);
     }
@@ -53,7 +58,8 @@ class UserController extends Controller
             return back()->withErrors(['role' => 'ไม่สามารถลดสิทธิ์บัญชีที่กำลังใช้งานอยู่ได้']);
         }
 
-        if ($user->isAdmin() && $validated['role'] !== 'admin' && User::where('role', 'admin')->count() <= 1) {
+        if ($user->isAdmin() && ! $user->isDisabled() && $validated['role'] !== 'admin'
+            && User::where('role', 'admin')->whereNull('disabled_at')->count() <= 1) {
             return back()->withErrors(['role' => 'ระบบต้องมีผู้ดูแลอย่างน้อย 1 บัญชี']);
         }
 

@@ -17,6 +17,10 @@ class ContactLeadController extends Controller
 {
     public function index(Request $request): View
     {
+        $request->user()->unreadNotifications()
+            ->where('data->type', 'contact_lead_submitted')
+            ->update(['read_at' => now()]);
+
         $search = trim((string) $request->query('q', ''));
         $status = (string) $request->query('status', '');
         $statuses = array_keys(ContactLead::STATUS_LABELS);

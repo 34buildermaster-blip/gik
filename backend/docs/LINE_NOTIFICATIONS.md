@@ -4,8 +4,8 @@ The application supports secure LINE account linking through the LINE Messaging 
 
 ## Account-link flow
 
-1. The user opens their profile and taps `เปิด LINE เพื่อเชื่อมต่อ`.
-2. The user adds the company's LINE Official Account and sends `เชื่อมบัญชี`.
+1. The user opens their profile and taps `เปิดแชต LINE`.
+2. LINE opens the company's Official Account chat with `เชื่อมบัญชี` prefilled; the user taps send.
 3. The bot returns a single-use link that expires in 10 minutes.
 4. The customer opens the link and signs in with their website account.
 5. LINE sends a signed account-link event to the application webhook.
@@ -31,7 +31,9 @@ events available in profile settings are limited automatically by account role.
 
 1. Create or select the company's LINE Official Account and Messaging API channel.
 2. Enable webhooks for the channel.
-3. Set the webhook URL to `https://YOUR_DOMAIN/api/line/webhook`.
+3. Set the production webhook URL to `https://YOUR_DOMAIN/line-webhook.php`.
+   This dedicated entry point forwards to `/api/line/webhook` and lets shared
+   hosting allow only the signed LINE endpoint without relaxing every route.
 4. Copy the Channel access token and Channel secret.
 5. Copy the Official Account add-friend URL from LINE Official Account Manager.
 

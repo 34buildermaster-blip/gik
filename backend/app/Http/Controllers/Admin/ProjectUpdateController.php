@@ -180,7 +180,7 @@ class ProjectUpdateController extends Controller
         });
 
         $creator = $update->fresh()->creator;
-        if ($creator && ! $creator->isAdmin()) {
+        if ($creator && ! $creator->isAdmin() && ! $creator->isDisabled()) {
             $creator->notify(new ProjectUpdateChangesRequested($update->fresh()));
         }
         AuditLog::record($request->user(), 'project_update.changes_requested', $update, "ส่งอัปเดต {$update->title} กลับแก้ไข", ['review_note' => $data['review_note']]);
@@ -325,7 +325,10 @@ class ProjectUpdateController extends Controller
         }
 
         $update->loadMissing('project.customers');
-        Notification::send($update->project->customers, new ProjectUpdatePublished($update));
+        Notification::send(
+            $update->project->customers->reject->isDisabled(),
+            new ProjectUpdatePublished($update),
+        );
         $update->update(['notified_at' => now()]);
     }
 

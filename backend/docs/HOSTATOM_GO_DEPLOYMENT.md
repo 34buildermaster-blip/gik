@@ -111,4 +111,6 @@ strict application validation layer, not a full antivirus engine. Move to the
 3. Create the first Admin securely, change the temporary password, and enroll 2FA.
 4. Upload one image, one PDF, and one DOCX, then confirm each reaches Google Drive.
 5. Test password reset and an Admin notification through SMTP.
-6. Complete LINE webhook setup after HTTPS is working.
+6. Complete LINE webhook setup after HTTPS is working. Use
+   `https://YOUR_DOMAIN/line-webhook.php`; the release includes a narrowly
+   scoped Apache access rule for this signed endpoint.

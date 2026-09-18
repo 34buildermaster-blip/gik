@@ -141,6 +141,35 @@ class RoleAccessTest extends TestCase
             ->assertSee('ควบคุมทุกส่วนจากพื้นที่เดียว');
     }
 
+    public function test_authenticated_users_are_redirected_from_login_to_their_workspace(): void
+    {
+        $customer = User::factory()->create();
+
+        $this->actingAs($customer)
+            ->get(route('login.customer'))
+            ->assertRedirect(route('client.projects.index'));
+
+        $admin = User::factory()->admin()->create();
+
+        $this->actingAs($admin)
+            ->get(route('login.customer'))
+            ->assertRedirect(route('admin.dashboard'));
+    }
+
+    public function test_public_tracking_link_reflects_the_current_session(): void
+    {
+        $this->get(route('site.home'))
+            ->assertOk()
+            ->assertSee('href="'.route('login.customer').'">ติดตามความคืบหน้า</a>', false);
+
+        $customer = User::factory()->create();
+
+        $this->actingAs($customer)
+            ->get(route('site.home'))
+            ->assertOk()
+            ->assertSee('href="'.route('client.projects.index').'">งานของฉัน</a>', false);
+    }
+
     public function test_account_cannot_sign_in_through_the_wrong_portal(): void
     {
         $inspector = User::factory()->inspector()->create([

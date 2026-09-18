@@ -161,6 +161,8 @@ Route::middleware('auth')
             Route::get('/users/{user}/security', [UserSecurityController::class, 'show'])->name('users.security.show');
             Route::put('/users/{user}/security/password', [UserSecurityController::class, 'resetPassword'])->name('users.security.password');
             Route::put('/users/{user}/security/unlock', [UserSecurityController::class, 'unlock'])->name('users.security.unlock');
+            Route::put('/users/{user}/status', [UserSecurityController::class, 'updateStatus'])->name('users.status');
+            Route::delete('/users/{user}', [UserSecurityController::class, 'destroy'])->name('users.destroy');
             Route::get('/settings', [SiteSettingController::class, 'edit'])->name('settings.edit');
             Route::put('/settings', [SiteSettingController::class, 'update'])->name('settings.update');
             Route::post('/projects/{project}/restore', [ProjectController::class, 'restore'])

@@ -56,7 +56,7 @@
                             <button class="button secondary" type="submit">กู้คืน</button>
                         </form>
                     @else
-                        <span class="project-open-icon">&rsaquo;</span>
+                        <span class="project-open-icon"><x-ui-icon name="chevron-right" /></span>
                     @endif
                 @if($view === 'archived')
                     </article>

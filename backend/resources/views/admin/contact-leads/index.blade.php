@@ -71,7 +71,7 @@
                     </form>
 
                     @if($lead->convertedProject)
-                        <div class="lead-converted-note"><strong>สร้างโครงการแล้ว</strong><a href="{{ route('admin.projects.show', $lead->convertedProject) }}">{{ $lead->convertedProject->code }} · {{ $lead->convertedProject->name }} →</a></div>
+                        <div class="lead-converted-note"><strong>สร้างโครงการแล้ว</strong><a href="{{ route('admin.projects.show', $lead->convertedProject) }}">{{ $lead->convertedProject->code }} · {{ $lead->convertedProject->name }} <x-ui-icon name="arrow-right" /></a></div>
                     @else
                         <details class="lead-convert-panel">
                             <summary>เปลี่ยนเป็นโครงการ</summary>

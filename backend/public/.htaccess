@@ -1,3 +1,16 @@
+<IfModule mod_access_compat.c>
+    <Files "line-webhook.php">
+        Order Deny,Allow
+        Allow from all
+    </Files>
+</IfModule>
+
+<IfModule mod_authz_core.c>
+    <Files "line-webhook.php">
+        Require all granted
+    </Files>
+</IfModule>
+
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes

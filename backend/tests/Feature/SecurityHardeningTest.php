@@ -78,6 +78,14 @@ class SecurityHardeningTest extends TestCase
             ->assertSessionHas('two_factor_setup_secret');
 
         $secret = session('two_factor_setup_secret');
+        $this->actingAs($user)
+            ->get(route('admin.profile.edit'))
+            ->assertOk()
+            ->assertHeader('Cache-Control', 'no-store, private')
+            ->assertSee('สแกน QR Code')
+            ->assertSee('data:image/svg+xml;base64,', false)
+            ->assertSee('สแกนไม่ได้? ตั้งค่าด้วย Setup key แทน');
+
         $code = app(Google2FA::class)->getCurrentOtp($secret);
 
         $this->actingAs($user)
@@ -102,7 +110,13 @@ class SecurityHardeningTest extends TestCase
 
         $this->actingAs($admin)
             ->get(route('admin.profile.edit'))
-            ->assertOk();
+            ->assertOk()
+            ->assertSee('ต้องเปิดการยืนยันตัวตนสองชั้นก่อน')
+            ->assertSee('id="two-factor-security"', false)
+            ->assertSeeInOrder([
+                'การยืนยันตัวตนสองชั้น',
+                'ข้อมูลส่วนตัว',
+            ]);
     }
 
     public function test_staff_cannot_disable_two_factor_when_it_is_required(): void

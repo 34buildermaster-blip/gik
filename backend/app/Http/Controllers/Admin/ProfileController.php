@@ -22,18 +22,25 @@ class ProfileController extends Controller
     public function edit(Request $request, TwoFactorAuthentication $twoFactor, LineMessaging $line)
     {
         $secret = $request->session()->get('two_factor_setup_secret');
+        $setupSecret = is_string($secret) ? $secret : null;
 
-        return view('admin.profile.edit', [
+        return response()->view('admin.profile.edit', [
             'user' => $request->user(),
-            'twoFactorSetupSecret' => is_string($secret) ? $secret : null,
-            'twoFactorProvisioningUri' => is_string($secret)
-                ? $twoFactor->provisioningUri($request->user(), $secret)
+            'twoFactorSetupSecret' => $setupSecret,
+            'twoFactorProvisioningUri' => $setupSecret
+                ? $twoFactor->provisioningUri($request->user(), $setupSecret)
+                : null,
+            'twoFactorQrCodeDataUri' => $setupSecret
+                ? $twoFactor->qrCodeDataUri($request->user(), $setupSecret)
                 : null,
             'lineAccountLinkConfigured' => $line->canStartAccountLink(),
             'lineAddFriendUrl' => config('project_notifications.line_add_friend_url'),
             'notificationSettings' => $request->user()->notificationSettings(),
             'notificationChannelLabels' => User::NOTIFICATION_CHANNEL_LABELS,
             'notificationEventLabels' => User::NOTIFICATION_EVENT_LABELS,
+        ])->withHeaders([
+            'Cache-Control' => 'no-store, private',
+            'Pragma' => 'no-cache',
         ]);
     }
 

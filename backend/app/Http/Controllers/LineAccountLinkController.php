@@ -16,6 +16,25 @@ class LineAccountLinkController extends Controller
     {
         abort_unless($line->isConfigured(), 503, 'ยังไม่ได้ตั้งค่าการเชื่อมต่อ LINE');
 
+        $user = $request->user();
+
+        if (filled($user->line_recipient_id)) {
+            LineAccountLink::query()
+                ->where('user_id', $user->id)
+                ->whereNull('consumed_at')
+                ->delete();
+
+            return redirect()
+                ->route('admin.profile.edit')
+                ->with('success', 'บัญชีนี้เชื่อมต่อ LINE เรียบร้อยแล้ว ไม่ต้องเชื่อมซ้ำ');
+        }
+
+        if (! $request->hasValidSignature()) {
+            return redirect()
+                ->route('admin.profile.edit')
+                ->with('warning', 'ลิงก์เชื่อมต่อ LINE หมดอายุแล้ว กรุณากลับไปที่แชตและพิมพ์ “เชื่อมบัญชี” เพื่อขอลิงก์ใหม่');
+        }
+
         $data = $request->validate([
             'linkToken' => ['required', 'string', 'max:255', 'regex:/^[A-Za-z0-9_-]+$/'],
         ]);

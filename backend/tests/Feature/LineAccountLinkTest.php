@@ -23,6 +23,58 @@ class LineAccountLinkTest extends TestCase
             ->assertSee('ยังไม่พร้อมเชื่อมต่อ');
     }
 
+    public function test_profile_opens_the_configured_official_account_and_offers_the_link_command(): void
+    {
+        $this->configureLine();
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->get(route('admin.profile.edit'))
+            ->assertOk()
+            ->assertSee('href="https://line.me/R/ti/p/@example"', false)
+            ->assertSee('data-copy-line-command="เชื่อมบัญชี"', false)
+            ->assertDontSee('/R/oaMessage/', false);
+    }
+
+    public function test_customer_without_line_connection_sees_a_clear_onboarding_action(): void
+    {
+        $user = User::factory()->create(['line_recipient_id' => null]);
+
+        $this->actingAs($user)
+            ->get(route('client.projects.index'))
+            ->assertOk()
+            ->assertSee('รับแจ้งเตือนความคืบหน้าผ่าน LINE')
+            ->assertSee('href="'.route('admin.profile.edit').'#line-account"', false)
+            ->assertSee('เริ่มเชื่อม LINE');
+    }
+
+    public function test_connected_customer_does_not_see_line_onboarding_action(): void
+    {
+        $user = User::factory()->create(['line_recipient_id' => 'U1234567890']);
+
+        $this->actingAs($user)
+            ->get(route('client.projects.index'))
+            ->assertOk()
+            ->assertDontSee('รับแจ้งเตือนความคืบหน้าผ่าน LINE');
+    }
+
+    public function test_line_link_guest_is_told_login_will_continue_the_connection(): void
+    {
+        $this->configureLine();
+        $url = \Illuminate\Support\Facades\URL::temporarySignedRoute(
+            'line.account.connect',
+            now()->addMinutes(10),
+            ['linkToken' => 'line-link-token'],
+        );
+
+        $this->get($url)->assertRedirect(route('login'));
+
+        $this->get(route('login'))
+            ->assertOk()
+            ->assertSee('เหลืออีกขั้นเดียวเพื่อเชื่อม LINE')
+            ->assertSee('เข้าสู่ระบบและเชื่อม LINE');
+    }
+
     public function test_line_webhook_rejects_an_invalid_signature(): void
     {
         $this->configureLine();
@@ -50,7 +102,95 @@ class LineAccountLinkTest extends TestCase
 
         Http::assertSentCount(2);
         Http::assertSent(fn ($request): bool => $request->url() === 'https://api.line.me/v2/bot/message/reply'
-            && str_contains($request['messages'][0]['text'], '/line/connect?linkToken=line-link-token'));
+            && str_contains($request['messages'][0]['text'], '/line/connect?')
+            && str_contains($request['messages'][0]['text'], 'linkToken=line-link-token')
+            && str_contains($request['messages'][0]['text'], 'signature='));
+    }
+
+    public function test_flexible_thai_connect_command_replies_with_an_account_link(): void
+    {
+        $this->configureLine();
+        Http::fake([
+            'api.line.me/v2/bot/user/*/linkToken' => Http::response(['linkToken' => 'line-link-token']),
+            'api.line.me/v2/bot/message/reply' => Http::response([], 200),
+        ]);
+        $payload = json_encode(['events' => [[
+            'type' => 'message',
+            'replyToken' => 'reply-token',
+            'source' => ['type' => 'user', 'userId' => 'U1234567890'],
+            'message' => ['type' => 'text', 'text' => 'เชื่อมต่อ LINE'],
+            'webhookEventId' => 'connect-command-event',
+        ]]], JSON_THROW_ON_ERROR);
+
+        $this->postSignedWebhook($payload)->assertOk();
+
+        Http::assertSent(fn ($request): bool => $request->url() === 'https://api.line.me/v2/bot/message/reply'
+            && str_contains($request['messages'][0]['text'], '/line/connect?')
+            && str_contains($request['messages'][0]['text'], 'linkToken=line-link-token')
+            && str_contains($request['messages'][0]['text'], 'signature='));
+    }
+
+    public function test_already_linked_line_user_is_not_given_another_link_token(): void
+    {
+        $this->configureLine();
+        User::factory()->create(['line_recipient_id' => 'U1234567890']);
+        Http::fake([
+            'api.line.me/v2/bot/message/reply' => Http::response([], 200),
+        ]);
+        $payload = json_encode(['events' => [[
+            'type' => 'message',
+            'replyToken' => 'reply-token',
+            'source' => ['type' => 'user', 'userId' => 'U1234567890'],
+            'message' => ['type' => 'text', 'text' => 'เชื่อมบัญชี'],
+            'webhookEventId' => 'already-linked-event',
+        ]]], JSON_THROW_ON_ERROR);
+
+        $this->postSignedWebhook($payload)->assertOk();
+
+        Http::assertSentCount(1);
+        Http::assertSent(fn ($request): bool => $request->url() === 'https://api.line.me/v2/bot/message/reply'
+            && str_contains($request['messages'][0]['text'], 'ไม่ต้องเชื่อมซ้ำ'));
+    }
+
+    public function test_link_token_failure_returns_a_helpful_line_reply(): void
+    {
+        $this->configureLine();
+        Http::fake([
+            'api.line.me/v2/bot/user/*/linkToken' => Http::response([], 500),
+            'api.line.me/v2/bot/message/reply' => Http::response([], 200),
+        ]);
+        $payload = json_encode(['events' => [[
+            'type' => 'message',
+            'replyToken' => 'reply-token',
+            'source' => ['type' => 'user', 'userId' => 'U1234567890'],
+            'message' => ['type' => 'text', 'text' => 'เชื่อมบัญชี'],
+            'webhookEventId' => 'failed-link-token-event',
+        ]]], JSON_THROW_ON_ERROR);
+
+        $this->postSignedWebhook($payload)->assertOk();
+
+        Http::assertSent(fn ($request): bool => $request->url() === 'https://api.line.me/v2/bot/message/reply'
+            && str_contains($request['messages'][0]['text'], 'ยังสร้างลิงก์เชื่อมบัญชีไม่ได้'));
+    }
+
+    public function test_duplicate_webhook_event_is_processed_only_once(): void
+    {
+        $this->configureLine();
+        Http::fake([
+            'api.line.me/v2/bot/user/*/linkToken' => Http::response(['linkToken' => 'line-link-token']),
+            'api.line.me/v2/bot/message/reply' => Http::response([], 200),
+        ]);
+        $payload = json_encode(['events' => [[
+            'type' => 'follow',
+            'replyToken' => 'reply-token',
+            'source' => ['type' => 'user', 'userId' => 'U1234567890'],
+            'webhookEventId' => 'duplicate-event',
+        ]]], JSON_THROW_ON_ERROR);
+
+        $this->postSignedWebhook($payload)->assertOk();
+        $this->postSignedWebhook($payload)->assertOk();
+
+        Http::assertSentCount(2);
     }
 
     public function test_authenticated_user_can_create_a_single_use_line_nonce(): void
@@ -58,9 +198,12 @@ class LineAccountLinkTest extends TestCase
         $this->configureLine();
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->get(route('line.account.connect', [
-            'linkToken' => 'line-link-token',
-        ]));
+        $url = \Illuminate\Support\Facades\URL::temporarySignedRoute(
+            'line.account.connect',
+            now()->addMinutes(10),
+            ['linkToken' => 'line-link-token'],
+        );
+        $response = $this->actingAs($user)->get($url);
 
         $response->assertRedirectContains('https://access.line.me/dialog/bot/accountLink?');
         $location = $response->headers->get('Location');
@@ -69,6 +212,47 @@ class LineAccountLinkTest extends TestCase
         $this->assertDatabaseHas('line_account_links', [
             'user_id' => $user->id,
             'nonce_hash' => hash('sha256', $query['nonce']),
+            'consumed_at' => null,
+        ]);
+    }
+
+    public function test_expired_account_link_returns_a_clear_warning_before_opening_line(): void
+    {
+        $this->configureLine();
+        $user = User::factory()->create();
+        $url = \Illuminate\Support\Facades\URL::temporarySignedRoute(
+            'line.account.connect',
+            now()->addMinutes(10),
+            ['linkToken' => 'expired-link-token'],
+        );
+
+        $this->travel(11)->minutes();
+
+        $this->actingAs($user)
+            ->get($url)
+            ->assertRedirect(route('admin.profile.edit'))
+            ->assertSessionHas('warning', 'ลิงก์เชื่อมต่อ LINE หมดอายุแล้ว กรุณากลับไปที่แชตและพิมพ์ “เชื่อมบัญชี” เพื่อขอลิงก์ใหม่');
+
+        $this->assertDatabaseCount('line_account_links', 0);
+    }
+
+    public function test_already_connected_user_does_not_reopen_the_line_account_link_endpoint(): void
+    {
+        $this->configureLine();
+        $user = User::factory()->create(['line_recipient_id' => 'U1234567890']);
+        LineAccountLink::create([
+            'user_id' => $user->id,
+            'nonce_hash' => hash('sha256', 'unused-nonce'),
+            'expires_at' => now()->addMinutes(10),
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('line.account.connect', ['linkToken' => 'already-used-token']))
+            ->assertRedirect(route('admin.profile.edit'))
+            ->assertSessionHas('success', 'บัญชีนี้เชื่อมต่อ LINE เรียบร้อยแล้ว ไม่ต้องเชื่อมซ้ำ');
+
+        $this->assertDatabaseMissing('line_account_links', [
+            'user_id' => $user->id,
             'consumed_at' => null,
         ]);
     }

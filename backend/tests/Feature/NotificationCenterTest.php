@@ -46,6 +46,27 @@ class NotificationCenterTest extends TestCase
         $this->assertCount(0, $customer->fresh()->notifications);
     }
 
+    public function test_approval_does_not_notify_a_suspended_customer(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $customer = User::factory()->create([
+            'disabled_at' => now(),
+            'disabled_reason' => 'พักบัญชี',
+        ]);
+        $project = $this->projectWithCustomer($customer);
+        $this->actingAs($admin)->post(
+            route('admin.project-updates.store', $project),
+            $this->updateData('submit_review'),
+        );
+        $update = $project->updates()->firstOrFail();
+
+        $this->actingAs($admin)
+            ->put(route('admin.project-updates.approve', [$project, $update]))
+            ->assertSessionHasNoErrors();
+
+        $this->assertCount(0, $customer->fresh()->notifications);
+    }
+
     public function test_inspector_submission_notifies_admin_but_not_customer(): void
     {
         $admin = User::factory()->admin()->create();
@@ -126,6 +147,28 @@ class NotificationCenterTest extends TestCase
         $this->assertContains('database', $channels);
         $this->assertContains(SafeMailChannel::class, $channels);
         $this->assertContains(LineNotificationChannel::class, $channels);
+    }
+
+    public function test_unavailable_selected_external_channel_falls_back_to_website_notification(): void
+    {
+        $customer = User::factory()->create([
+            'notification_preferences' => [
+                'channels' => ['line'],
+                'events' => ['project_update_approved'],
+                'all_projects' => false,
+            ],
+        ]);
+        $project = $this->projectWithCustomer($customer);
+        $notification = new ProjectUpdatePublished($project->updates()->create([
+            'title' => 'อัปเดตทดสอบ fallback',
+            'description' => 'รายละเอียด',
+            'stage' => 'structure',
+            'progress_percent' => 20,
+            'work_performed_at' => now(),
+            'status' => 'published',
+        ]));
+
+        $this->assertSame(['database'], $notification->via($customer));
     }
 
     private function projectWithCustomer(User $customer): Project

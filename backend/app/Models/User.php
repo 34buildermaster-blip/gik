@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'username', 'email', 'email_verified_at', 'phone', 'address', 'billing_name', 'tax_id', 'preferred_contact_channel', 'emergency_contact_name', 'emergency_contact_phone', 'customer_status', 'internal_notes', 'line_recipient_id', 'notification_preferences', 'password', 'avatar_path', 'avatar_file_id', 'role', 'failed_login_attempts', 'login_locked_until', 'password_must_change', 'password_changed_at', 'terms_accepted_at', 'privacy_accepted_at', 'marketing_consent_at', 'policy_version', 'consent_ip_hash'])]
+#[Fillable(['name', 'username', 'email', 'email_verified_at', 'phone', 'address', 'billing_name', 'tax_id', 'preferred_contact_channel', 'emergency_contact_name', 'emergency_contact_phone', 'customer_status', 'internal_notes', 'line_recipient_id', 'notification_preferences', 'password', 'avatar_path', 'avatar_file_id', 'role', 'failed_login_attempts', 'login_locked_until', 'disabled_at', 'disabled_by', 'disabled_reason', 'password_must_change', 'password_changed_at', 'terms_accepted_at', 'privacy_accepted_at', 'marketing_consent_at', 'policy_version', 'consent_ip_hash'])]
 #[Hidden(['password', 'remember_token', 'two_factor_secret', 'two_factor_recovery_codes', 'tax_id', 'internal_notes'])]
 class User extends Authenticatable
 {
@@ -78,6 +78,11 @@ class User extends Authenticatable
         return $this->login_locked_until?->isFuture() ?? false;
     }
 
+    public function isDisabled(): bool
+    {
+        return $this->disabled_at !== null;
+    }
+
     public function routeNotificationForLine(): ?string
     {
         return $this->line_recipient_id;
@@ -136,6 +141,10 @@ class User extends Authenticatable
 
     public function sendPasswordResetNotification($token): void
     {
+        if ($this->isDisabled()) {
+            return;
+        }
+
         $this->notify(new ResetPasswordNotification($token));
     }
 
@@ -187,6 +196,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'failed_login_attempts' => 'integer',
             'login_locked_until' => 'datetime',
+            'disabled_at' => 'datetime',
             'password_must_change' => 'boolean',
             'password_changed_at' => 'datetime',
             'terms_accepted_at' => 'datetime',

@@ -43,6 +43,38 @@ class AdminNotificationRoutingTest extends TestCase
         $this->assertCount(1, $secondAdmin->fresh()->notifications);
     }
 
+    public function test_submission_falls_back_to_current_admins_when_assigned_reviewer_was_demoted(): void
+    {
+        $formerReviewer = $this->adminWithPreferences();
+        $currentAdmin = $this->adminWithPreferences();
+        $inspector = User::factory()->inspector()->create();
+        $project = $this->projectFor($inspector, $formerReviewer);
+        $formerReviewer->update(['role' => 'inspector']);
+
+        $this->actingAs($inspector)
+            ->post(route('admin.project-updates.store', $project), $this->updateData())
+            ->assertSessionHasNoErrors();
+
+        $this->assertCount(0, $formerReviewer->fresh()->notifications);
+        $this->assertCount(1, $currentAdmin->fresh()->notifications);
+    }
+
+    public function test_submission_skips_a_suspended_reviewer_and_uses_an_active_admin(): void
+    {
+        $suspendedReviewer = $this->adminWithPreferences();
+        $suspendedReviewer->update(['disabled_at' => now(), 'disabled_reason' => 'พักบัญชี']);
+        $activeAdmin = $this->adminWithPreferences();
+        $inspector = User::factory()->inspector()->create();
+        $project = $this->projectFor($inspector, $suspendedReviewer);
+
+        $this->actingAs($inspector)
+            ->post(route('admin.project-updates.store', $project), $this->updateData())
+            ->assertSessionHasNoErrors();
+
+        $this->assertCount(0, $suspendedReviewer->fresh()->notifications);
+        $this->assertCount(1, $activeAdmin->fresh()->notifications);
+    }
+
     public function test_admin_can_save_personal_notification_preferences(): void
     {
         $admin = User::factory()->admin()->create();

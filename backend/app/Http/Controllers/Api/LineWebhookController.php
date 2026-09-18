@@ -10,6 +10,7 @@ use App\Services\LineMessaging;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -26,10 +27,24 @@ class LineWebhookController extends Controller
             401,
         );
 
+        $processingFailed = false;
+
         foreach ((array) $request->input('events', []) as $event) {
+            $cacheKey = $this->eventCacheKey($event);
+
+            if ($cacheKey !== null && ! Cache::add($cacheKey, true, now()->addDays(7))) {
+                continue;
+            }
+
             try {
                 $this->handleEvent($event, $line);
             } catch (Throwable $exception) {
+                $processingFailed = true;
+
+                if ($cacheKey !== null) {
+                    Cache::forget($cacheKey);
+                }
+
                 Log::warning('LINE webhook event could not be processed.', [
                     'event_type' => data_get($event, 'type'),
                     'webhook_event_id' => data_get($event, 'webhookEventId'),
@@ -38,7 +53,16 @@ class LineWebhookController extends Controller
             }
         }
 
-        return response()->json(['ok' => true]);
+        return response()->json(['ok' => ! $processingFailed], $processingFailed ? 500 : 200);
+    }
+
+    private function eventCacheKey(array $event): ?string
+    {
+        $eventId = data_get($event, 'webhookEventId');
+
+        return is_string($eventId) && $eventId !== ''
+            ? 'line:webhook:event:'.hash('sha256', $eventId)
+            : null;
     }
 
     private function handleEvent(array $event, LineMessaging $line): void
@@ -54,16 +78,20 @@ class LineWebhookController extends Controller
         }
 
         if ($type === 'follow') {
-            $line->sendAccountLinkInvitation($lineUserId, (string) $replyToken);
+            $this->replyWithAccountLink($line, $lineUserId, $replyToken);
 
             return;
         }
 
         if ($type === 'message' && data_get($event, 'message.type') === 'text') {
-            $command = mb_strtolower(trim((string) data_get($event, 'message.text')));
+            $command = mb_strtolower((string) preg_replace(
+                '/[\s\p{P}\p{S}]+/u',
+                '',
+                trim((string) data_get($event, 'message.text')),
+            ));
 
-            if (in_array($command, ['เชื่อมบัญชี', 'เชื่อมไลน์', 'link', 'connect'], true)) {
-                $line->sendAccountLinkInvitation($lineUserId, (string) $replyToken);
+            if ($this->isAccountLinkCommand($command)) {
+                $this->replyWithAccountLink($line, $lineUserId, $replyToken);
             }
 
             return;
@@ -71,6 +99,49 @@ class LineWebhookController extends Controller
 
         if ($type === 'accountLink') {
             $this->completeAccountLink($event, $lineUserId, $replyToken, $line);
+        }
+    }
+
+    private function isAccountLinkCommand(string $command): bool
+    {
+        return in_array($command, [
+            'เชื่อมบัญชี',
+            'เชื่อมไลน์',
+            'เชื่อมต่อ',
+            'เชื่อมต่อไลน์',
+            'เชื่อมต่อline',
+            'เชื่อมต่อบัญชี',
+            'สมัครแจ้งเตือน',
+            'link',
+            'connect',
+        ], true);
+    }
+
+    private function replyWithAccountLink(
+        LineMessaging $line,
+        string $lineUserId,
+        ?string $replyToken,
+    ): void {
+        if (User::query()->where('line_recipient_id', $lineUserId)->exists()) {
+            $line->replyText(
+                $replyToken,
+                'LINE บัญชีนี้เชื่อมกับ 34 Build Master เรียบร้อยแล้ว ไม่ต้องเชื่อมซ้ำ',
+            );
+
+            return;
+        }
+
+        try {
+            $line->sendAccountLinkInvitation($lineUserId, (string) $replyToken);
+        } catch (Throwable $exception) {
+            Log::warning('LINE account-link invitation could not be created.', [
+                'error' => $exception->getMessage(),
+            ]);
+
+            $line->replyText(
+                $replyToken,
+                'ขออภัย ระบบยังสร้างลิงก์เชื่อมบัญชีไม่ได้ กรุณารอสักครู่แล้วส่งคำว่า “เชื่อมบัญชี” อีกครั้ง',
+            );
         }
     }
 

@@ -15,32 +15,37 @@
         <article class="card user-stat-card is-primary">
             <span>ผู้ใช้งานทั้งหมด</span>
             <strong>{{ $totalUsers }}</strong>
-            <small>ทุกบัญชีในระบบ</small>
+            <small>ระงับอยู่ {{ $suspendedCount }} บัญชี</small>
         </article>
         <article class="card user-stat-card">
             <span>ผู้ดูแลระบบ</span>
             <strong>{{ $adminCount }}</strong>
-            <small>เข้าถึงแดชบอร์ดและบทความ</small>
+            <small>บัญชีที่พร้อมใช้งาน</small>
         </article>
         <article class="card user-stat-card">
             <span>ผู้ตรวจหน้างาน</span>
             <strong>{{ $inspectorCount }}</strong>
-            <small>อัปเดตเฉพาะโครงการที่ได้รับมอบหมาย</small>
+            <small>บัญชีที่พร้อมใช้งาน</small>
         </article>
         <article class="card user-stat-card">
             <span>ลูกค้า</span>
             <strong>{{ $memberCount }}</strong>
-            <small>ติดตามข้อมูลโครงการของตนเอง</small>
+            <small>บัญชีที่พร้อมใช้งาน</small>
         </article>
     </section>
 
     <section class="card panel user-list-panel">
         <div class="list-toolbar">
             <div class="filter-tabs" aria-label="กรองบทบาทผู้ใช้งาน">
-                <a class="filter-chip {{ ! array_key_exists($role, $roleLabels) ? 'is-active' : '' }}" href="{{ route('admin.users.index', array_filter(['q' => $search])) }}">ทั้งหมด</a>
-                <a class="filter-chip {{ $role === 'admin' ? 'is-active' : '' }}" href="{{ route('admin.users.index', array_filter(['q' => $search, 'role' => 'admin'])) }}">Admin</a>
-                <a class="filter-chip {{ $role === 'inspector' ? 'is-active' : '' }}" href="{{ route('admin.users.index', array_filter(['q' => $search, 'role' => 'inspector'])) }}">ผู้ตรวจหน้างาน</a>
-                <a class="filter-chip {{ $role === 'user' ? 'is-active' : '' }}" href="{{ route('admin.users.index', array_filter(['q' => $search, 'role' => 'user'])) }}">ลูกค้า</a>
+                <a class="filter-chip {{ ! array_key_exists($role, $roleLabels) ? 'is-active' : '' }}" href="{{ route('admin.users.index', array_filter(['q' => $search, 'status' => $status])) }}">ทุกบทบาท</a>
+                <a class="filter-chip {{ $role === 'admin' ? 'is-active' : '' }}" href="{{ route('admin.users.index', array_filter(['q' => $search, 'role' => 'admin', 'status' => $status])) }}">Admin</a>
+                <a class="filter-chip {{ $role === 'inspector' ? 'is-active' : '' }}" href="{{ route('admin.users.index', array_filter(['q' => $search, 'role' => 'inspector', 'status' => $status])) }}">ผู้ตรวจหน้างาน</a>
+                <a class="filter-chip {{ $role === 'user' ? 'is-active' : '' }}" href="{{ route('admin.users.index', array_filter(['q' => $search, 'role' => 'user', 'status' => $status])) }}">ลูกค้า</a>
+            </div>
+            <div class="filter-tabs" aria-label="กรองสถานะผู้ใช้งาน">
+                <a class="filter-chip {{ ! in_array($status, ['active', 'suspended'], true) ? 'is-active' : '' }}" href="{{ route('admin.users.index', array_filter(['q' => $search, 'role' => $role])) }}">ทุกสถานะ</a>
+                <a class="filter-chip {{ $status === 'active' ? 'is-active' : '' }}" href="{{ route('admin.users.index', array_filter(['q' => $search, 'role' => $role, 'status' => 'active'])) }}">พร้อมใช้งาน</a>
+                <a class="filter-chip {{ $status === 'suspended' ? 'is-active' : '' }}" href="{{ route('admin.users.index', array_filter(['q' => $search, 'role' => $role, 'status' => 'suspended'])) }}">ถูกระงับ</a>
             </div>
             <p class="result-note">
                 @if ($search !== '') ผลการค้นหา “{{ $search }}” · @endif
@@ -56,6 +61,7 @@
                         <th>ชื่อผู้ใช้</th>
                         <th>วันที่สมัคร</th>
                         <th>สิทธิ์ปัจจุบัน</th>
+                        <th>สถานะ</th>
                         <th>จัดการสิทธิ์</th>
                     </tr>
                 </thead>
@@ -82,17 +88,22 @@
                                 </span>
                             </td>
                             <td>
+                                <span class="account-status-badge {{ $listedUser->isDisabled() ? 'is-suspended' : 'is-active' }}">
+                                    {{ $listedUser->isDisabled() ? 'ถูกระงับ' : 'พร้อมใช้งาน' }}
+                                </span>
+                            </td>
+                            <td>
                                 <div class="user-row-actions">
                                 <form class="role-form" method="POST" action="{{ route('admin.users.role', $listedUser) }}">
                                     @csrf
                                     @method('PUT')
-                                    <select name="role" aria-label="สิทธิ์ของ {{ $listedUser->name }}" @disabled(auth()->id() === $listedUser->id)>
+                                    <select name="role" aria-label="สิทธิ์ของ {{ $listedUser->name }}" @disabled(auth()->id() === $listedUser->id || $listedUser->isDisabled())>
                                         <option value="user" @selected($listedUser->role === 'user')>User</option>
                                         <option value="inspector" @selected($listedUser->role === 'inspector')>ผู้ตรวจหน้างาน</option>
                                         <option value="admin" @selected($listedUser->role === 'admin')>Admin</option>
                                     </select>
-                                    <button class="icon-save-button" type="submit" title="บันทึกสิทธิ์" aria-label="บันทึกสิทธิ์ของ {{ $listedUser->name }}" @disabled(auth()->id() === $listedUser->id)>
-                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+                                    <button class="icon-save-button" type="submit" title="บันทึกสิทธิ์" aria-label="บันทึกสิทธิ์ของ {{ $listedUser->name }}" @disabled(auth()->id() === $listedUser->id || $listedUser->isDisabled())>
+                                        <x-ui-icon name="check" />
                                     </button>
                                 </form>
                                 @if($listedUser->role === 'user')
@@ -100,15 +111,15 @@
                                     <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path><path d="M17 4h4"></path><path d="M19 2v4"></path></svg>
                                 </a>
                                 @endif
-                                <a class="icon-save-button" href="{{ route('admin.users.security.show', $listedUser) }}" title="ความปลอดภัยของ {{ $listedUser->name }}" aria-label="จัดการความปลอดภัยของ {{ $listedUser->name }}">
-                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 6v5c0 5 3.4 8.4 8 10 4.6-1.6 8-5 8-10V6l-8-3Z"></path><path d="M9 12h6"></path></svg>
+                                <a class="icon-save-button {{ $listedUser->isDisabled() ? 'is-warning' : '' }}" href="{{ route('admin.users.security.show', $listedUser) }}" title="ความปลอดภัยและสถานะของ {{ $listedUser->name }}" aria-label="จัดการความปลอดภัยและสถานะของ {{ $listedUser->name }}">
+                                    <x-ui-icon name="shield" />
                                 </a>
                                 </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5"><p class="muted user-empty">ไม่พบบัญชีที่ตรงกับเงื่อนไข</p></td>
+                            <td colspan="6"><p class="muted user-empty">ไม่พบบัญชีที่ตรงกับเงื่อนไข</p></td>
                         </tr>
                     @endforelse
                 </tbody>

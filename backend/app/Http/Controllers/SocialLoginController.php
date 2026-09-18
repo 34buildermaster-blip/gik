@@ -93,6 +93,10 @@ class SocialLoginController extends Controller
                 return $this->loginError('บัญชีนี้ไม่สามารถเข้าสู่พื้นที่ลูกค้าผ่านช่องทางดังกล่าวได้');
             }
 
+            if ($identity->user->isDisabled()) {
+                return $this->loginError('บัญชีนี้ถูกระงับการใช้งาน กรุณาติดต่อผู้ดูแลระบบ');
+            }
+
             if ($identity->user->isLoginLocked()) {
                 return $this->loginError('บัญชีถูกระงับการเข้าสู่ระบบชั่วคราว กรุณารอสักครู่หรือติดต่อผู้ดูแล');
             }
@@ -155,6 +159,10 @@ class SocialLoginController extends Controller
         if ($existing) {
             if ($existing->role !== 'user') {
                 return back()->withErrors(['email' => 'อีเมลนี้ไม่สามารถผูกกับพื้นที่ลูกค้าได้'])->withInput();
+            }
+
+            if ($existing->isDisabled()) {
+                return back()->withErrors(['email' => 'บัญชีนี้ถูกระงับการใช้งาน กรุณาติดต่อผู้ดูแลระบบ'])->withInput();
             }
 
             if ($existing->isLoginLocked() || $loginSecurity->isThrottled($email)) {
@@ -241,6 +249,10 @@ class SocialLoginController extends Controller
 
     private function finishLogin(Request $request, User $user, string $provider, LoginSecurity $loginSecurity): RedirectResponse
     {
+        if ($user->isDisabled()) {
+            return $this->loginError('บัญชีนี้ถูกระงับการใช้งาน กรุณาติดต่อผู้ดูแลระบบ');
+        }
+
         $loginSecurity->clear($user);
 
         if ($user->hasTwoFactorAuthenticationEnabled()) {

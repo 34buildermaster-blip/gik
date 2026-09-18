@@ -8,6 +8,6 @@
         <label>รายละเอียด<textarea name="message" rows="4" maxlength="5000" placeholder="พื้นที่ งบประมาณ หรือสิ่งที่ต้องการปรึกษา"></textarea></label>
         <input class="honeypot" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
         <p class="form-feedback" data-form-feedback role="status"></p>
-        <button class="button" type="submit">ส่งข้อมูลให้ทีมงาน <span>→</span></button>
+        <button class="button" type="submit">ส่งข้อมูลให้ทีมงาน <x-ui-icon name="arrow-right" /></button>
     </form>
 </section>
