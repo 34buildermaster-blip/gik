@@ -59,6 +59,46 @@ class ProjectUpdateTest extends TestCase
         $this->assertSame(30, $project->fresh()->progress_percent);
     }
 
+    public function test_staff_can_open_timeline_details_and_only_admin_can_review(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $inspector = User::factory()->inspector()->create();
+        $project = Project::create([
+            'manager_id' => $inspector->id,
+            'code' => 'P-DETAIL',
+            'name' => 'โครงการตัวอย่าง',
+            'type' => 'house_build',
+            'status' => 'in_progress',
+            'progress_percent' => 20,
+        ]);
+        $update = $project->updates()->create([
+            'created_by' => $inspector->id,
+            'title' => 'ตรวจงานฐานราก',
+            'description' => 'รายละเอียดการตรวจงานฐานรากพร้อมรูปประกอบ',
+            'stage' => 'structure',
+            'progress_percent' => 35,
+            'work_performed_at' => now(),
+            'status' => 'pending_review',
+            'submitted_at' => now(),
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('admin.projects.show', $project))
+            ->assertOk()
+            ->assertSee('data-update-dialog="admin-update-'.$update->id.'"', false)
+            ->assertSee('id="admin-update-'.$update->id.'"', false)
+            ->assertSee('รายละเอียดการตรวจงานฐานรากพร้อมรูปประกอบ')
+            ->assertSee(route('admin.project-updates.approve', [$project, $update]), false)
+            ->assertSee(route('admin.project-updates.request-changes', [$project, $update]), false);
+
+        $this->actingAs($inspector)
+            ->get(route('admin.projects.show', $project))
+            ->assertOk()
+            ->assertSee('id="admin-update-'.$update->id.'"', false)
+            ->assertDontSee(route('admin.project-updates.approve', [$project, $update]), false)
+            ->assertDontSee(route('admin.project-updates.request-changes', [$project, $update]), false);
+    }
+
     public function test_admin_can_send_pending_update_back_without_changing_progress(): void
     {
         $admin = User::factory()->admin()->create();

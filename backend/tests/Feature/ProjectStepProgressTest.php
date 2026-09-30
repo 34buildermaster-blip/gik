@@ -11,6 +11,44 @@ class ProjectStepProgressTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_ready_step_plan_starts_collapsed_with_timeline_before_other_sections(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $project = $this->projectWithReadyStep();
+
+        $html = $this->actingAs($admin)
+            ->get(route('admin.projects.show', $project))
+            ->assertOk()
+            ->getContent();
+
+        preg_match('/<details[^>]*id="project-steps"[^>]*>/', $html, $details);
+        $this->assertNotEmpty($details);
+        $this->assertStringNotContainsString(' open', $details[0]);
+        $this->assertStringContainsString('1 ขั้นตอน', $html);
+        $this->assertLessThan(
+            strpos($html, 'id="project-documents"'),
+            strpos($html, 'id="project-updates"'),
+        );
+    }
+
+    public function test_incomplete_step_plan_starts_expanded(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $project = Project::create([
+            'code' => 'STEP-EMPTY', 'name' => 'Empty plan', 'type' => 'house_build',
+            'status' => 'preparing', 'progress_percent' => 0,
+        ]);
+
+        $html = $this->actingAs($admin)
+            ->get(route('admin.projects.show', $project))
+            ->assertOk()
+            ->getContent();
+
+        preg_match('/<details[^>]*id="project-steps"[^>]*>/', $html, $details);
+        $this->assertNotEmpty($details);
+        $this->assertStringContainsString(' open', $details[0]);
+    }
+
     public function test_admin_can_build_weighted_steps_and_project_progress_is_calculated(): void
     {
         $admin = User::factory()->admin()->create();

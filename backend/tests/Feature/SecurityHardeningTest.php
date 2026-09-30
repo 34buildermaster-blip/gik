@@ -57,7 +57,9 @@ class SecurityHardeningTest extends TestCase
             'login' => $user->username,
             'password' => 'CorrectPassword1',
             'portal' => 'admin',
+            'remember' => '1',
         ])->assertRedirect(route('two-factor.challenge'));
+        $this->assertFalse((bool) session('auth.two_factor.remember'));
         $this->assertGuest();
 
         $code = app(Google2FA::class)->getCurrentOtp($secret);
@@ -66,6 +68,21 @@ class SecurityHardeningTest extends TestCase
 
         $this->assertAuthenticatedAs($user);
         $this->assertDatabaseHas('audit_logs', ['action' => 'auth.login.succeeded', 'user_id' => $user->id]);
+    }
+
+    public function test_only_customer_login_can_offer_a_persistent_session(): void
+    {
+        $this->get(route('login.customer'))
+            ->assertOk()
+            ->assertSee('name="remember"', false);
+
+        $this->get(route('login.admin'))
+            ->assertOk()
+            ->assertDontSee('name="remember"', false);
+
+        $this->get(route('login.inspector'))
+            ->assertOk()
+            ->assertDontSee('name="remember"', false);
     }
 
     public function test_staff_can_enable_two_factor_authentication_from_profile(): void

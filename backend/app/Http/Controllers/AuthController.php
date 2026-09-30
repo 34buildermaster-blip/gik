@@ -42,6 +42,8 @@ class AuthController extends Controller
             $loginField => $data['login'],
             'password' => $data['password'],
         ];
+        $expectedRole = $this->loginPortals()[$data['portal']]['role'];
+        $remember = $expectedRole === 'user' && $request->boolean('remember');
         $loginUser = User::where($loginField, $data['login'])->first();
 
         if ($loginUser?->isDisabled()) {
@@ -73,7 +75,7 @@ class AuthController extends Controller
                 ->onlyInput('login');
         }
 
-        if (! Auth::attempt($credentials, $request->boolean('remember'))) {
+        if (! Auth::attempt($credentials, $remember)) {
             $loginSecurity->recordFailure($data['login'], $loginUser);
             AuditLog::record(null, 'auth.login.failed', null, 'เข้าสู่ระบบไม่สำเร็จ', [
                 'login_hash' => hash('sha256', Str::lower($data['login'])),
@@ -89,7 +91,6 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        $expectedRole = $this->loginPortals()[$data['portal']]['role'];
         if ($request->user()->role !== $expectedRole) {
             $actualRole = User::ROLE_LABELS[$request->user()->role] ?? 'บัญชีประเภทอื่น';
             Auth::logout();
@@ -110,7 +111,7 @@ class AuthController extends Controller
         if ($user->hasTwoFactorAuthenticationEnabled()) {
             $request->session()->put('auth.two_factor', [
                 'user_id' => $user->id,
-                'remember' => $request->boolean('remember'),
+                'remember' => $remember,
                 'portal' => $data['portal'],
             ]);
             Auth::logout();
@@ -152,6 +153,7 @@ class AuthController extends Controller
         $data['privacy_accepted_at'] = $acceptedAt;
         $data['marketing_consent_at'] = $marketingConsent ? $acceptedAt : null;
         $data['policy_version'] = config('legal.policy_version');
+        $data['role'] = 'user';
         $data['consent_ip_hash'] = $request->ip()
             ? hash_hmac('sha256', $request->ip(), (string) config('app.key'))
             : null;
@@ -166,7 +168,9 @@ class AuthController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
-        return redirect()->route('client.projects.index');
+        return redirect()
+            ->route('client.projects.index')
+            ->with('prompt_line_connect', true);
     }
 
     public function logout(Request $request): RedirectResponse

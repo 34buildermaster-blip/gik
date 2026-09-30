@@ -61,6 +61,9 @@ class TwoFactorChallengeController extends Controller
         $request->session()->forget('auth.two_factor');
         Auth::login($user, (bool) ($pending['remember'] ?? false));
         $request->session()->regenerate();
+        if (($pending['prompt_line_connect'] ?? false) && blank($user->line_recipient_id)) {
+            $request->session()->flash('prompt_line_connect', true);
+        }
         AuditLog::record($user, 'auth.login.succeeded', $user, 'เข้าสู่ระบบด้วยการยืนยันตัวตนสองชั้น');
 
         return redirect()->intended(

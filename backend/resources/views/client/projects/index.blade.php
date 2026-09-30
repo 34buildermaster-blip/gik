@@ -1,4 +1,8 @@
 <x-admin-layout title="งานของฉัน | 34 Build Master">
+    @php
+        $lineAddFriendUrl = trim((string) config('project_notifications.line_add_friend_url'));
+        $lineConnectUrl = $lineAddFriendUrl !== '' ? $lineAddFriendUrl : route('admin.profile.edit').'#line-account';
+    @endphp
     <div class="topbar client-heading">
         <div><p class="eyebrow">MY PROJECTS</p><h1>งานของฉัน</h1><p class="muted">ติดตามสถานะ ความคืบหน้า และรูปอัปเดตล่าสุดจากทีมงาน</p></div>
     </div>
@@ -18,6 +22,40 @@
             </div>
             <a class="button client-line-onboarding-action" href="{{ route('admin.profile.edit') }}#line-account">เริ่มเชื่อม LINE</a>
         </section>
+    @endif
+
+    @if(session('prompt_line_connect') && blank(auth()->user()->line_recipient_id))
+        <dialog class="line-onboarding-dialog" id="line-onboarding-dialog" aria-labelledby="line-onboarding-dialog-title">
+            <button class="line-onboarding-dialog-close" type="button" data-line-dialog-close aria-label="ปิด"><x-ui-icon name="x" /></button>
+            <span class="line-onboarding-dialog-icon" aria-hidden="true"><x-ui-icon name="line" /></span>
+            <p class="eyebrow">ONE MORE STEP</p>
+            <h2 id="line-onboarding-dialog-title">เชื่อม LINE เพื่อไม่พลาดอัปเดตบ้าน</h2>
+            <p>ระบบจะแจ้งเตือนหลัง Admin ตรวจและอนุมัติความคืบหน้า รูปหน้างาน หรือข้อมูลสำคัญของโครงการแล้ว</p>
+            <ol>
+                <li><strong>เพิ่มเพื่อน LINE OA</strong><span>เปิดบัญชีทางการของ 34 Build Master</span></li>
+                <li><strong>เชื่อมบัญชีครั้งเดียว</strong><span>กดลิงก์ที่ระบบส่งให้ในแชต LINE</span></li>
+                <li><strong>รับแจ้งเตือนอัตโนมัติ</strong><span>ไม่ต้องกลับมากรอก LINE ID เอง</span></li>
+            </ol>
+            <div class="line-onboarding-dialog-actions">
+                <a class="button" href="{{ $lineConnectUrl }}" @if($lineAddFriendUrl !== '') target="_blank" rel="noopener noreferrer" @endif>
+                    <x-ui-icon name="line" /> เชื่อม LINE ตอนนี้
+                </a>
+                <button class="button secondary" type="button" data-line-dialog-close>ไว้ภายหลัง</button>
+            </div>
+        </dialog>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const dialog = document.getElementById('line-onboarding-dialog');
+                if (!dialog || typeof dialog.showModal !== 'function') return;
+                dialog.showModal();
+                dialog.querySelectorAll('[data-line-dialog-close]').forEach(function (button) {
+                    button.addEventListener('click', function () { dialog.close(); });
+                });
+                dialog.addEventListener('click', function (event) {
+                    if (event.target === dialog) dialog.close();
+                });
+            });
+        </script>
     @endif
 
     @if($projects->isEmpty())

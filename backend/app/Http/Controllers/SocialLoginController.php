@@ -107,7 +107,7 @@ class SocialLoginController extends Controller
                 'avatar_url' => $profile['avatar_url'],
             ]);
 
-            return $this->finishLogin($request, $identity->user, $provider, $loginSecurity);
+            return $this->finishLogin($request, $identity->user, $provider, $loginSecurity, $profile);
         }
 
         $request->session()->put('auth.social.pending', [
@@ -244,16 +244,32 @@ class SocialLoginController extends Controller
             'provider' => $pending['provider'],
         ]);
 
-        return $this->finishLogin($request, $user, $pending['provider'], $loginSecurity);
+        return $this->finishLogin(
+            $request,
+            $user,
+            $pending['provider'],
+            $loginSecurity,
+            $pending,
+            $newUserData !== null,
+        );
     }
 
-    private function finishLogin(Request $request, User $user, string $provider, LoginSecurity $loginSecurity): RedirectResponse
-    {
+    private function finishLogin(
+        Request $request,
+        User $user,
+        string $provider,
+        LoginSecurity $loginSecurity,
+        array $profile = [],
+        bool $newAccount = false,
+    ): RedirectResponse {
         if ($user->isDisabled()) {
             return $this->loginError('บัญชีนี้ถูกระงับการใช้งาน กรุณาติดต่อผู้ดูแลระบบ');
         }
 
         $loginSecurity->clear($user);
+        $this->syncLineNotificationRecipient($user, $profile);
+        $user->refresh();
+        $promptLineConnect = blank($user->line_recipient_id) && ($provider === 'line' || $newAccount);
 
         if ($user->hasTwoFactorAuthenticationEnabled()) {
             $request->session()->put('auth.two_factor', [
@@ -261,6 +277,7 @@ class SocialLoginController extends Controller
                 'remember' => false,
                 'portal' => 'customer',
                 'source' => $provider,
+                'prompt_line_connect' => $promptLineConnect,
             ]);
 
             return redirect()->route('two-factor.challenge');
@@ -272,7 +289,31 @@ class SocialLoginController extends Controller
             'provider' => $provider,
         ]);
 
-        return redirect()->intended(route('client.projects.index'));
+        $redirect = redirect()->intended(route('client.projects.index'));
+
+        return $promptLineConnect
+            ? $redirect->with('prompt_line_connect', true)
+            : $redirect;
+    }
+
+    private function syncLineNotificationRecipient(User $user, array $profile): void
+    {
+        $lineUserId = (string) ($profile['provider_user_id'] ?? '');
+        if (($profile['provider'] ?? null) !== 'line'
+            || ($profile['line_notification_ready'] ?? false) !== true
+            || ! preg_match('/^U[0-9a-f]{32}$/i', $lineUserId)
+            || filled($user->line_recipient_id)) {
+            return;
+        }
+
+        try {
+            $user->update(['line_recipient_id' => $lineUserId]);
+            AuditLog::record($user, 'line.account_connected', $user, 'เชื่อม LINE แจ้งเตือนอัตโนมัติจาก LINE Login');
+        } catch (QueryException) {
+            Log::warning('LINE Login recipient is already connected to another customer.', [
+                'user_id' => $user->id,
+            ]);
+        }
     }
 
     private function validFlow(mixed $flow, string $state): bool

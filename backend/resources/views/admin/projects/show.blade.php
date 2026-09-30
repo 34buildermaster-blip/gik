@@ -3,6 +3,7 @@
     <div class="topbar project-detail-heading">
         <div><p class="eyebrow">{{ $project->code }}</p><h1>{{ $project->name }}</h1><p class="muted">{{ $typeLabels[$project->type] ?? $project->type }} · {{ $project->address ?: 'ยังไม่ได้ระบุที่อยู่' }}</p></div>
         <div class="actions">
+            <a class="button secondary" href="#project-updates">ดูอัปเดตหน้างาน</a>
             @if($isAdmin)
                 <a class="button secondary" href="{{ route('admin.projects.edit', $project) }}">แก้ไขโครงการ</a>
                 <form method="POST" action="{{ route('admin.projects.destroy', $project) }}" onsubmit="return confirm('เก็บโครงการนี้เข้าคลังใช่ไหม? ข้อมูล Timeline และไฟล์ใน Google Drive จะยังอยู่ครบ')">
@@ -29,13 +30,18 @@
         </article>
     </section>
 
-    <section id="project-steps" class="card panel project-steps-panel">
-        <div class="panel-heading project-steps-heading">
+    <details id="project-steps" class="card panel project-steps-panel" data-project-steps-key="{{ $project->id }}" @if(! $isStepPlanReady || $errors->any()) open @endif>
+        <summary class="panel-heading project-steps-heading">
             <div><p class="eyebrow">WEIGHTED PROGRESS</p><h2>ขั้นตอนและน้ำหนักงาน</h2><p>เปอร์เซ็นต์รวมคำนวณจากน้ำหนัก × ความสำเร็จของแต่ละขั้น</p></div>
-            <div class="step-weight-summary {{ $isStepPlanReady ? 'is-ready' : '' }}">
-                <span>น้ำหนักที่กำหนด</span><strong>{{ $stepWeightTotal }}<small>/100%</small></strong>
+            <div class="project-steps-heading-side">
+                <span class="project-steps-count">{{ $project->steps->count() }} ขั้นตอน</span>
+                <div class="step-weight-summary {{ $isStepPlanReady ? 'is-ready' : '' }}">
+                    <span>น้ำหนักที่กำหนด</span><strong>{{ $stepWeightTotal }}<small>/100%</small></strong>
+                </div>
+                <span class="project-steps-chevron"><x-ui-icon name="chevron-right" /></span>
             </div>
-        </div>
+        </summary>
+        <div class="project-steps-body">
 
         @if(! $isStepPlanReady)
             <div class="step-plan-notice"><strong>ตั้งค่าแผนงานให้ครบ 100%</strong><span>เหลืออีก {{ 100 - $stepWeightTotal }}% จึงจะเริ่มอัปเดตและคำนวณความคืบหน้าอัตโนมัติ</span></div>
@@ -113,7 +119,10 @@
                 <div class="project-empty compact"><h2>ยังไม่มีขั้นตอนงาน</h2><p>{{ $isAdmin ? 'เริ่มเพิ่มขั้นตอนและกำหนดน้ำหนักให้รวมครบ 100%' : 'Admin ยังไม่ได้กำหนดขั้นตอนงานของโครงการนี้' }}</p></div>
             @endforelse
         </div>
-    </section>
+        </div>
+    </details>
+
+    @include('admin.projects._timeline')
 
     <section class="card panel launch-panel" id="project-documents">
         <div class="panel-heading"><div><p class="eyebrow">DOCUMENT CENTER</p><h2>เอกสารโครงการ</h2><p>สัญญา BOQ แบบก่อสร้าง และเอกสารส่งมอบในพื้นที่เดียว</p></div><span class="client-update-count">{{ $project->documents->count() }} ไฟล์</span></div>
@@ -184,57 +193,29 @@
     </section>
     @endif
 
-    <section id="project-updates" class="card panel project-timeline-panel">
-        <div class="panel-heading"><div><p class="eyebrow">SITE UPDATES</p><h2>Timeline อัปเดตหน้างาน</h2><p>เรียงตามวันที่ทำงานจริงจากล่าสุด</p></div><a class="button" href="{{ route('admin.project-updates.create',$project) }}">เพิ่มอัปเดต</a></div>
-        <div class="project-timeline">
-            @forelse($project->updates as $updateItem)
-                <article class="timeline-entry">
-                    <div class="timeline-marker"><span></span></div>
-                    <div class="timeline-content">
-                        <div class="timeline-meta"><span>{{ $stageLabels[$updateItem->stage] ?? $updateItem->stage }}</span><time>{{ $updateItem->work_performed_at->format('d/m/Y H:i') }}</time><em class="update-status-{{ $updateItem->status }} {{ $updateItem->status === 'published' ? 'is-published' : '' }}">{{ $updateStatusLabels[$updateItem->status] ?? $updateItem->status }}</em></div>
-                        <div class="timeline-title-row"><div><h3>{{ $updateItem->title }}</h3><p>{{ $updateItem->description }}</p>@if($updateItem->projectStep)<small class="timeline-step-label">ขั้นตอน: {{ $updateItem->projectStep->name }}</small>@endif</div><strong>{{ $updateItem->progress_percent }}%<small>{{ $updateItem->status === 'published' ? ($updateItem->projectStep ? 'ของขั้นตอน' : 'ที่อนุมัติ') : ($updateItem->projectStep ? 'ของขั้นตอนที่เสนอ' : 'รวมที่เสนอ') }}</small></strong></div>
-                        @if($updateItem->inspection_result || $updateItem->progress_reason)
-                            <div class="timeline-inspection-summary">
-                                @if($updateItem->inspection_result)<span>{{ $inspectionLabels[$updateItem->inspection_result] ?? $updateItem->inspection_result }}</span>@endif
-                                @if($updateItem->progress_reason)<p>{{ $updateItem->progress_reason }}</p>@endif
-                            </div>
-                        @endif
-                        @if($updateItem->media->isNotEmpty())
-                            <div class="timeline-gallery">@foreach($updateItem->media as $media)<a href="{{ route('project-media.show',$media) }}" target="_blank"><img src="{{ route('project-media.show',$media) }}" alt="{{ $media->original_name }}"></a>@endforeach</div>
-                        @endif
-                        @if($updateItem->review_note)
-                            <div class="timeline-review-note"><strong>{{ $updateItem->status === 'changes_requested' ? 'เหตุผลที่ส่งกลับ' : 'หมายเหตุการอนุมัติ' }}</strong><p>{{ $updateItem->review_note }}</p><small>{{ $updateItem->reviewer?->name }} · {{ $updateItem->reviewed_at?->format('d/m/Y H:i') }}</small></div>
-                        @endif
-                        @if($isAdmin && $updateItem->reviewLogs->isNotEmpty())
-                            <details class="timeline-review-history">
-                                <summary>ประวัติการตรวจ {{ $updateItem->reviewLogs->count() }} รายการ</summary>
-                                @foreach($updateItem->reviewLogs as $reviewLog)
-                                    <div><strong>{{ \App\Models\ProjectUpdateReviewLog::ACTION_LABELS[$reviewLog->action] ?? $reviewLog->action }}</strong><span>{{ $reviewLog->actor?->name ?: 'ไม่ระบุผู้ดำเนินการ' }}</span><time>{{ $reviewLog->created_at->format('d/m/Y H:i') }}</time>@if($reviewLog->note)<p>{{ $reviewLog->note }}</p>@endif</div>
-                                @endforeach
-                            </details>
-                        @endif
-                        @if($isAdmin && $updateItem->status === 'pending_review')
-                            <div class="timeline-review-panel">
-                                <form method="POST" action="{{ route('admin.project-updates.approve', [$project, $updateItem]) }}">
-                                    @csrf @method('PUT')
-                                    <label for="approve_note_{{ $updateItem->id }}">หมายเหตุการอนุมัติ (ไม่บังคับ)</label>
-                                    <input id="approve_note_{{ $updateItem->id }}" name="review_note" placeholder="รายละเอียดที่ต้องการบันทึกไว้">
-                                    <button class="button" type="submit" onclick="return confirm('อนุมัติและเผยแพร่อัปเดตนี้ให้ลูกค้าเห็นใช่ไหม?')">อนุมัติและแจ้งลูกค้า</button>
-                                </form>
-                                <form method="POST" action="{{ route('admin.project-updates.request-changes', [$project, $updateItem]) }}">
-                                    @csrf @method('PUT')
-                                    <label for="change_note_{{ $updateItem->id }}">เหตุผลที่ต้องแก้ไข</label>
-                                    <input id="change_note_{{ $updateItem->id }}" name="review_note" required placeholder="ระบุสิ่งที่ผู้ตรวจต้องแก้ไข">
-                                    <button class="button secondary" type="submit">ส่งกลับแก้ไข</button>
-                                </form>
-                            </div>
-                        @endif
-                        <div class="timeline-actions"><small>บันทึกโดย {{ $updateItem->creator?->name ?: 'ไม่ระบุ' }}</small>@if($updateItem->canBeEditedBy(auth()->user()))<a href="{{ route('admin.project-updates.edit',[$project,$updateItem]) }}">แก้ไข</a>@endif @if($isAdmin)<form method="POST" action="{{ route('admin.project-updates.destroy',[$project,$updateItem]) }}" onsubmit="return confirm('ต้องการลบอัปเดตนี้ใช่ไหม?')">@csrf @method('DELETE')<button type="submit">ลบ</button></form>@endif</div>
-                    </div>
-                </article>
-            @empty
-                <div class="project-empty"><h2>ยังไม่มีอัปเดตหน้างาน</h2><p>เพิ่มรูปและรายละเอียดครั้งแรกเพื่อเริ่ม Timeline ของลูกค้า</p><a class="button" href="{{ route('admin.project-updates.create',$project) }}">เพิ่มอัปเดตแรก</a></div>
-            @endforelse
-        </div>
-    </section>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const steps = document.getElementById('project-steps');
+            if (steps) {
+                const key = `project-steps:${steps.dataset.projectStepsKey}`;
+                try {
+                    if (location.hash === '#project-steps' || sessionStorage.getItem(key) === 'open') steps.open = true;
+                    steps.addEventListener('toggle', () => sessionStorage.setItem(key, steps.open ? 'open' : 'closed'));
+                } catch (_) {
+                    if (location.hash === '#project-steps') steps.open = true;
+                }
+            }
+            document.querySelectorAll('[data-update-dialog]').forEach((trigger) => {
+                trigger.addEventListener('click', () => document.getElementById(trigger.dataset.updateDialog)?.showModal());
+            });
+            document.querySelectorAll('.admin-update-dialog').forEach((dialog) => {
+                dialog.querySelectorAll('[data-close-update-dialog]').forEach((button) => {
+                    button.addEventListener('click', () => dialog.close());
+                });
+                dialog.addEventListener('click', (event) => {
+                    if (event.target === dialog) dialog.close();
+                });
+            });
+        });
+    </script>
 </x-admin-layout>

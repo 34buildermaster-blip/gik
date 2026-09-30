@@ -5,6 +5,7 @@ namespace App\Services;
 use Google\Client as GoogleClient;
 use Illuminate\Support\Facades\Http;
 use RuntimeException;
+use Throwable;
 
 class SocialLogin
 {
@@ -56,11 +57,15 @@ class SocialLogin
             $parameters['prompt'] = 'select_account';
         }
 
+        if ($provider === 'line' && in_array($config['bot_prompt'] ?? null, ['normal', 'aggressive'], true)) {
+            $parameters['bot_prompt'] = $config['bot_prompt'];
+        }
+
         return $config['authorize_url'].'?'.http_build_query($parameters, '', '&', PHP_QUERY_RFC3986);
     }
 
     /**
-     * @return array{provider:string, provider_user_id:string, email:?string, name:?string, avatar_url:?string}
+     * @return array{provider:string, provider_user_id:string, email:?string, name:?string, avatar_url:?string, line_notification_ready?:bool}
      */
     public function fetchIdentity(string $provider, string $code, string $nonce): array
     {
@@ -139,7 +144,32 @@ class SocialLogin
             throw new RuntimeException('LINE identity verification failed.');
         }
 
-        return $this->identity('line', $verified->json());
+        $identity = $this->identity('line', $verified->json());
+        $identity['line_notification_ready'] = $this->hasLineFriendship(
+            (string) $token->json('access_token', ''),
+            (string) ($config['friendship_url'] ?? ''),
+        );
+
+        return $identity;
+    }
+
+    private function hasLineFriendship(string $accessToken, string $friendshipUrl): bool
+    {
+        if ($accessToken === '' || $friendshipUrl === '') {
+            return false;
+        }
+
+        try {
+            $response = Http::withToken($accessToken)
+                ->acceptJson()
+                ->connectTimeout(5)
+                ->timeout(12)
+                ->get($friendshipUrl);
+
+            return $response->successful() && $response->json('friendFlag') === true;
+        } catch (Throwable) {
+            return false;
+        }
     }
 
     private function identity(string $provider, array $payload): array

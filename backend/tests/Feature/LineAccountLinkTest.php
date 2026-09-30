@@ -6,6 +6,7 @@ use App\Models\LineAccountLink;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
 
 class LineAccountLinkTest extends TestCase
@@ -58,10 +59,33 @@ class LineAccountLinkTest extends TestCase
             ->assertDontSee('รับแจ้งเตือนความคืบหน้าผ่าน LINE');
     }
 
+    public function test_new_customer_is_prompted_to_connect_line_immediately_after_registration(): void
+    {
+        $this->configureLine();
+
+        $response = $this->post(route('register.store'), [
+            'name' => 'New Customer',
+            'username' => 'new_customer',
+            'email' => 'new-customer@example.com',
+            'password' => 'Password123',
+            'password_confirmation' => 'Password123',
+            'accept_policy' => '1',
+        ]);
+
+        $response->assertRedirect(route('client.projects.index'));
+        $response->assertSessionHas('prompt_line_connect', true);
+
+        $this->get(route('client.projects.index'))
+            ->assertOk()
+            ->assertSee('id="line-onboarding-dialog"', false)
+            ->assertSee('เชื่อม LINE เพื่อไม่พลาดอัปเดตบ้าน')
+            ->assertSee('href="https://line.me/R/ti/p/@example"', false);
+    }
+
     public function test_line_link_guest_is_told_login_will_continue_the_connection(): void
     {
         $this->configureLine();
-        $url = \Illuminate\Support\Facades\URL::temporarySignedRoute(
+        $url = URL::temporarySignedRoute(
             'line.account.connect',
             now()->addMinutes(10),
             ['linkToken' => 'line-link-token'],
@@ -198,7 +222,7 @@ class LineAccountLinkTest extends TestCase
         $this->configureLine();
         $user = User::factory()->create();
 
-        $url = \Illuminate\Support\Facades\URL::temporarySignedRoute(
+        $url = URL::temporarySignedRoute(
             'line.account.connect',
             now()->addMinutes(10),
             ['linkToken' => 'line-link-token'],
@@ -220,7 +244,7 @@ class LineAccountLinkTest extends TestCase
     {
         $this->configureLine();
         $user = User::factory()->create();
-        $url = \Illuminate\Support\Facades\URL::temporarySignedRoute(
+        $url = URL::temporarySignedRoute(
             'line.account.connect',
             now()->addMinutes(10),
             ['linkToken' => 'expired-link-token'],

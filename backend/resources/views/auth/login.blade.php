@@ -87,10 +87,12 @@
                     <label for="password">รหัสผ่าน</label>
                     <input id="password" name="password" type="password" autocomplete="current-password" required @class(['is-invalid' => $errors->has('login') || $errors->has('password')]) @if($errors->has('login') || $errors->has('password')) aria-invalid="true" aria-describedby="login-error" @endif>
                 </div>
-                <label class="auth-remember">
-                    <input name="remember" type="checkbox" value="1">
-                    จดจำการเข้าสู่ระบบบนอุปกรณ์นี้
-                </label>
+                @if($portal === 'customer')
+                    <label class="auth-remember">
+                        <input name="remember" type="checkbox" value="1">
+                        จดจำการเข้าสู่ระบบบนอุปกรณ์นี้
+                    </label>
+                @endif
                 <a class="auth-forgot-link" href="{{ route('password.request') }}">ลืมรหัสผ่าน?</a>
                 <button class="button auth-submit" type="submit">{{ $lineConnectIntent && $portal === 'customer' ? 'เข้าสู่ระบบและเชื่อม LINE' : 'เข้าสู่ระบบ'.$portalData['label'] }}</button>
 

@@ -40,14 +40,23 @@ class SocialLoginTest extends TestCase
         $this->assertStringContainsString(urlencode('https://example.com/auth/google/callback'), $url);
     }
 
+    public function test_line_authorization_requests_add_friend_prompt(): void
+    {
+        $this->configureLine();
+
+        $url = app(SocialLogin::class)->authorizationUrl('line', 'state-value', 'nonce-value');
+
+        $this->assertStringContainsString('bot_prompt=aggressive', $url);
+    }
+
     public function test_line_id_token_is_verified_by_line_before_identity_is_used(): void
     {
-        config()->set('social_login.line.enabled', true);
-        config()->set('social_login.line.client_id', 'line-channel-id');
-        config()->set('social_login.line.client_secret', 'line-channel-secret');
-        config()->set('social_login.line.redirect_uri', 'https://example.com/auth/line/callback');
+        $this->configureLine();
         Http::fake([
-            'https://api.line.me/oauth2/v2.1/token' => Http::response(['id_token' => 'signed-id-token']),
+            'https://api.line.me/oauth2/v2.1/token' => Http::response([
+                'id_token' => 'signed-id-token',
+                'access_token' => 'line-access-token',
+            ]),
             'https://api.line.me/oauth2/v2.1/verify' => Http::response([
                 'sub' => 'line-user-1',
                 'name' => 'LINE Customer',
@@ -55,13 +64,15 @@ class SocialLoginTest extends TestCase
                 'picture' => 'https://example.com/avatar.jpg',
                 'nonce' => 'valid-nonce',
             ]),
+            'https://api.line.me/friendship/v1/status' => Http::response(['friendFlag' => true]),
         ]);
 
         $identity = app(SocialLogin::class)->fetchIdentity('line', 'authorization-code', 'valid-nonce');
 
         $this->assertSame('line-user-1', $identity['provider_user_id']);
         $this->assertSame('line@example.com', $identity['email']);
-        Http::assertSentCount(2);
+        $this->assertTrue($identity['line_notification_ready']);
+        Http::assertSentCount(3);
     }
 
     public function test_social_login_rejects_an_invalid_callback_state(): void
@@ -136,7 +147,7 @@ class SocialLoginTest extends TestCase
         $this->assertGuest();
         $this->assertDatabaseMissing('social_identities', ['user_id' => $user->id]);
 
-        $this->post(route('social.complete.store'), [
+        $response = $this->post(route('social.complete.store'), [
             'email' => 'customer@example.com',
             'password' => 'password',
         ])->assertRedirect(route('client.projects.index'));
@@ -146,6 +157,35 @@ class SocialLoginTest extends TestCase
             'user_id' => $user->id,
             'provider' => 'line',
             'provider_user_id' => 'line-user-1',
+        ]);
+        $response->assertSessionHas('prompt_line_connect', true);
+    }
+
+    public function test_line_login_automatically_connects_notifications_for_an_official_account_friend(): void
+    {
+        $lineUserId = 'U'.str_repeat('a', 32);
+        $user = User::factory()->create(['line_recipient_id' => null]);
+        SocialIdentity::create([
+            'user_id' => $user->id,
+            'provider' => 'line',
+            'provider_user_id' => $lineUserId,
+        ]);
+        $this->mockProfile('line', $this->lineProfile($user->email, $lineUserId, true));
+
+        $response = $this->withSession([
+            'auth.social.flow.line' => $this->flow('valid-state'),
+        ])->get(route('social.callback', [
+            'provider' => 'line',
+            'code' => 'authorization-code',
+            'state' => 'valid-state',
+        ]));
+
+        $response->assertRedirect(route('client.projects.index'));
+        $response->assertSessionMissing('prompt_line_connect');
+        $this->assertSame($lineUserId, $user->fresh()->line_recipient_id);
+        $this->assertDatabaseHas('audit_logs', [
+            'user_id' => $user->id,
+            'action' => 'line.account_connected',
         ]);
     }
 
@@ -181,6 +221,7 @@ class SocialLoginTest extends TestCase
             'provider' => 'google',
             'provider_user_id' => 'google-user-1',
         ]);
+        $response->assertSessionHas('prompt_line_connect', true);
     }
 
     public function test_social_login_still_requires_enabled_two_factor_authentication(): void
@@ -215,6 +256,15 @@ class SocialLoginTest extends TestCase
         config()->set('social_login.google.client_id', 'google-client-id');
         config()->set('social_login.google.client_secret', 'google-client-secret');
         config()->set('social_login.google.redirect_uri', 'https://example.com/auth/google/callback');
+    }
+
+    private function configureLine(): void
+    {
+        config()->set('social_login.line.enabled', true);
+        config()->set('social_login.line.client_id', 'line-channel-id');
+        config()->set('social_login.line.client_secret', 'line-channel-secret');
+        config()->set('social_login.line.redirect_uri', 'https://example.com/auth/line/callback');
+        config()->set('social_login.line.bot_prompt', 'aggressive');
     }
 
     private function mockProfile(string $provider, array $profile): void
@@ -256,14 +306,18 @@ class SocialLoginTest extends TestCase
         ];
     }
 
-    private function lineProfile(?string $email): array
-    {
+    private function lineProfile(
+        ?string $email,
+        string $providerUserId = 'line-user-1',
+        bool $notificationReady = false,
+    ): array {
         return [
             'provider' => 'line',
-            'provider_user_id' => 'line-user-1',
+            'provider_user_id' => $providerUserId,
             'email' => $email,
             'name' => 'LINE Customer',
             'avatar_url' => 'https://example.com/line-avatar.jpg',
+            'line_notification_ready' => $notificationReady,
         ];
     }
 
