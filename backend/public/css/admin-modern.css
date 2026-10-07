@@ -3603,6 +3603,9 @@ textarea {
 .calendar-more { color: var(--green); font-size: 8px; font-weight: 700; }
 .calendar-form { display: grid; gap: 12px; }
 .calendar-form-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.calendar-form-row > .field { min-width: 0; }
+.calendar-form-row input,
+.calendar-form-row select { display: block; width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box; }
 .calendar-form .button { width: 100%; justify-content: center; }
 .calendar-checkbox { display: flex; align-items: flex-start; gap: 9px; color: var(--deep); font-size: 10px; }
 .calendar-checkbox input { width: 16px; height: 16px; margin-top: 1px; accent-color: var(--green); }

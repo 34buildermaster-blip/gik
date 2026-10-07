@@ -32,6 +32,7 @@ class ProjectCalendarController extends Controller
 
         $events = ProjectEvent::query()
             ->whereIn('project_id', $projectIds)
+            ->where('status', '<>', 'cancelled')
             ->whereBetween('starts_at', [$gridStart, $gridEnd])
             ->with(['project:id,code,name', 'assignee:id,name'])
             ->orderBy('starts_at')

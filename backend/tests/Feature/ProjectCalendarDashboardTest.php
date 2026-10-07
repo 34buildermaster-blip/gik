@@ -114,6 +114,37 @@ class ProjectCalendarDashboardTest extends TestCase
         Notification::assertSentToTimes($customer, ProjectEventNotification::class, 1);
     }
 
+    public function test_cancelled_event_is_not_rendered_on_calendar_grid(): void
+    {
+        Notification::fake();
+        $admin = User::factory()->admin()->create();
+        $project = $this->project(['manager_id' => $admin->id]);
+        $startsAt = now()->addDays(3)->startOfHour();
+        $event = ProjectEvent::create([
+            'project_id' => $project->id,
+            'created_by' => $admin->id,
+            'title' => 'นัดหมายที่ยกเลิกแล้ว',
+            'type' => 'site_inspection',
+            'starts_at' => $startsAt,
+            'status' => 'scheduled',
+            'customer_visible' => true,
+        ]);
+
+        $this->actingAs($admin)->put(route('admin.calendar.update', $event), [
+            'project_id' => $project->id,
+            'title' => $event->title,
+            'type' => $event->type,
+            'starts_at' => $startsAt->format('Y-m-d H:i:s'),
+            'status' => 'cancelled',
+            'customer_visible' => 1,
+        ])->assertRedirect();
+
+        $this->actingAs($admin)
+            ->get(route('admin.calendar.index', ['month' => $startsAt->format('Y-m')]))
+            ->assertOk()
+            ->assertDontSee($event->title);
+    }
+
     public function test_dashboard_surfaces_overdue_work_and_upcoming_events(): void
     {
         $admin = User::factory()->admin()->create();
