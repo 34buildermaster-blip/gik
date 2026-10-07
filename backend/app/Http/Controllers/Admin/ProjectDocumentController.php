@@ -22,6 +22,7 @@ class ProjectDocumentController extends Controller
             'version' => ['required', 'string', 'max:40'],
             'visibility' => ['required', Rule::in(array_keys(ProjectDocument::VISIBILITY_LABELS))],
             'notes' => ['nullable', 'string', 'max:2000'],
+            'requires_acknowledgement' => ['nullable', 'boolean'],
             'file' => ['required', 'file', 'max:20480', 'mimes:pdf,docx,xlsx,csv,jpg,jpeg,png,webp'],
         ]);
 
@@ -34,6 +35,7 @@ class ProjectDocumentController extends Controller
             'version' => $data['version'],
             'visibility' => $data['visibility'],
             'notes' => $data['notes'] ?? null,
+            'requires_acknowledgement' => $request->boolean('requires_acknowledgement'),
         ]);
 
         AuditLog::record($request->user(), 'project_document.created', $document, "เพิ่มเอกสาร {$document->title}", ['project_id' => $project->id]);

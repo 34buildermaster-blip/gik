@@ -26,6 +26,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'review_note',
     'published_at',
     'notified_at',
+    'requires_acknowledgement',
 ])]
 class ProjectUpdate extends Model
 {
@@ -56,6 +57,7 @@ class ProjectUpdate extends Model
             'reviewed_at' => 'datetime',
             'published_at' => 'datetime',
             'notified_at' => 'datetime',
+            'requires_acknowledgement' => 'boolean',
         ];
     }
 
@@ -92,6 +94,11 @@ class ProjectUpdate extends Model
     public function reviewLogs(): HasMany
     {
         return $this->hasMany(ProjectUpdateReviewLog::class)->latest('id');
+    }
+
+    public function inquiries(): HasMany
+    {
+        return $this->hasMany(ProjectInquiry::class);
     }
 
     public function canBeEditedBy(User $user): bool

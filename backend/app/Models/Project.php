@@ -79,6 +79,16 @@ class Project extends Model
         return $this->hasMany(ProjectIssue::class)->latest();
     }
 
+    public function inquiries(): HasMany
+    {
+        return $this->hasMany(ProjectInquiry::class)->latest('last_message_at');
+    }
+
+    public function acknowledgements(): HasMany
+    {
+        return $this->hasMany(ProjectAcknowledgement::class);
+    }
+
     public function stepWeightTotal(): int
     {
         return (int) $this->steps()->sum('weight_percent');

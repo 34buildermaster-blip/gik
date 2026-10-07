@@ -7,6 +7,41 @@
         <div><p class="eyebrow">MY PROJECTS</p><h1>งานของฉัน</h1><p class="muted">ติดตามสถานะ ความคืบหน้า และรูปอัปเดตล่าสุดจากทีมงาน</p></div>
     </div>
 
+    @php
+        $taskCount = (int) $taskCenter['profile_incomplete']
+            + (int) $taskCenter['line_incomplete']
+            + (int) ($taskCenter['unread_updates'] > 0)
+            + (int) ($taskCenter['pending_acknowledgements'] > 0)
+            + (int) ($taskCenter['answered_inquiries'] > 0);
+    @endphp
+    <section class="card client-action-center" aria-labelledby="client-action-center-title">
+        <div class="client-action-center-heading">
+            <div><p class="eyebrow">ACTION CENTER</p><h2 id="client-action-center-title">สิ่งที่ควรทำตอนนี้</h2><p>รวมรายการสำคัญไว้ให้กดดำเนินการได้ทันที</p></div>
+            <span class="client-action-count {{ $taskCount === 0 ? 'is-complete' : '' }}">{{ $taskCount === 0 ? 'เรียบร้อยทั้งหมด' : $taskCount.' รายการ' }}</span>
+        </div>
+        @if($taskCount > 0)
+            <div class="client-action-list">
+                @if($taskCenter['profile_incomplete'])
+                    <a href="{{ route('admin.profile.edit') }}#profile-details"><span class="client-action-icon"><x-ui-icon name="user" /></span><span><strong>กรอกข้อมูลติดต่อให้ครบ</strong><small>ช่วยให้ทีมงานติดต่อและจัดทำเอกสารได้ถูกต้อง</small></span><b>กรอกข้อมูล <x-ui-icon name="arrow-right" /></b></a>
+                @endif
+                @if($taskCenter['line_incomplete'])
+                    <a href="{{ route('admin.profile.edit') }}#line-account"><span class="client-action-icon"><x-ui-icon name="line" /></span><span><strong>เชื่อม LINE เพื่อรับแจ้งเตือน</strong><small>รับข่าวทันทีหลัง Admin อนุมัติอัปเดตหน้างาน</small></span><b>เชื่อม LINE <x-ui-icon name="arrow-right" /></b></a>
+                @endif
+                @if($taskCenter['unread_updates'] > 0 && $taskCenter['unread_project_id'])
+                    <a href="{{ route('client.projects.show', $taskCenter['unread_project_id']) }}#client-project-updates"><span class="client-action-icon"><x-ui-icon name="bell" /></span><span><strong>มี {{ $taskCenter['unread_updates'] }} อัปเดตใหม่</strong><small>ดูรูปและรายละเอียดงานล่าสุดจากทีมงาน</small></span><b>เปิดดู <x-ui-icon name="arrow-right" /></b></a>
+                @endif
+                @if($taskCenter['pending_acknowledgements'] > 0 && $taskCenter['acknowledgement_project_id'])
+                    <a href="{{ route('client.projects.show', $taskCenter['acknowledgement_project_id']) }}#{{ $taskCenter['acknowledgement_anchor'] }}"><span class="client-action-icon"><x-ui-icon name="file" /></span><span><strong>รอยืนยันรับทราบ {{ $taskCenter['pending_acknowledgements'] }} รายการ</strong><small>ตรวจอัปเดตหรือเอกสารสำคัญแล้วกดยืนยัน</small></span><b>ตรวจรายการ <x-ui-icon name="arrow-right" /></b></a>
+                @endif
+                @if($taskCenter['answered_inquiries'] > 0 && $taskCenter['inquiry_project_id'])
+                    <a href="{{ route('client.projects.show', ['project' => $taskCenter['inquiry_project_id'], 'inquiry' => $taskCenter['inquiry_id']]) }}#project-inquiries"><span class="client-action-icon"><x-ui-icon name="message-circle" /></span><span><strong>ทีมงานตอบแล้ว {{ $taskCenter['answered_inquiries'] }} เรื่อง</strong><small>เปิดอ่านคำตอบและสอบถามเพิ่มเติมได้ทันที</small></span><b>ดูคำตอบ <x-ui-icon name="arrow-right" /></b></a>
+                @endif
+            </div>
+        @else
+            <div class="client-action-complete"><span><x-ui-icon name="check" /></span><div><strong>ไม่มีรายการค้าง</strong><p>ข้อมูลและอัปเดตสำคัญของคุณเรียบร้อยแล้ว</p></div></div>
+        @endif
+    </section>
+
     @if(blank(auth()->user()->line_recipient_id))
         <section class="card client-line-onboarding" aria-labelledby="client-line-title">
             <span class="client-line-onboarding-icon" aria-hidden="true"><x-ui-icon name="line" /></span>

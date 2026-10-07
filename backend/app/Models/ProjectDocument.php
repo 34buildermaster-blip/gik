@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['project_id', 'stored_file_id', 'uploaded_by', 'title', 'category', 'version', 'visibility', 'notes'])]
+#[Fillable(['project_id', 'stored_file_id', 'uploaded_by', 'title', 'category', 'version', 'visibility', 'notes', 'requires_acknowledgement'])]
 class ProjectDocument extends Model
 {
     public const CATEGORY_LABELS = [
@@ -36,5 +36,10 @@ class ProjectDocument extends Model
     public function uploader(): BelongsTo
     {
         return $this->belongsTo(User::class, 'uploaded_by');
+    }
+
+    protected function casts(): array
+    {
+        return ['requires_acknowledgement' => 'boolean'];
     }
 }

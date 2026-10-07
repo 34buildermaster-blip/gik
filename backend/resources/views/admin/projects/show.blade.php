@@ -135,6 +135,7 @@
                 <div class="field"><label for="document_visibility">การมองเห็น</label><select id="document_visibility" name="visibility">@foreach($documentVisibilityLabels as $value => $label)<option value="{{ $value }}">{{ $label }}</option>@endforeach</select></div>
                 <div class="field"><label for="document_file">ไฟล์ (ไม่เกิน 20 MB)</label><input id="document_file" name="file" type="file" required></div>
                 <div class="field launch-wide"><label for="document_notes">หมายเหตุ</label><input id="document_notes" name="notes"></div>
+                <label class="launch-check"><input name="requires_acknowledgement" type="checkbox" value="1"> ให้ลูกค้ายืนยันรับทราบ</label>
                 <button class="button" type="submit">เพิ่มเอกสาร</button>
             </form>
         @endif
@@ -185,6 +186,8 @@
             @endforelse
         </div>
     </section>
+
+    @include('client.projects._inquiries', ['isStaff' => true])
 
     @if($isAdmin)
     <section class="card panel project-customers-panel">

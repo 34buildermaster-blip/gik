@@ -6,6 +6,15 @@
         <div class="client-project-dates"><div><span>เริ่มงาน</span><strong>{{ $project->start_date?->format('d/m/Y') ?: '-' }}</strong></div><div><span>กำหนดส่ง</span><strong>{{ $project->estimated_end_date?->format('d/m/Y') ?: '-' }}</strong></div><div><span>ผู้ดูแลโครงการ</span><strong>{{ $project->manager?->name ?: 'ทีม 34 Build Master' }}</strong></div></div>
     </section>
 
+    <section class="card client-next-step {{ $nextStep ? '' : 'is-complete' }}">
+        <div><p class="eyebrow">NEXT STEP</p><h2>{{ $nextStep ? 'ขั้นตอนถัดไปของโครงการ' : 'ขั้นตอนตามแผนเสร็จครบแล้ว' }}</h2></div>
+        @if($nextStep)
+            <div class="client-next-step-detail"><span>{{ str_pad((string) ($project->steps->search(fn ($step) => $step->is($nextStep)) + 1), 2, '0', STR_PAD_LEFT) }}</span><div><strong>{{ $nextStep->name }}</strong><p>{{ $nextStep->description ?: 'ทีมงานจะอัปเดตรายละเอียดเมื่อเริ่มดำเนินการ' }}</p></div><div><small>กำหนดการ</small><b>{{ $nextStep->planned_start_date?->format('d/m/Y') ?: '-' }} ถึง {{ $nextStep->planned_end_date?->format('d/m/Y') ?: '-' }}</b></div></div>
+        @else
+            <p>ติดตามรายละเอียดการตรวจรับและเอกสารส่งมอบได้จากรายการด้านล่าง</p>
+        @endif
+    </section>
+
     @php($hasConfiguredSteps = $project->steps->isNotEmpty() && (int) $project->steps->sum('weight_percent') === 100)
 
     @if($hasConfiguredSteps)
@@ -111,6 +120,14 @@
 
                         <footer class="client-update-dialog-footer">
                             <span>เผยแพร่ {{ $updateItem->published_at?->locale('th')->diffForHumans() }}</span>
+                            <a class="button secondary" href="{{ route('client.projects.show', ['project' => $project, 'ask_update' => $updateItem->id]) }}#project-inquiries"><x-ui-icon name="message-circle" /> สอบถามทีมงาน</a>
+                            @if($updateItem->requires_acknowledgement)
+                                @if(in_array($updateItem->id, $acknowledgedUpdateIds, true))
+                                    <span class="client-acknowledged"><x-ui-icon name="check" /> รับทราบแล้ว</span>
+                                @else
+                                    <form method="POST" action="{{ route('client.projects.acknowledge', [$project, 'update', $updateItem->id]) }}">@csrf<button class="button" type="submit"><x-ui-icon name="check" /> ยืนยันรับทราบ</button></form>
+                                @endif
+                            @endif
                             <button type="button" class="button secondary" data-close-update-dialog>ปิดหน้าต่าง</button>
                         </footer>
                     </div>
@@ -123,13 +140,20 @@
     </div>
 
     <div class="client-support-grid">
-        <section class="card panel launch-panel">
+        <section class="card panel launch-panel" id="client-project-documents">
             <div class="panel-heading"><div><p class="eyebrow">DOCUMENTS</p><h2>เอกสารของโครงการ</h2><p>เอกสารฉบับที่ทีมงานเปิดให้ลูกค้าตรวจสอบ</p></div><span class="client-update-count">{{ $project->documents->count() }} ไฟล์</span></div>
             <div class="launch-list">
                 @forelse($project->documents as $document)
-                    <a class="launch-list-row" href="{{ route('project-documents.show', $document) }}" target="_blank">
-                        <div><strong>{{ $document->title }}</strong><small>{{ $documentCategoryLabels[$document->category] }} · v{{ $document->version }}</small></div><span>เปิดไฟล์ <x-ui-icon name="arrow-right" /></span>
-                    </a>
+                    <div class="launch-list-row client-document-row">
+                        <a href="{{ route('project-documents.show', $document) }}" target="_blank"><div><strong>{{ $document->title }}</strong><small>{{ $documentCategoryLabels[$document->category] }} · v{{ $document->version }}</small></div><span>เปิดไฟล์ <x-ui-icon name="arrow-right" /></span></a>
+                        @if($document->requires_acknowledgement)
+                            @if(in_array($document->id, $acknowledgedDocumentIds, true))
+                                <span class="client-acknowledged"><x-ui-icon name="check" /> รับทราบแล้ว</span>
+                            @else
+                                <form method="POST" action="{{ route('client.projects.acknowledge', [$project, 'document', $document->id]) }}">@csrf<button class="button secondary" type="submit">ยืนยันรับทราบ</button></form>
+                            @endif
+                        @endif
+                    </div>
                 @empty
                     <div class="client-empty-state compact"><h2>ยังไม่มีเอกสาร</h2><p>เอกสารที่พร้อมเผยแพร่จะปรากฏในส่วนนี้</p></div>
                 @endforelse
@@ -152,6 +176,8 @@
             </div>
         </section>
     </div>
+
+    @include('client.projects._inquiries', ['isStaff' => false])
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
 use App\Models\Project;
 use App\Models\ProjectDocument;
+use App\Models\ProjectInquiry;
 use App\Models\ProjectIssue;
 use App\Models\ProjectStep;
 use App\Models\ProjectUpdate;
@@ -96,6 +97,10 @@ class ProjectController extends Controller
             'issues.projectStep:id,name',
             'issues.creator:id,name',
             'issues.assignee:id,name',
+            'inquiries.customer:id,name,email',
+            'inquiries.projectUpdate:id,title',
+            'inquiries.messages.sender:id,name,role',
+            'inquiries.messages.attachments.file',
         ]);
 
         $stepWeightTotal = (int) $project->steps->sum('weight_percent');
@@ -114,6 +119,7 @@ class ProjectController extends Controller
             'documentVisibilityLabels' => ProjectDocument::VISIBILITY_LABELS,
             'issueStatusLabels' => ProjectIssue::STATUS_LABELS,
             'issuePriorityLabels' => ProjectIssue::PRIORITY_LABELS,
+            'inquiryStatusLabels' => ProjectInquiry::STATUS_LABELS,
             'staffUsers' => User::whereIn('role', ['admin', 'inspector'])->orderBy('name')->get(['id', 'name', 'role']),
         ]);
     }

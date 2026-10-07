@@ -37,6 +37,11 @@
             @if($update->review_note)
                 <div class="review-feedback"><strong>หมายเหตุจาก Admin</strong><p>{{ $update->review_note }}</p><small>{{ $update->reviewed_at?->format('d/m/Y H:i') }}</small></div>
             @endif
+
+            <label class="launch-check">
+                <input name="requires_acknowledgement" type="checkbox" value="1" @checked(old('requires_acknowledgement', $update->requires_acknowledgement))>
+                ต้องการให้ลูกค้ากดยืนยันรับทราบอัปเดตนี้
+            </label>
         </div>
 
         <aside class="site-update-media-panel">

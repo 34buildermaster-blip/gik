@@ -53,6 +53,15 @@
         @case('check')
             <path d="M20 6 9 17l-5-5" />
             @break
+        @case('user')
+            <path d="M20 21a8 8 0 0 0-16 0" /><circle cx="12" cy="7" r="4" />
+            @break
+        @case('bell')
+            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" /><path d="M10 21h4" />
+            @break
+        @case('file')
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" /><path d="M14 2v6h6" /><path d="M8 13h8M8 17h8" />
+            @break
         @case('shield')
             <path d="M20 13c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V5l8-3 8 3Z" /><path d="M9 12h6" />
             @break

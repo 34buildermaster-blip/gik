@@ -37,6 +37,12 @@ class NotificationController extends Controller
 
         abort_unless($projectId, 404);
 
+        if (isset($item->data['inquiry_id'])) {
+            $route = $request->user()->isStaff() ? 'admin.projects.show' : 'client.projects.show';
+
+            return redirect()->to(route($route, ['project' => $projectId, 'inquiry' => $item->data['inquiry_id']]).'#project-inquiries');
+        }
+
         return redirect()->route(
             $request->user()->isStaff() ? 'admin.projects.show' : 'client.projects.show',
             $projectId,

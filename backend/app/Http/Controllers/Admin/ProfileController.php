@@ -51,10 +51,20 @@ class ProfileController extends Controller
             'name' => ['required', 'string', 'max:120'],
             'username' => ['nullable', 'string', 'max:80', 'alpha_dash', Rule::unique('users')->ignore($user->id)],
             'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
+            'phone' => [$user->role === 'user' ? 'required' : 'nullable', 'string', 'max:30'],
+            'address' => [$user->role === 'user' ? 'required' : 'nullable', 'string', 'max:1000'],
+            'billing_name' => ['nullable', 'string', 'max:255'],
+            'tax_id' => ['nullable', 'string', 'max:30'],
+            'preferred_contact_channel' => ['nullable', Rule::in(array_keys(User::CONTACT_CHANNEL_LABELS))],
+            'emergency_contact_name' => ['nullable', 'string', 'max:255'],
+            'emergency_contact_phone' => ['nullable', 'string', 'max:30'],
             'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ]);
 
         unset($validated['avatar']);
+        if ($user->role === 'user' && blank($validated['tax_id'] ?? null) && filled($user->tax_id)) {
+            unset($validated['tax_id']);
+        }
         $oldAvatarFile = null;
         $oldAvatarPath = null;
 

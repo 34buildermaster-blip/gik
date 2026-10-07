@@ -236,6 +236,7 @@ class ProjectUpdateController extends Controller
             'progress_reason' => ['nullable', 'string', 'max:2000'],
             'work_performed_at' => ['required', 'date'],
             'workflow_action' => ['required', Rule::in(['save_draft', 'submit_review'])],
+            'requires_acknowledgement' => ['nullable', 'boolean'],
             'images' => ['nullable', 'array', 'max:10'],
             'images.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:15360'],
         ]);
@@ -246,6 +247,7 @@ class ProjectUpdateController extends Controller
         unset($data['images']);
         $workflowAction = $data['workflow_action'];
         unset($data['workflow_action']);
+        $data['requires_acknowledgement'] = $request->boolean('requires_acknowledgement');
         $data['created_by'] = $update?->created_by ?? $request->user()->id;
         $data['status'] = $workflowAction === 'submit_review' ? 'pending_review' : 'draft';
         $data['submitted_at'] = $workflowAction === 'submit_review' ? now() : $update?->submitted_at;

@@ -34,6 +34,8 @@ class ProfileTest extends TestCase
                 'name' => 'Build Master Admin',
                 'username' => 'buildmaster_admin',
                 'email' => 'admin@34buildmaster.test',
+                'phone' => '0812345678',
+                'address' => '34 Build Master, Chiang Mai',
                 'avatar' => $avatar,
             ])
             ->assertSessionHasNoErrors()
@@ -43,6 +45,8 @@ class ProfileTest extends TestCase
         $this->assertSame('Build Master Admin', $user->name);
         $this->assertSame('buildmaster_admin', $user->username);
         $this->assertSame('admin@34buildmaster.test', $user->email);
+        $this->assertSame('0812345678', $user->phone);
+        $this->assertSame('34 Build Master, Chiang Mai', $user->address);
         $this->assertNull($user->email_verified_at);
         $this->assertNotNull($user->avatar_file_id);
         $this->assertNull($user->avatar_path);

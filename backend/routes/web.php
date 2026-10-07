@@ -24,6 +24,8 @@ use App\Http\Controllers\ClientProjectController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\LineAccountLinkController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ProjectInquiryMediaController;
+use App\Http\Controllers\ProjectInteractionController;
 use App\Http\Controllers\ProjectIssueMediaController;
 use App\Http\Controllers\ProjectMediaController;
 use App\Http\Controllers\PublicSiteController;
@@ -108,6 +110,12 @@ Route::middleware('auth')->group(function (): void {
         ->middleware('throttle:30,1')
         ->name('project-documents.show');
     Route::get('/project-issue-media/{media}', [ProjectIssueMediaController::class, 'show'])->name('project-issue-media.show');
+    Route::get('/project-inquiry-media/{attachment}', [ProjectInquiryMediaController::class, 'show'])->name('project-inquiry-media.show');
+    Route::post('/projects/{project}/inquiries/{inquiry}/messages', [ProjectInteractionController::class, 'reply'])
+        ->middleware('throttle:15,1')
+        ->name('project-inquiries.messages.store');
+    Route::put('/projects/{project}/inquiries/{inquiry}/status', [ProjectInteractionController::class, 'updateStatus'])
+        ->name('project-inquiries.status');
     Route::get('/line/connect', [LineAccountLinkController::class, 'connect'])
         ->middleware('throttle:10,1')
         ->name('line.account.connect');
@@ -118,6 +126,13 @@ Route::middleware('auth')->group(function (): void {
 Route::middleware(['auth', 'role:user'])->group(function (): void {
     Route::get('/my-projects', [ClientProjectController::class, 'index'])->name('client.projects.index');
     Route::get('/my-projects/{project}', [ClientProjectController::class, 'show'])->name('client.projects.show');
+    Route::post('/my-projects/{project}/acknowledgements/{type}/{target}', [ProjectInteractionController::class, 'acknowledge'])
+        ->whereIn('type', ['document', 'update'])
+        ->whereNumber('target')
+        ->name('client.projects.acknowledge');
+    Route::post('/my-projects/{project}/inquiries', [ProjectInteractionController::class, 'storeInquiry'])
+        ->middleware('throttle:10,1')
+        ->name('client.projects.inquiries.store');
 });
 
 Route::middleware('auth')

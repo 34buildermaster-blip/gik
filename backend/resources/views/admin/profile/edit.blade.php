@@ -42,7 +42,7 @@
                 @include('admin.profile._two-factor')
             @endif
 
-            <section class="card profile-form-card">
+            <section class="card profile-form-card" id="profile-details">
                 <div class="profile-card-heading">
                     <span class="profile-heading-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21a8 8 0 0 0-16 0"></path><circle cx="12" cy="7" r="4"></circle></svg></span>
                     <div><h2>ข้อมูลส่วนตัว</h2><p>ข้อมูลนี้ใช้แสดงในระบบจัดการเว็บไซต์</p></div>
@@ -86,6 +86,30 @@
                             <input id="email" name="email" type="email" value="{{ old('email', $user->email) }}" autocomplete="email" required>
                             @error('email') <small class="field-error">{{ $message }}</small> @enderror
                         </div>
+                        @if($user->role === 'user')
+                            <div class="field">
+                                <label for="phone">เบอร์โทรศัพท์ <span aria-hidden="true">*</span></label>
+                                <input id="phone" name="phone" type="tel" value="{{ old('phone', $user->phone) }}" autocomplete="tel" required>
+                                @error('phone') <small class="field-error">{{ $message }}</small> @enderror
+                            </div>
+                            <div class="field">
+                                <label for="preferred_contact_channel">ช่องทางติดต่อที่สะดวก</label>
+                                <select id="preferred_contact_channel" name="preferred_contact_channel">
+                                    @foreach(\App\Models\User::CONTACT_CHANNEL_LABELS as $value => $label)
+                                        <option value="{{ $value }}" @selected(old('preferred_contact_channel', $user->preferred_contact_channel) === $value)>{{ $label }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="field full">
+                                <label for="address">ที่อยู่สำหรับติดต่อ <span aria-hidden="true">*</span></label>
+                                <textarea id="address" name="address" rows="3" required>{{ old('address', $user->address) }}</textarea>
+                                @error('address') <small class="field-error">{{ $message }}</small> @enderror
+                            </div>
+                            <div class="field"><label for="billing_name">ชื่อสำหรับออกเอกสาร</label><input id="billing_name" name="billing_name" value="{{ old('billing_name', $user->billing_name) }}"></div>
+                            <div class="field"><label for="tax_id">เลขประจำตัวผู้เสียภาษี</label><input id="tax_id" name="tax_id" value="{{ old('tax_id') }}" placeholder="{{ $user->maskedTaxId() ?: 'กรอกเมื่อจำเป็น' }}"></div>
+                            <div class="field"><label for="emergency_contact_name">ผู้ติดต่อสำรอง</label><input id="emergency_contact_name" name="emergency_contact_name" value="{{ old('emergency_contact_name', $user->emergency_contact_name) }}"></div>
+                            <div class="field"><label for="emergency_contact_phone">เบอร์ผู้ติดต่อสำรอง</label><input id="emergency_contact_phone" name="emergency_contact_phone" type="tel" value="{{ old('emergency_contact_phone', $user->emergency_contact_phone) }}"></div>
+                        @endif
                     </div>
 
                     <div class="profile-form-actions"><button class="button" type="submit">บันทึกข้อมูล</button></div>

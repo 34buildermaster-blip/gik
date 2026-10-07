@@ -47,6 +47,8 @@ class User extends Authenticatable
         'project_update_changes_requested' => 'งานถูกส่งกลับให้แก้ไข',
         'project_update_approved' => 'อัปเดตโครงการผ่านการอนุมัติ',
         'contact_lead_submitted' => 'ผู้ติดต่อใหม่จากเว็บไซต์',
+        'customer_message_received' => 'ลูกค้าส่งคำถามใหม่',
+        'staff_message_received' => 'ทีมงานตอบคำถาม',
     ];
 
     /** @use HasFactory<UserFactory> */
@@ -118,9 +120,9 @@ class User extends Authenticatable
     public function availableNotificationEvents(): array
     {
         return match ($this->role) {
-            'admin' => ['project_update_submitted', 'contact_lead_submitted'],
-            'inspector' => ['project_update_changes_requested'],
-            default => ['project_update_approved'],
+            'admin' => ['project_update_submitted', 'contact_lead_submitted', 'customer_message_received'],
+            'inspector' => ['project_update_changes_requested', 'customer_message_received'],
+            default => ['project_update_approved', 'staff_message_received'],
         };
     }
 
@@ -182,6 +184,16 @@ class User extends Authenticatable
     public function projectUpdatesRead(): BelongsToMany
     {
         return $this->belongsToMany(ProjectUpdate::class, 'project_update_reads')->withPivot('read_at');
+    }
+
+    public function projectAcknowledgements(): HasMany
+    {
+        return $this->hasMany(ProjectAcknowledgement::class);
+    }
+
+    public function projectInquiries(): HasMany
+    {
+        return $this->hasMany(ProjectInquiry::class, 'customer_id');
     }
 
     /**
