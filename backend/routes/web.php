@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\HomeSlideController;
 use App\Http\Controllers\Admin\HouseDesignController;
 use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\ProjectCalendarController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\ProjectDocumentController;
 use App\Http\Controllers\Admin\ProjectIssueController;
@@ -152,6 +153,9 @@ Route::middleware('auth')
 
         Route::middleware(['role:admin,inspector', 'staff.2fa'])->group(function (): void {
             Route::get('/', DashboardController::class)->name('dashboard');
+            Route::get('/calendar', [ProjectCalendarController::class, 'index'])->name('calendar.index');
+            Route::post('/calendar', [ProjectCalendarController::class, 'store'])->name('calendar.store');
+            Route::put('/calendar/{event}', [ProjectCalendarController::class, 'update'])->name('calendar.update');
             Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
             Route::get('/projects/{project}', [ProjectController::class, 'show'])->whereNumber('project')->name('projects.show');
             Route::get('/projects/{project}/updates/create', [ProjectUpdateController::class, 'create'])->name('project-updates.create');

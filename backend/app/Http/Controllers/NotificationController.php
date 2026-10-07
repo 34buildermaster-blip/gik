@@ -43,6 +43,14 @@ class NotificationController extends Controller
             return redirect()->to(route($route, ['project' => $projectId, 'inquiry' => $item->data['inquiry_id']]).'#project-inquiries');
         }
 
+        if (isset($item->data['project_event_id'])) {
+            if ($request->user()->isStaff()) {
+                return redirect()->route('admin.calendar.index', ['event' => $item->data['project_event_id']]);
+            }
+
+            return redirect()->to(route('client.projects.show', $projectId).'#project-calendar');
+        }
+
         return redirect()->route(
             $request->user()->isStaff() ? 'admin.projects.show' : 'client.projects.show',
             $projectId,

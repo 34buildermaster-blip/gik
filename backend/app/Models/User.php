@@ -49,6 +49,7 @@ class User extends Authenticatable
         'contact_lead_submitted' => 'ผู้ติดต่อใหม่จากเว็บไซต์',
         'customer_message_received' => 'ลูกค้าส่งคำถามใหม่',
         'staff_message_received' => 'ทีมงานตอบคำถาม',
+        'project_event_reminder' => 'กำหนดการและแจ้งเตือนนัดหมาย',
     ];
 
     /** @use HasFactory<UserFactory> */
@@ -120,9 +121,9 @@ class User extends Authenticatable
     public function availableNotificationEvents(): array
     {
         return match ($this->role) {
-            'admin' => ['project_update_submitted', 'contact_lead_submitted', 'customer_message_received'],
-            'inspector' => ['project_update_changes_requested', 'customer_message_received'],
-            default => ['project_update_approved', 'staff_message_received'],
+            'admin' => ['project_update_submitted', 'contact_lead_submitted', 'customer_message_received', 'project_event_reminder'],
+            'inspector' => ['project_update_changes_requested', 'customer_message_received', 'project_event_reminder'],
+            default => ['project_update_approved', 'staff_message_received', 'project_event_reminder'],
         };
     }
 

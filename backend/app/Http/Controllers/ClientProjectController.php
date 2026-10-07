@@ -82,6 +82,12 @@ class ClientProjectController extends Controller
                 ->where('customer_id', $user->id)
                 ->with(['customer:id,name', 'projectUpdate:id,title', 'messages.sender:id,name,role', 'messages.attachments.file'])
                 ->latest('last_message_at'),
+            'events' => fn ($query) => $query
+                ->where('customer_visible', true)
+                ->where('status', '<>', 'cancelled')
+                ->where('starts_at', '>=', now()->subDay())
+                ->with('assignee:id,name')
+                ->orderBy('starts_at'),
         ]);
 
         $unreadIds = $project->updates()

@@ -15,6 +15,21 @@
         @endif
     </section>
 
+    @if($project->events->isNotEmpty())
+        <section class="card panel client-calendar-panel" id="project-calendar">
+            <div class="panel-heading"><div><p class="eyebrow">PROJECT CALENDAR</p><h2>กำหนดการที่กำลังจะถึง</h2><p>นัดตรวจ ประชุม และวันสำคัญที่ทีมงานแจ้งไว้</p></div><span class="client-update-count">{{ $project->events->count() }} นัด</span></div>
+            <div class="client-calendar-list">
+                @foreach($project->events->take(6) as $event)
+                    <article>
+                        <time><strong>{{ $event->starts_at->format('d') }}</strong><span>{{ $event->starts_at->locale('th')->translatedFormat('M') }}</span></time>
+                        <div><span>{{ \App\Models\ProjectEvent::TYPE_LABELS[$event->type] }}</span><h3>{{ $event->title }}</h3><p>{{ $event->starts_at->format('H:i') }} น.{{ $event->location ? ' · '.$event->location : '' }}</p></div>
+                        <b>{{ $event->assignee?->name ?: 'ทีม 34 Build Master' }}</b>
+                    </article>
+                @endforeach
+            </div>
+        </section>
+    @endif
+
     @php($hasConfiguredSteps = $project->steps->isNotEmpty() && (int) $project->steps->sum('weight_percent') === 100)
 
     @if($hasConfiguredSteps)

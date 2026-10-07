@@ -5,14 +5,25 @@
             <h1>งานที่ได้รับมอบหมาย</h1>
             <p class="muted" style="margin:7px 0 0;">ตรวจความคืบหน้า บันทึกผล และอัปเดตรูปหน้างานให้ลูกค้า</p>
         </div>
-        <a class="button" href="{{ route('admin.projects.index') }}">ดูทุกโครงการ</a>
+        <div class="actions"><a class="button secondary" href="{{ route('admin.calendar.index') }}"><x-ui-icon name="calendar" /> ปฏิทินงาน</a><a class="button" href="{{ route('admin.projects.index') }}">ดูทุกโครงการ</a></div>
     </div>
 
     <section class="project-stats" aria-label="สรุปงานตรวจหน้างาน">
         <article class="card user-stat-card is-primary"><span>โครงการที่รับผิดชอบ</span><strong>{{ $totalProjects }}</strong><small>เฉพาะงานที่มอบหมายให้คุณ</small></article>
         <article class="card user-stat-card"><span>กำลังดำเนินงาน</span><strong>{{ $activeProjects }}</strong><small>พร้อมบันทึกความคืบหน้า</small></article>
         <article class="card user-stat-card"><span>รอ Admin ตรวจ</span><strong>{{ $pendingReviewCount }}</strong><small>ลูกค้ายังไม่เห็นรายการเหล่านี้</small></article>
-        <article class="card user-stat-card"><span>ต้องติดตามแก้ไข</span><strong>{{ $attentionProjects }}</strong><small>มีขั้นตอนที่ไม่ผ่านการตรวจ</small></article>
+        <article class="card user-stat-card"><span>งานเกินกำหนด</span><strong>{{ $overdueStepCount }}</strong><small>ปัญหาเปิดอยู่ {{ $openIssueCount }} รายการ</small></article>
+    </section>
+
+    <section class="card panel inspector-calendar-panel">
+        <div class="panel-heading"><div><p class="eyebrow">UPCOMING SCHEDULE</p><h2>กำหนดการของฉัน</h2><p>นัดตรวจและงานที่ได้รับมอบหมายเรียงตามเวลา</p></div><a class="text-link" href="{{ route('admin.calendar.index') }}">ดูปฏิทิน</a></div>
+        <div class="dashboard-event-list">
+            @forelse($upcomingEvents as $event)
+                <a href="{{ route('admin.calendar.index', ['month' => $event->starts_at->format('Y-m'), 'event' => $event->id]) }}#event-{{ $event->id }}"><time><strong>{{ $event->starts_at->format('d') }}</strong><span>{{ $event->starts_at->locale('th')->translatedFormat('M') }}</span></time><span><em>{{ $event->project->code }}</em><strong>{{ $event->title }}</strong><small>{{ $event->starts_at->format('H:i') }} น.</small></span><x-ui-icon name="chevron-right" /></a>
+            @empty
+                <div class="dashboard-empty"><strong>ยังไม่มีกำหนดการ</strong><a href="{{ route('admin.calendar.index') }}#calendar-create">เพิ่มนัดหมาย</a></div>
+            @endforelse
+        </div>
     </section>
 
     <section class="card panel">

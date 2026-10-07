@@ -6,6 +6,9 @@
             <p class="muted" style="margin:7px 0 0;">ติดตามโครงการ ทีมงาน อัปเดตหน้างาน และข้อมูลเว็บไซต์ในหน้าเดียว</p>
         </div>
         <div class="actions">
+            <a class="button secondary" href="{{ route('admin.calendar.index') }}">
+                <x-ui-icon name="calendar" /> ปฏิทินโครงการ
+            </a>
             <a class="button" href="{{ route('admin.projects.create') }}">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
                 สร้างโครงการ
@@ -64,11 +67,49 @@
         <article class="card panel dashboard-attention-panel">
             <div class="panel-heading"><div><p class="eyebrow">ATTENTION</p><h2>สิ่งที่ต้องติดตาม</h2><p>รายการที่ควรตรวจสอบหรือดำเนินการต่อ</p></div></div>
             <div class="dashboard-attention-list">
+                <a href="{{ route('admin.calendar.index') }}"><span class="attention-dot is-danger"></span><span><strong>ขั้นตอนงานเกินกำหนด</strong><small>ยังดำเนินการไม่ครบ 100%</small></span><b>{{ $overdueStepCount }}</b></a>
+                <a href="{{ route('admin.projects.index') }}"><span class="attention-dot is-danger"></span><span><strong>โครงการเกินกำหนดส่ง</strong><small>ยังไม่ได้ปิดเป็นโครงการเสร็จสิ้น</small></span><b>{{ $overdueProjectCount }}</b></a>
+                <a href="{{ route('admin.projects.index') }}"><span class="attention-dot is-warning"></span><span><strong>ปัญหาหน้างานที่ยังเปิดอยู่</strong><small>เร่งด่วน {{ $urgentIssueCount }} รายการ</small></span><b>{{ $openIssueCount }}</b></a>
                 <a href="{{ route('admin.projects.index') }}"><span class="attention-dot is-danger"></span><span><strong>งานไม่ผ่านหรือรอแก้ไข</strong><small>ขั้นตอนใน {{ $attentionProjectCount }} โครงการ</small></span><b>{{ $attentionProjectCount }}</b></a>
                 <a href="{{ route('admin.projects.index') }}"><span class="attention-dot is-warning"></span><span><strong>อัปเดตรอ Admin ตรวจ</strong><small>ยังไม่กระทบเปอร์เซ็นต์และลูกค้ายังไม่เห็น</small></span><b>{{ $pendingReviewCount }}</b></a>
                 <a href="{{ route('admin.projects.index') }}"><span class="attention-dot is-warning"></span><span><strong>ยังไม่มีผู้ดูแลโครงการ</strong><small>ควรมอบหมาย Admin หรือผู้ตรวจ</small></span><b>{{ $unassignedProjectCount }}</b></a>
                 <a href="{{ route('admin.projects.index') }}"><span class="attention-dot"></span><span><strong>อัปเดตหน้างานฉบับร่าง</strong><small>ยังไม่แสดงให้ลูกค้าเห็น</small></span><b>{{ $draftUpdateCount }}</b></a>
                 <a href="{{ route('admin.articles.index', ['status' => 'draft']) }}"><span class="attention-dot"></span><span><strong>บทความฉบับร่าง</strong><small>รอตรวจสอบก่อนเผยแพร่</small></span><b>{{ $draftCount }}</b></a>
+            </div>
+        </article>
+    </section>
+
+    <section class="dashboard-operations-grid">
+        <article class="card panel">
+            <div class="panel-heading"><div><p class="eyebrow">PROJECT CALENDAR</p><h2>กำหนดการที่กำลังจะถึง</h2><p>นัดหมายเรียงตามวันและเวลาที่ใกล้ที่สุด</p></div><a class="text-link" href="{{ route('admin.calendar.index') }}">เปิดปฏิทิน</a></div>
+            <div class="dashboard-event-list">
+                @forelse($upcomingEvents as $event)
+                    <a href="{{ route('admin.calendar.index', ['month' => $event->starts_at->format('Y-m'), 'event' => $event->id]) }}#event-{{ $event->id }}">
+                        <time><strong>{{ $event->starts_at->format('d') }}</strong><span>{{ $event->starts_at->locale('th')->translatedFormat('M') }}</span></time>
+                        <span><em>{{ $event->project->code }} · {{ \App\Models\ProjectEvent::TYPE_LABELS[$event->type] }}</em><strong>{{ $event->title }}</strong><small>{{ $event->starts_at->format('H:i') }} น.{{ $event->assignee ? ' · '.$event->assignee->name : '' }}</small></span>
+                        <x-ui-icon name="chevron-right" />
+                    </a>
+                @empty
+                    <div class="dashboard-empty"><strong>ยังไม่มีนัดหมาย</strong><a href="{{ route('admin.calendar.index') }}#calendar-create">เพิ่มนัดหมายแรก</a></div>
+                @endforelse
+            </div>
+        </article>
+
+        <article class="card panel">
+            <div class="panel-heading"><div><p class="eyebrow">PROJECT HEALTH</p><h2>สถานะโครงการ</h2><p>เปรียบเทียบจำนวนโครงการในแต่ละสถานะ</p></div></div>
+            @php($maxStatusCount = max(1, (int) $statusCounts->max()))
+            <div class="dashboard-status-bars">
+                @foreach($projectStatusLabels as $status => $label)
+                    <div><header><span>{{ $label }}</span><strong>{{ $statusCounts[$status] ?? 0 }}</strong></header><i><b style="width:{{ (($statusCounts[$status] ?? 0) / $maxStatusCount) * 100 }}%"></b></i></div>
+                @endforeach
+            </div>
+            <div class="dashboard-workload">
+                <h3>ภาระงานของผู้ดูแล</h3>
+                @forelse($managerWorkload as $manager)
+                    <div><span>{{ $manager->name }}<small>{{ $manager->role === 'inspector' ? 'ผู้ตรวจหน้างาน' : 'Admin' }}</small></span><strong>{{ $manager->active_projects_count }} โครงการ</strong></div>
+                @empty
+                    <p class="muted">ยังไม่มีโครงการที่มอบหมายผู้ดูแล</p>
+                @endforelse
             </div>
         </article>
     </section>
@@ -95,6 +136,7 @@
         <article class="card panel">
             <div class="panel-heading"><div><p class="eyebrow">QUICK ACTIONS</p><h2>งานที่ทำได้ทันที</h2><p>ทางลัดสำหรับงานที่ใช้เป็นประจำ</p></div></div>
             <div class="dashboard-action-list">
+                <a href="{{ route('admin.calendar.index') }}#calendar-create"><span class="quick-icon"><x-ui-icon name="calendar" /></span><span><strong>เพิ่มนัดหมาย</strong><small>นัดตรวจ ประชุม หรือส่งมอบ</small></span><b><x-ui-icon name="chevron-right" /></b></a>
                 <a href="{{ route('admin.projects.create') }}"><span class="quick-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg></span><span><strong>สร้างโครงการใหม่</strong><small>กำหนดลูกค้าและผู้ดูแล</small></span><b><x-ui-icon name="chevron-right" /></b></a>
                 <a href="{{ route('admin.users.create') }}"><span class="quick-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M19 8v6"></path><path d="M16 11h6"></path></svg></span><span><strong>เพิ่มผู้ใช้งาน</strong><small>ลูกค้า ผู้ตรวจ หรือ Admin</small></span><b><x-ui-icon name="chevron-right" /></b></a>
                 <a href="{{ route('admin.articles.create') }}"><span class="quick-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg></span><span><strong>เขียนบทความใหม่</strong><small>เพิ่มเนื้อหาและข้อมูล SEO</small></span><b><x-ui-icon name="chevron-right" /></b></a>

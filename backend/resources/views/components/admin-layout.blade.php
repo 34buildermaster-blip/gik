@@ -733,6 +733,11 @@
                             <span class="nav-label">โครงการลูกค้า</span>
                             <span class="nav-arrow"><x-ui-icon name="chevron-right" /></span>
                         </a>
+                        <a class="{{ request()->routeIs('admin.calendar.*') ? 'is-active' : '' }}" href="{{ route('admin.calendar.index') }}" title="ปฏิทินโครงการ">
+                            <x-ui-icon class="nav-icon" name="calendar" />
+                            <span class="nav-label">ปฏิทินโครงการ</span>
+                            <span class="nav-arrow"><x-ui-icon name="chevron-right" /></span>
+                        </a>
                         @if ($isAdmin)
                         <a class="{{ $isCustomersPage ? 'is-active' : '' }}" href="{{ route('admin.customers.index') }}" title="ข้อมูลลูกค้า">
                             <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M18 8h4"></path><path d="M20 6v4"></path></svg>

@@ -84,6 +84,11 @@ class Project extends Model
         return $this->hasMany(ProjectInquiry::class)->latest('last_message_at');
     }
 
+    public function events(): HasMany
+    {
+        return $this->hasMany(ProjectEvent::class)->orderBy('starts_at');
+    }
+
     public function acknowledgements(): HasMany
     {
         return $this->hasMany(ProjectAcknowledgement::class);

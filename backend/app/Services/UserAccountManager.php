@@ -57,6 +57,7 @@ class UserAccountManager
             'ประวัติการตรวจอัปเดต' => fn (): bool => DB::table('project_update_review_logs')->where('acted_by', $id)->exists(),
             'ประวัติความคืบหน้าขั้นตอนงาน' => fn (): bool => DB::table('project_step_progress_logs')->where('changed_by', $id)->exists(),
             'ปัญหาหน้างานที่เกี่ยวข้อง' => fn (): bool => DB::table('project_issues')->where('created_by', $id)->orWhere('assigned_to', $id)->orWhere('verified_by', $id)->exists(),
+            'นัดหมายโครงการที่สร้างหรือรับผิดชอบ' => fn (): bool => DB::table('project_events')->where('created_by', $id)->orWhere('assigned_to', $id)->exists(),
             'เอกสารหรือไฟล์ที่อัปโหลด' => fn (): bool => DB::table('project_documents')->where('uploaded_by', $id)->exists()
                 || DB::table('stored_files')->where('uploaded_by', $id)->exists(),
             'บทความหรือแบบบ้านที่สร้าง' => fn (): bool => DB::table('articles')->where('user_id', $id)->exists()
