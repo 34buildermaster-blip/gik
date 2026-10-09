@@ -86,7 +86,7 @@ class ClientProjectController extends Controller
                 ->where('customer_visible', true)
                 ->where('status', '<>', 'cancelled')
                 ->where('starts_at', '>=', now()->subDay())
-                ->with('assignee:id,name')
+                ->with(['assignee:id,name', 'responder:id,name', 'attachments.file'])
                 ->orderBy('starts_at'),
         ]);
 

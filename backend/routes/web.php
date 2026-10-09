@@ -25,6 +25,8 @@ use App\Http\Controllers\ClientProjectController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\LineAccountLinkController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ProjectEventAttachmentController;
+use App\Http\Controllers\ProjectEventResponseController;
 use App\Http\Controllers\ProjectInquiryMediaController;
 use App\Http\Controllers\ProjectInteractionController;
 use App\Http\Controllers\ProjectIssueMediaController;
@@ -112,6 +114,9 @@ Route::middleware('auth')->group(function (): void {
         ->name('project-documents.show');
     Route::get('/project-issue-media/{media}', [ProjectIssueMediaController::class, 'show'])->name('project-issue-media.show');
     Route::get('/project-inquiry-media/{attachment}', [ProjectInquiryMediaController::class, 'show'])->name('project-inquiry-media.show');
+    Route::get('/project-event-attachments/{attachment}', [ProjectEventAttachmentController::class, 'show'])
+        ->middleware('throttle:30,1')
+        ->name('project-event-attachments.show');
     Route::post('/projects/{project}/inquiries/{inquiry}/messages', [ProjectInteractionController::class, 'reply'])
         ->middleware('throttle:15,1')
         ->name('project-inquiries.messages.store');
@@ -134,6 +139,9 @@ Route::middleware(['auth', 'role:user'])->group(function (): void {
     Route::post('/my-projects/{project}/inquiries', [ProjectInteractionController::class, 'storeInquiry'])
         ->middleware('throttle:10,1')
         ->name('client.projects.inquiries.store');
+    Route::put('/my-projects/{project}/events/{event}/response', [ProjectEventResponseController::class, 'update'])
+        ->middleware('throttle:10,1')
+        ->name('client.project-events.response');
 });
 
 Route::middleware('auth')
@@ -154,8 +162,12 @@ Route::middleware('auth')
         Route::middleware(['role:admin,inspector', 'staff.2fa'])->group(function (): void {
             Route::get('/', DashboardController::class)->name('dashboard');
             Route::get('/calendar', [ProjectCalendarController::class, 'index'])->name('calendar.index');
+            Route::get('/calendar/export/csv', [ProjectCalendarController::class, 'exportCsv'])->name('calendar.export.csv');
+            Route::get('/calendar/export/ics', [ProjectCalendarController::class, 'exportIcs'])->name('calendar.export.ics');
+            Route::get('/calendar/print', [ProjectCalendarController::class, 'print'])->name('calendar.print');
             Route::post('/calendar', [ProjectCalendarController::class, 'store'])->name('calendar.store');
             Route::put('/calendar/{event}', [ProjectCalendarController::class, 'update'])->name('calendar.update');
+            Route::delete('/calendar/attachments/{attachment}', [ProjectEventAttachmentController::class, 'destroy'])->name('calendar.attachments.destroy');
             Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
             Route::get('/projects/{project}', [ProjectController::class, 'show'])->whereNumber('project')->name('projects.show');
             Route::get('/projects/{project}/updates/create', [ProjectUpdateController::class, 'create'])->name('project-updates.create');

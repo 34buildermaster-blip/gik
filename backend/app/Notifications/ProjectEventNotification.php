@@ -57,6 +57,10 @@ class ProjectEventNotification extends Notification
 
     private function headline(): string
     {
+        if ($this->event->status === 'cancelled') {
+            return 'ยกเลิกนัดหมายในโครงการ';
+        }
+
         return match ($this->mode) {
             'updated' => 'กำหนดการมีการเปลี่ยนแปลง',
             'reminder' => 'แจ้งเตือนนัดหมายภายใน 24 ชั่วโมง',

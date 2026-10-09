@@ -20,9 +20,38 @@
             <div class="panel-heading"><div><p class="eyebrow">PROJECT CALENDAR</p><h2>กำหนดการที่กำลังจะถึง</h2><p>นัดตรวจ ประชุม และวันสำคัญที่ทีมงานแจ้งไว้</p></div><span class="client-update-count">{{ $project->events->count() }} นัด</span></div>
             <div class="client-calendar-list">
                 @foreach($project->events->take(6) as $event)
-                    <article>
+                    <article class="client-calendar-event">
                         <time><strong>{{ $event->starts_at->format('d') }}</strong><span>{{ $event->starts_at->locale('th')->translatedFormat('M') }}</span></time>
-                        <div><span>{{ \App\Models\ProjectEvent::TYPE_LABELS[$event->type] }}</span><h3>{{ $event->title }}</h3><p>{{ $event->starts_at->format('H:i') }} น.{{ $event->location ? ' · '.$event->location : '' }}</p></div>
+                        <div class="client-calendar-event-main">
+                            <span>{{ \App\Models\ProjectEvent::TYPE_LABELS[$event->type] }}</span>
+                            <h3>{{ $event->title }}</h3>
+                            <p>{{ $event->starts_at->format('H:i') }} น.{{ $event->location ? ' · '.$event->location : '' }}</p>
+                            @if($event->description)<p class="client-calendar-description">{{ $event->description }}</p>@endif
+                            <div class="client-calendar-links">
+                                @if($event->googleMapsUrl())<a href="{{ $event->googleMapsUrl() }}" target="_blank" rel="noopener">เปิดแผนที่</a>@endif
+                                @foreach($event->attachments as $attachment)<a href="{{ route('project-event-attachments.show', $attachment) }}" target="_blank">{{ $attachment->file?->original_name ?: 'ไฟล์แนบ' }}</a>@endforeach
+                            </div>
+                            @if($event->customer_response)
+                                <div class="client-event-response is-{{ $event->customer_response }}">
+                                    <strong>{{ \App\Models\ProjectEvent::CUSTOMER_RESPONSE_LABELS[$event->customer_response] }}</strong>
+                                    @if($event->proposed_starts_at)<span>เสนอ {{ $event->proposed_starts_at->format('d/m/Y H:i') }} น.</span>@endif
+                                    @if($event->customer_response_note)<span>{{ $event->customer_response_note }}</span>@endif
+                                </div>
+                            @else
+                                <div class="client-event-actions">
+                                    <form method="POST" action="{{ route('client.project-events.response', [$project, $event]) }}">@csrf @method('PUT')<input type="hidden" name="response" value="confirmed"><button class="button" type="submit">ยืนยันนัดหมาย</button></form>
+                                    <details>
+                                        <summary class="button secondary">ขอเปลี่ยนวัน</summary>
+                                        <form method="POST" action="{{ route('client.project-events.response', [$project, $event]) }}">
+                                            @csrf @method('PUT')<input type="hidden" name="response" value="reschedule_requested">
+                                            <label>วันที่และเวลาที่สะดวก<input name="proposed_starts_at" type="datetime-local" min="{{ now()->format('Y-m-d\TH:i') }}" required></label>
+                                            <label>หมายเหตุ<textarea name="note" rows="2" maxlength="1000"></textarea></label>
+                                            <button class="button" type="submit">ส่งคำขอ</button>
+                                        </form>
+                                    </details>
+                                </div>
+                            @endif
+                        </div>
                         <b>{{ $event->assignee?->name ?: 'ทีม 34 Build Master' }}</b>
                     </article>
                 @endforeach

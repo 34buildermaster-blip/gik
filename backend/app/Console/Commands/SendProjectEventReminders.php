@@ -34,7 +34,9 @@ class SendProjectEventReminders extends Command
                             $event->project->manager,
                             $event->project->reviewer,
                             $event->assignee,
-                            ...($event->customer_visible ? $event->project->customers->all() : []),
+                            ...($event->customer_visible && $event->customer_response !== 'reschedule_requested'
+                                ? $event->project->customers->all()
+                                : []),
                         ])->filter()->unique('id')->values();
 
                         Notification::send($recipients, new ProjectEventNotification($event, 'reminder'));

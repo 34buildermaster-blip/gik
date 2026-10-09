@@ -29,6 +29,10 @@ class NotificationController extends Controller
         $item->markAsRead();
         $contactLeadId = $item->data['contact_lead_id'] ?? null;
 
+        if (in_array($item->data['type'] ?? null, ['daily_operations_summary', 'system_health_alert'], true)) {
+            return redirect()->route('admin.dashboard');
+        }
+
         if ($contactLeadId && $request->user()->isAdmin()) {
             return redirect()->route('admin.contact-leads.index', ['q' => $contactLeadId]);
         }

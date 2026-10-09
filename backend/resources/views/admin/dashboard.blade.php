@@ -17,6 +17,20 @@
         </div>
     </div>
 
+    <nav class="dashboard-range" aria-label="ช่วงเวลาของข้อมูล">
+        <span>ช่วงข้อมูล</span>
+        @foreach([7 => '7 วัน', 30 => '30 วัน', 90 => 'ไตรมาส'] as $days => $label)
+            <a class="{{ $rangeDays === $days ? 'is-active' : '' }}" href="{{ route('admin.dashboard', ['range' => $days]) }}">{{ $label }}</a>
+        @endforeach
+        <small>ตั้งแต่ {{ $rangeStart->format('d/m/Y') }}</small>
+    </nav>
+
+    <section class="dashboard-system-status" aria-label="สถานะระบบอัตโนมัติ">
+        <div><span>สำรองข้อมูลล่าสุด</span><strong>{{ $latestBackup?->created_at?->timezone(config('app.display_timezone'))->format('d/m/Y H:i') ?: 'รอรอบสำรองข้อมูล' }}</strong></div>
+        <div><span>ตรวจสุขภาพระบบล่าสุด</span><strong>{{ $lastHealthCheckAt?->timezone(config('app.display_timezone'))->format('d/m/Y H:i') ?: 'รอรอบตรวจสอบ' }}</strong></div>
+        <div><span>พื้นที่เก็บไฟล์</span><strong>{{ $mediaStorageDriver === 'google' ? 'Google Drive' : 'พื้นที่เซิร์ฟเวอร์' }}</strong></div>
+    </section>
+
     <section class="dashboard-stats" aria-label="สรุปการดำเนินงาน">
         <article class="card stat-card is-primary">
             <p class="stat-label">โครงการที่กำลังดำเนินงาน</p>
@@ -31,8 +45,8 @@
             <a class="stat-link" href="{{ route('admin.projects.index') }}" aria-label="ตรวจความคืบหน้าโครงการ"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a>
         </article>
         <article class="card stat-card">
-            <p class="stat-label">อัปเดตหน้างาน 7 วัน</p>
-            <div class="stat-value">{{ $updatesThisWeek }}</div>
+            <p class="stat-label">อัปเดตหน้างาน {{ $rangeDays }} วัน</p>
+            <div class="stat-value">{{ $updatesInRange }}</div>
             <p class="stat-caption">รูป รายงาน และ Timeline ล่าสุด</p>
             <a class="stat-link" href="{{ route('admin.projects.index') }}" aria-label="ดูอัปเดตหน้างาน"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a>
         </article>

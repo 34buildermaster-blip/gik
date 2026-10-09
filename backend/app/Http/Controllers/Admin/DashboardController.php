@@ -9,14 +9,22 @@ use App\Models\ProjectEvent;
 use App\Models\ProjectIssue;
 use App\Models\ProjectStep;
 use App\Models\ProjectUpdate;
+use App\Models\StoredFile;
 use App\Models\User;
+use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
     public function __invoke(Request $request): View
     {
+        $rangeDays = in_array((int) $request->integer('range', 7), [7, 30, 90], true)
+            ? (int) $request->integer('range', 7)
+            : 7;
+        $rangeStart = now()->subDays($rangeDays)->startOfDay();
+
         if ($request->user()->isInspector()) {
             $projects = Project::query()->where('manager_id', $request->user()->id);
             $projectIds = (clone $projects)->pluck('id');
@@ -66,7 +74,7 @@ class DashboardController extends Controller
         $activeProjectCount = Project::where('status', 'in_progress')->count();
         $completedProjectCount = Project::where('status', 'completed')->count();
         $averageProgress = $projectCount > 0 ? (int) round((float) Project::avg('progress_percent')) : 0;
-        $updatesThisWeek = ProjectUpdate::where('work_performed_at', '>=', now()->subDays(7))->count();
+        $updatesInRange = ProjectUpdate::where('work_performed_at', '>=', $rangeStart)->count();
         $userCount = User::count();
         $inspectorCount = User::where('role', 'inspector')->count();
         $customerCount = User::where('role', 'user')->count();
@@ -102,7 +110,14 @@ class DashboardController extends Controller
             'activeProjectCount' => $activeProjectCount,
             'completedProjectCount' => $completedProjectCount,
             'averageProgress' => $averageProgress,
-            'updatesThisWeek' => $updatesThisWeek,
+            'updatesInRange' => $updatesInRange,
+            'rangeDays' => $rangeDays,
+            'rangeStart' => $rangeStart,
+            'latestBackup' => StoredFile::where('category', 'system-backups')->latest()->first(),
+            'lastHealthCheckAt' => Cache::get('system-health:last-ok-at')
+                ? CarbonImmutable::parse(Cache::get('system-health:last-ok-at'))
+                : null,
+            'mediaStorageDriver' => config('media.driver'),
             'userCount' => $userCount,
             'inspectorCount' => $inspectorCount,
             'customerCount' => $customerCount,
@@ -126,6 +141,7 @@ class DashboardController extends Controller
                 ->get(),
             'latestProjectUpdates' => ProjectUpdate::query()
                 ->whereHas('project')
+                ->where('work_performed_at', '>=', $rangeStart)
                 ->with(['project:id,code,name', 'creator:id,name'])
                 ->latest('work_performed_at')
                 ->limit(5)
@@ -137,7 +153,7 @@ class DashboardController extends Controller
             'draftCount' => $draftCount,
             'seoReadyCount' => $seoReadyCount,
             'publishPercent' => $articleCount > 0 ? (int) round(($publishedCount / $articleCount) * 100) : 0,
-            'recentlyUpdatedCount' => Article::where('updated_at', '>=', now()->subDays(7))->count(),
+            'recentlyUpdatedCount' => Article::where('updated_at', '>=', $rangeStart)->count(),
             'latestArticles' => Article::with('user')->latest('updated_at')->limit(4)->get(),
         ]);
     }
